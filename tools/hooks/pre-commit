@@ -1,0 +1,26 @@
+#!/bin/sh
+# Pre-Commit-Hook: Anforderungs-Uebersichten nachfuehren und mitcommitten.
+# Installation:  ln -sf ../../tools/hooks/pre-commit .git/hooks/pre-commit
+#
+# Der Hook laeuft nur, wenn Datensaetze veraendert wurden. Er schreibt die
+# generierten README.md und legt sie in den laufenden Commit.
+
+set -e
+
+if ! git diff --cached --name-only | grep -qE '\.md$'; then
+    exit 0
+fi
+
+python3 tools/gen_index.py >/dev/null
+
+# Nur generierte Uebersichten nachlegen.
+# --modified UND --others, sonst werden neu entstandene (noch untracked)
+# Uebersichten uebersehen.
+CHANGED=$(git ls-files --modified --others --exclude-standard -- '*/README.md')
+if [ -n "$CHANGED" ]; then
+    echo "pre-commit: Anforderungs-Uebersichten aktualisiert:"
+    echo "$CHANGED" | sed 's/^/  - /'
+    echo "$CHANGED" | xargs git add
+fi
+
+exit 0

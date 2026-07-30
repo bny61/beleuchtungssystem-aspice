@@ -1,0 +1,64 @@
+name: Anforderungs-Uebersichten
+
+# Haelt die generierten Ordner-Uebersichten (README.md je Anforderungsordner) aktuell.
+# ASPICE: SUP.8 (Konfigurationsmanagement), SUP.1 (QA)
+# ISO 26262: Part 8 (Requirements Management) -- die Uebersichten sind abgeleitete
+# Artefakte, die Quelle bleibt der jeweilige Datensatz.
+#
+# Zwei Betriebsarten:
+#   Pull Request -> nur pruefen. Veraltete Uebersicht blockiert den Merge.
+#   Push auf main -> neu erzeugen und automatisch zurueckcommitten.
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Uebersichten aktuell?
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Aktualitaet pruefen
+        run: python3 tools/gen_index.py --check
+
+  update:
+    name: Uebersichten nachfuehren
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Token mit Schreibrecht, damit der Commit zurueckgeschrieben werden kann
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Uebersichten erzeugen
+        run: python3 tools/gen_index.py
+
+      - name: Aenderungen zurueckcommitten
+        run: |
+          if git diff --quiet; then
+            echo "Keine Aenderung an den Uebersichten - nichts zu committen."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "*/README.md"
+          git commit -m "chore(index): Anforderungs-Uebersichten nachgefuehrt
+
+          Automatisch erzeugt von tools/gen_index.py.
+          [skip ci]"
+          git push
