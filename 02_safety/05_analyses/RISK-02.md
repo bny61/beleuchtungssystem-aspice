@@ -1,20 +1,20 @@
 ---
 id: RISK-02
 text: >
-  Die ASIL-Dekomposition von FSR-005 in FSR-006 (QM(A)) und FSR-007 (A(A)) ist bis zum Vorliegen
-  der DFA nicht nachgewiesen.
-type: risiko
+  The ASIL decomposition of FSR-005 into FSR-006 (QM(A)) and FSR-007 (A(A)) is not demonstrated
+  until the DFA is available.
+type: risk
 status: draft
 owner: safety-analyst
-source: FSC Phase 2, ISO 26262-9
+source: FSC phase 2, ISO 26262-9
 mitigation: >
-  DFA in Phase 5 mit Betrachtung von gemeinsamer Versorgung, Takt, Masse, thermischer und
-  raeumlicher Kopplung, gemeinsamen Softwareressourcen und gemeinsamem Designfehler.
+  DFA in phase 5 covering common supply, clock, ground, thermal and spatial coupling, shared
+  software resources and common design faults.
 impact: >
-  Ohne Unabhaengigkeitsnachweis faellt die Dekomposition zurueck: FSR-006 waere dann ASIL A
-  statt QM(A), mit entsprechenden Anforderungen an den Funktionspfad.
+  Without an independence argument the decomposition falls back: FSR-006 would then be ASIL A
+  instead of QM(A), with corresponding requirements on the functional path.
 ---
 
-## Kontext
+## Context
 
-Bis zum Nachweis darf der QM-Pfad im Safety Case nicht als erledigt argumentiert werden.
+Until demonstrated, the QM path must not be argued as discharged in the safety case.
