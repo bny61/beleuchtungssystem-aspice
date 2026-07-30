@@ -101,3 +101,84 @@ vier Bloecke.
 | `08_safety_case/` | GSN, Work-Product-Status, Confirmation Measures | ISO 26262-2 |
 | `09_process/` | Plaene, Templates, Annahmen, Tailoring, Meta-Prompt | SUP, MAN.3 |
 | `tools/` | CI-Skripte (Traceability) | SUP.1, SUP.8 |
+
+## Arbeiten mit den Agenten
+
+Die Phasen 0–11 werden nicht von einem Generalisten abgearbeitet, sondern von **neun Fach-Agenten**
+mit klarer Zustaendigkeit. Der Skill `phase-run` routet jede Phase an den federfuehrenden Agenten,
+die **Methoden-Skills** liefern die Verfahren, und zwei Gates sichern das Ergebnis ab.
+
+```mermaid
+flowchart TB
+    U["<b>Du</b><br/>/phase-run · weiter<br/>tiefer: Thema · kuerzer"]
+    SK["<b>Skill phase-run</b><br/>Routing Phase → Agent<br/>Tiefenregel Golden Thread<br/><small>DEEP DIVE vs. UEBERSICHT</small>"]
+
+    subgraph AGENTS["Fach-Agenten — einer pro Phase federfuehrend"]
+        direction TB
+        A1["<b>systems-engineer</b><br/>CR · SYS-REQ · E/E-Architektur<br/><small>Phase 1 · 3</small>"]
+        A2["<b>safety-manager</b><br/>HARA · SG · FSC · TSC · Safety Case<br/><small>Phase 0 · 2 · 9</small>"]
+        A3["<b>safety-analyst</b><br/>FMEA · FTA · FMEDA · DFA · STPA<br/><small>Phase 5</small>"]
+        A4["<b>mbse-modeler</b><br/>MagicGrid · SysML-Sichten<br/><small>Phase 4</small>"]
+        A5["<b>hardware-engineer</b><br/>HW-REQ · SM-xx · HW-Verifikation<br/><small>Phase 6</small>"]
+        A6["<b>software-engineer</b><br/>SW-REQ · SWC_LightManager<br/><small>Phase 7</small>"]
+        A7["<b>verification-engineer</b><br/>TC-xxx · Fehlerinjektion<br/><small>Phase 8</small>"]
+        A8["<b>config-manager</b><br/>CM · Baselines · GitHub-Nachweis<br/><small>Phase 10 · 11</small>"]
+    end
+
+    subgraph METH["Methoden-Skills — werden von den Agenten geladen"]
+        direction TB
+        S1["requirements-authoring<br/><small>EARS · Req-Tabelle · RaC-Schema</small>"]
+        S2["hara<br/><small>S/E/C · Safe State · FTTI</small>"]
+        S3["safety-analyses<br/><small>AP statt RPZ · SPFM/LFM/PMHF</small>"]
+        S4["mbse-magicgrid<br/><small>PlantUML-Konventionen</small>"]
+        S5["safety-case-gsn<br/><small>Goal → Strategy → Evidence</small>"]
+        S6["trace-audit<br/><small>Coverage-KPIs</small>"]
+    end
+
+    WP["<b>Work Products</b><br/>Requirements-as-Code<br/>PlantUML · Analysen · Testfaelle<br/><small>01_… bis 09_</small>"]
+    TCK{"<b>tools/trace_check.py</b><br/>orphan · dangling · untested<br/>unallocated · asil-drop"}
+    QA{"<b>quality-assessor</b><br/>unabhaengiges Review<br/><small>read-only · nur Findings</small>"}
+    OUT["<b>PR + Baseline</b><br/>Review-Nachweis SUP.4 · Git Tag SUP.8<br/><small>danach: weiter → naechste Phase</small>"]
+
+    U --> SK
+    SK --> AGENTS
+    METH -.->|"Methodik"| AGENTS
+    AGENTS -->|"erzeugen"| WP
+    WP --> TCK
+    TCK -->|"Findings → nacharbeiten"| AGENTS
+    TCK -->|"gruen"| QA
+    QA -->|"blocker / major"| AGENTS
+    QA -->|"Freigabe"| OUT
+
+    classDef user fill:#e7f0fb,stroke:#3b6ea5,color:#10233a
+    classDef agent fill:#eaf4ea,stroke:#4a8a4a,color:#102a10
+    classDef skill fill:#f0edf7,stroke:#7a5ea8,color:#241a3a
+    classDef gate fill:#fdf0e3,stroke:#c07d29,color:#3a2408
+    classDef out fill:#fbeaea,stroke:#b05252,color:#3a1010
+    class U,SK user
+    class A1,A2,A3,A4,A5,A6,A7,A8 agent
+    class S1,S2,S3,S4,S5,S6 skill
+    class WP,TCK,QA gate
+    class OUT out
+
+    style AGENTS fill:#fafcfa,stroke:#bcd4bc,color:#37503a
+    style METH fill:#fcfbfd,stroke:#cbc0dd,color:#4a3e63
+```
+
+**Leseanleitung:** Der Ablauf laeuft von oben nach unten — du startest mit `/phase-run`, der Skill
+waehlt den zustaendigen Agenten, dieser erzeugt die Work Products. Danach greifen zwei Gates:
+`tools/trace_check.py` prueft die Traces maschinell, der `quality-assessor` reviewt unabhaengig und
+read-only. Beide Gates fuehren bei Findings zurueck zu den Agenten — erst nach Freigabe entstehen
+PR und Baseline. Die Agenten reichen untereinander weiter (Handoffs), z. B. eine FMEA-Erkenntnis
+vom `safety-analyst` als neue Anforderung an den `systems-engineer`.
+
+### Steuerworte
+
+| Eingabe | Wirkung |
+|---|---|
+| `/phase-run` | startet bzw. setzt die Phasenfolge fort |
+| `weiter` | naechste Phase |
+| `tiefer: <Thema>` | Thema auf Detailniveau ausarbeiten, IDs und Werte bleiben unveraendert |
+| `kuerzer` | naechste Phase nur auf Uebersichtsniveau |
+
+Wer welche Phase verantwortet und welche Skills es gibt: **[HOWTO.md](HOWTO.md)**, Abschnitte 3 und 4.
