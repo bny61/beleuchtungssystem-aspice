@@ -33,6 +33,8 @@ Tailoring-Entscheidungen fehlen, werden aber spaetestens fuer Phase 9 gebraucht.
 - **8 FSR** `FSR-001 … FSR-008`, inkl. ASIL-Dekomposition `FSR-005 → FSR-006 QM(A) + FSR-007 A(A)`.
 - **Zeitbudget SG-01** geschlossen: 70 ms Erkennung + 150 ms Reaktion = 220 ms < FTTI 300 ms.
 - Traceability-Check gruen, 38 Datensaetze.
+- **Dokumentierte Work Products Phase 2:** `02_safety/01_item_definition/item_definition.md`,
+  `02_safety/02_hara/hara.md`, `betriebssituationen.md`, `sec_klassifikation.md`.
 
 ## Offene Punkte
 
@@ -50,6 +52,7 @@ Tailoring-Entscheidungen fehlen, werden aber spaetestens fuer Phase 9 gebraucht.
 | OP-10 | Schnittstellenvereinbarung (DIA) zur Objekterkennung ausserhalb der Item-Grenze (`A-05`) | safety-manager | Phase 3 |
 | OP-11 | ~~`RISK-01`/`RISK-02` als Datensaetze anlegen~~ | config-manager | **erledigt** |
 | OP-12 | Kontextdiagramm `ctx_item.puml` syntaktisch pruefen (PlantUML lokal nicht installiert) | mbse-modeler | Phase 4 |
+| OP-14 | ~~HARA und Item Definition waren nur im Chat, nicht als Work Product abgelegt~~ | safety-manager | **erledigt** |
 | OP-13 | Phase 0 nachholen: Rollenmodell, Unabhaengigkeitsgrade, Tailoring, Glossar | safety-manager | vor Phase 9 |
 
 ## Naechster Schritt
