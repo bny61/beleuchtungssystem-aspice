@@ -15,6 +15,8 @@ English). The infrastructure — this file, `CLAUDE.md`, agents, skills, CI — 
 CLAUDE.md                     Binding project context: variables, ID scheme, Golden Thread, hard rules
 HOWTO.md                      This file
 tools/trace_check.py          Traceability consistency checker (stdlib only, CI gate)
+tools/gen_index.py            Generates a clickable README.md index per requirement folder
+tools/hooks/pre-commit        Keeps those indexes up to date on every commit
 .claude/agents/               9 role agents
 .claude/skills/               7 method skills
 .github/                      Workflow, issue templates, PR template, CODEOWNERS
@@ -100,6 +102,7 @@ Claude picks them up automatically.
    ```bash
    python3 tools/trace_check.py
    python3 tools/trace_check.py --matrix 07_verification/reports/traceability_matrix.md
+   python3 tools/gen_index.py     # folder overviews (runs automatically via the pre-commit hook)
    ```
 4. **Review independently:** `use the quality-assessor agent to review Phase 3` — it returns a
    finding table with severities and a pass/conditional/fail verdict.
@@ -112,6 +115,23 @@ Claude picks them up automatically.
 `sg-uncovered` (safety goal with no FSR) · `id-scheme`.
 
 Exit code 1 on findings — that is what makes it usable as a required check.
+
+### Folder overviews — kept up to date automatically
+
+Every folder holding requirement records gets a generated `README.md` with a clickable table of its
+records (ID → file, text, type, ASIL, status, trace, verifying test). GitHub renders it as soon as
+you open the folder. Three layers keep it current:
+
+| Layer | What it does | Setup |
+|---|---|---|
+| Pre-commit hook | Regenerates the overviews and adds them to the commit | `ln -sf ../../tools/hooks/pre-commit .git/hooks/pre-commit` (once per clone) |
+| CI on pull requests | Fails the check if an overview is stale | automatic |
+| CI on push to `main` | Regenerates and commits the result back | automatic |
+
+Manual run: `python3 tools/gen_index.py` · verify only: `python3 tools/gen_index.py --check`
+
+The generator refuses to touch a `README.md` that lacks its generated-by marker, so hand-written
+folder READMEs — including the repo root one — are safe. Edit the record, never the overview.
 
 ---
 

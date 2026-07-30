@@ -7,6 +7,7 @@
 | Werkzeug | Zweck im Projekt | Erzeugt Nachweis? | Betrachtung |
 |---|---|---|---|
 | `tools/trace_check.py` | Prueft Traceability-Konsistenz, erzeugt Traceability-Matrix und Coverage-KPIs | **ja** | Qualifikationskandidat — siehe unten |
+| `tools/gen_index.py` | Erzeugt die Ordner-Uebersichten der Anforderungen | mittelbar | Abgeleitetes Artefakt: die Quelle bleibt der Datensatz. Ein Fehler waere im Review sichtbar, da Uebersicht und Datensatz nebeneinander liegen. Geringerer Vertrauensbedarf als `trace_check.py`. |
 | GitHub Actions Runner | Fuehrt die Pruefungen aus, archiviert Artefakte | mittelbar | Infrastruktur; Nachweis liegt in den archivierten Artefakten |
 | PlantUML | Rendert Modellsichten aus Textquellen | nein (Darstellung) | Quelle ist der Text, nicht das Bild — Fehlrendering ist im Review erkennbar |
 | Compiler / statische Analyse / Coverage-Tool | SW-Verifikation | ja | Eigene Betrachtung im SW-Plan (Phase 7) erforderlich |
