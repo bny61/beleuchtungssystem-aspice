@@ -1,0 +1,7 @@
+# Tool-generierte Artefakte: werden von der CI erzeugt, nicht eingecheckt
+03_model/exports/
+trace_report.txt
+trace_report.json
+__pycache__/
+*.pyc
+.DS_Store

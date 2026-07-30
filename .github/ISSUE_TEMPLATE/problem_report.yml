@@ -1,0 +1,47 @@
+name: Problem Report (SUP.9)
+description: Abweichung, Fehler oder Inkonsistenz melden
+title: "[PR] "
+labels: ["problem-report"]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Fundstelle (Datei / ID / Baseline)
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Beobachtetes Verhalten / Befund
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Erwartetes Verhalten
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Schweregrad
+      options: ["blocker", "major", "minor", "observation"]
+    validations:
+      required: true
+  - type: dropdown
+    id: safety
+    attributes:
+      label: Sicherheitsrelevanz
+      description: Bei "ja" zusaetzlich als Safety Anomaly behandeln
+      options: ["ja", "nein", "unklar - Bewertung erforderlich"]
+    validations:
+      required: true
+  - type: textarea
+    id: analysis
+    attributes:
+      label: Ursachenanalyse / Korrekturmassnahme
+      value: |
+        - Ursache:
+        - Sofortmassnahme:
+        - Korrekturmassnahme:
+        - Verifikation der Korrektur:

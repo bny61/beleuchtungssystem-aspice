@@ -1,0 +1,43 @@
+name: Requirement Change
+description: Aenderung an einer bestehenden Anforderung (Text, ASIL, Trace, Status)
+title: "[REQ] "
+labels: ["requirement-change", "impact-analysis-required"]
+body:
+  - type: input
+    id: reqid
+    attributes:
+      label: Anforderungs-ID
+      placeholder: "SYS-REQ-014"
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Aktuelle Fassung
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Vorgeschlagene Fassung (EARS-konform)
+    validations:
+      required: true
+  - type: dropdown
+    id: asilchange
+    attributes:
+      label: Aendert sich der ASIL?
+      options: ["nein", "ja - Begruendung unten", "unklar"]
+    validations:
+      required: true
+  - type: textarea
+    id: downstream
+    attributes:
+      label: Betroffene abgeleitete Artefakte
+      description: Aus der Traceability-Matrix uebernehmen (derived_from / allocated_to / verified_by)
+      value: |
+        - Abgeleitete Anforderungen:
+        - Design-Elemente:
+        - Testfaelle:
+        - Sicherheitsanalysen:
+    validations:
+      required: true

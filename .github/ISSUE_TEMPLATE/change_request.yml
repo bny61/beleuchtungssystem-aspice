@@ -1,0 +1,52 @@
+name: Change Request (SUP.10)
+description: Aenderung an einem freigegebenen Work Product beantragen
+title: "[CR] "
+labels: ["change-request", "impact-analysis-required"]
+body:
+  - type: input
+    id: affected
+    attributes:
+      label: Betroffene IDs / Work Products
+      placeholder: "SYS-REQ-014, SM-01, 03_model/plantuml/stm_lighting.puml"
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: Beschreibung der Aenderung
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: Begruendung
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact-Analyse
+      description: Auswirkung auf Anforderungen, Architektur, Sicherheitsanalysen, Tests, Baseline
+      value: |
+        - Anforderungen:
+        - Architektur / Modell:
+        - Sicherheitsanalysen (FMEA/FTA/FMEDA/DFA):
+        - Tests / Regression:
+        - Betroffene Baseline (Tag):
+    validations:
+      required: true
+  - type: dropdown
+    id: safety
+    attributes:
+      label: Sicherheitsrelevant?
+      options: ["ja - ASIL B", "ja - QM", "nein"]
+    validations:
+      required: true
+  - type: checkboxes
+    id: gates
+    attributes:
+      label: Freigabe
+      options:
+        - label: Impact-Analyse durchgefuehrt
+        - label: Safety Manager informiert (falls sicherheitsrelevant)
+        - label: Betroffene Tests identifiziert

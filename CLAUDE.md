@@ -1,0 +1,90 @@
+# Project: Adaptive Front Lighting System — Commercial Vehicle (ASPICE + ISO 26262)
+
+MBSE reference/teaching project. **Not a production baseline.** Every number is a plausible
+example value, never validated data.
+
+## Project variables (binding for all agents and skills)
+
+| Variable | Value |
+|---|---|
+| `FAHRZEUG` | Heavy truck, class N3, 18 t tractor unit |
+| `PRODUKT` | Adaptive front lighting system incl. work-lamp control |
+| `ZIEL_ASIL` | ASIL B (loss of low beam during night driving) |
+| `SPRACHE` | **German prose**, standard/technical terms kept in English |
+| `MBSE_METHODE` | MagicGrid (SysML v1.6) |
+| `NOTATION` | PlantUML (fallback: Mermaid) |
+| `TOOLCHAIN` | Cameo/MagicDraw, Requirements-as-Code, Git/GitHub, GitHub Actions only (no Jenkins) |
+| `UMFANG` | Teaching/reference project, no series status |
+
+> Deliverable content is written in **German**. Repo infrastructure (this file, HOWTO,
+> agent/skill definitions, CI scripts) is in English.
+
+## The Golden Thread (depth rule)
+
+Breadth everywhere (3–8 representative entries per work product), full depth on exactly one thread:
+
+**SG-01 "Kein unerkannter Ausfall des Abblendlichts während der Fahrt" (ASIL B)**
+→ FSR → TSR → architecture element → HW safety mechanism → SW component incl. detailed design
+→ test cases → FTA path → FMEDA row → safety case argument.
+
+Second, deliberately shallower thread for contrast:
+**SG-02 "Keine unbeabsichtigte Blendung durch Fernlicht/Arbeitsscheinwerfer"**
+
+Mark sections visibly: `🔍 DEEP DIVE` (detail) and `📋 ÜBERSICHT` (overview).
+
+## ID scheme (never reuse, never silently change)
+
+`CR-` customer req · `SYS-REQ-` system req · `SG-` safety goal · `FSR-` functional safety req ·
+`TSR-` technical safety req · `HW-REQ-` · `SW-REQ-` · `SM-` safety mechanism · `TC-` test case ·
+`A-` assumption · `RISK-` risk
+
+Numbering is 3-digit zero-padded (`CR-001`), safety goals 2-digit (`SG-01`).
+
+## Hard rules
+
+1. **No invented standard citations.** Cite a clause number only when certain; otherwise name the
+   part and topic ("ISO 26262-6, SW architectural design"). Never quote normative text verbatim.
+2. **Assumptions are explicit** as `A-xx` in `09_process/assumptions.md`. Never assume silently.
+3. **Consistency is binding.** Once an ID, value, or architecture element is published it does not
+   change without an explicit change note (and a CR/impact analysis entry).
+4. **Requirements always as a table**: ID · Text · Typ · ASIL · Quelle/Trace · Verifikationsmethode · Status.
+   Requirement text follows the **EARS** patterns.
+5. **Diagrams always as renderable PlantUML code blocks**, each followed by 1–2 sentences of reading guidance.
+6. **Every phase ends with**: Work Products (filename + repo path) · Offene Punkte · reference to the
+   ASPICE process and ISO 26262 part/clause.
+7. Realistic numeric values (currents, temperatures, cycle times, failure rates), always labelled as
+   plausible example values.
+
+## Repo layout
+
+```
+01_requirements/   customer/ (CR), system/ (SYS-REQ)   — SYS.1, SYS.2
+02_safety/         item definition, HARA, FSC, TSC, analyses — ISO 26262-3/4/9
+03_model/          plantuml/ sources, exports/ rendered  — MBSE
+04_architecture/   E/E architecture, interfaces, allocation — SYS.3
+05_hardware/       HW-REQ, HW architecture, HW verification — HWE.1–4, Part 5
+06_software/       SW-REQ, SW architecture, detailed design — SWE.1–6, Part 6
+07_verification/   test strategy, testcases/, reports/     — SYS.4/SYS.5
+08_safety_case/    GSN, work product status, confirmation measures — Part 2
+09_process/        plans, templates, glossary, assumptions, tailoring — SUP/MAN
+tools/             CI scripts (traceability, req lint)
+.github/           workflows, issue/PR templates, CODEOWNERS
+```
+
+## Requirements-as-Code format
+
+One Markdown file per requirement set; each requirement is a YAML front-matter record or a row in
+a `.yaml` file with fields:
+`id, text, type, asil, derived_from[], allocated_to[], verified_by[], status, source, rationale`
+
+`status ∈ {draft, reviewed, approved, implemented, verified, rejected}`
+`asil ∈ {QM, A, B, C, D, "B(D)"}` (decomposition notation allowed)
+
+`tools/trace_check.py` is the authority on whether the trace graph is consistent — run it before
+claiming a phase is complete.
+
+## Phase workflow
+
+Phases 0–11 are defined in `09_process/prompts/prompt_beleuchtungssystem_aspice_iso26262.md`.
+Deliver **one phase at a time**, stop, and wait for `weiter`. Honour `tiefer: <Thema>` (expand to
+detail level) and `kürzer` (condense next phase to overview level).

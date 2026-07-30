@@ -1,0 +1,44 @@
+name: Safety Anomaly (ISO 26262)
+description: Sicherheitsrelevante Abweichung mit moeglicher Verletzung eines Safety Goal
+title: "[SAFETY] "
+labels: ["safety-relevant", "asil-b", "impact-analysis-required"]
+body:
+  - type: input
+    id: sg
+    attributes:
+      label: Betroffenes Safety Goal
+      placeholder: "SG-01"
+    validations:
+      required: true
+  - type: textarea
+    id: anomaly
+    attributes:
+      label: Beschreibung der Anomalie
+    validations:
+      required: true
+  - type: textarea
+    id: violation
+    attributes:
+      label: Bewertung der Safety-Goal-Verletzung
+      value: |
+        - Verletzung moeglich? (ja/nein/unklar):
+        - Betroffener Sicherheitsmechanismus (SM-xx):
+        - Auswirkung auf FTTI / Fault Reaction Time:
+        - Auswirkung auf HW-Metriken (SPFM/LFM/PMHF):
+    validations:
+      required: true
+  - type: textarea
+    id: containment
+    attributes:
+      label: Sofortmassnahme / Containment
+    validations:
+      required: true
+  - type: checkboxes
+    id: followup
+    attributes:
+      label: Folgeaktivitaeten
+      options:
+        - label: Sicherheitsanalysen aktualisiert (FMEA / FTA / FMEDA / DFA)
+        - label: Betroffene Anforderungen aktualisiert
+        - label: Safety Case aktualisiert
+        - label: Confirmation Review erforderlich
