@@ -33,7 +33,11 @@ SEARCH_DIRS = [
     "07_verification",
 ]
 
-ID_PATTERN = re.compile(r"^(CR|SYS-REQ|SG|FSR|TSR|HW-REQ|SW-REQ|SM|TC|A|RISK)-\d+")
+ID_PATTERN = re.compile(r"^(CR|SYS-REQ|SG|FSR|TSR|HW-REQ|SW-REQ|SM|TC|A|RISK|H)-\d+")
+
+# Datensatzarten, die keine Anforderung sind: Gefaehrdungen, Testfaelle, Annahmen, Risiken.
+# Fuer sie gelten die Anforderungspruefungen (untested, unallocated, orphan) nicht.
+NON_REQUIREMENT_KINDS = ("TC", "A", "RISK", "H")
 
 ASIL_ORDER = {"QM": 0, "A": 1, "B": 2, "C": 3, "D": 4}
 
@@ -206,7 +210,7 @@ def check(records: dict) -> list[dict]:
             )
 
         # orphan: everything except CR, SG, A, RISK needs an upstream link
-        if kind not in ("CR", "SG", "A", "RISK", "TC") and not rec["derived_from"]:
+        if kind not in ("CR", "SG", "H", "A", "RISK", "TC") and not rec["derived_from"]:
             findings.append(
                 finding("orphan", "major", where, "Kein 'derived_from' - Anforderung ohne Quelle")
             )
@@ -225,7 +229,7 @@ def check(records: dict) -> list[dict]:
                     )
 
         # untested
-        if kind != "TC" and status in MATURE_STATUS and not rec["verified_by"]:
+        if kind not in NON_REQUIREMENT_KINDS and status in MATURE_STATUS and not rec["verified_by"]:
             findings.append(
                 finding(
                     "untested",
@@ -236,7 +240,7 @@ def check(records: dict) -> list[dict]:
             )
 
         # unallocated safety requirement
-        if kind not in ("TC", "SG", "A", "RISK"):
+        if kind not in ("SG",) + NON_REQUIREMENT_KINDS:
             rank = asil_rank(asil)
             if rank is not None and rank > 0 and not rec["allocated_to"]:
                 findings.append(
@@ -269,6 +273,21 @@ def check(records: dict) -> list[dict]:
                         )
                     )
 
+        # hazard coverage: jede Gefaehrdung mit ASIL != QM braucht ein Safety Goal
+        if kind == "H":
+            rank = asil_rank(asil)
+            if rank is not None and rank > 0:
+                sgs = [c for c in derived_children.get(rid, []) if c.startswith("SG-")]
+                if not sgs:
+                    findings.append(
+                        finding(
+                            "hazard-uncovered",
+                            "blocker",
+                            where,
+                            f"Gefaehrdung mit ASIL {asil} ohne abgeleitetes Safety Goal",
+                        )
+                    )
+
         # safety goal coverage
         if kind == "SG":
             fsrs = [c for c in derived_children.get(rid, []) if c.startswith("FSR-")]
@@ -287,7 +306,7 @@ def kpis(records: dict) -> dict:
     reqs = {
         rid: r
         for rid, r in records.items()
-        if not rid.startswith(("TC-", "A-", "RISK-", "SM-"))
+        if not rid.startswith(("TC-", "A-", "RISK-", "SM-", "H-"))
     }
     mature = {
         rid: r

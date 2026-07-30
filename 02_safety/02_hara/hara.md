@@ -44,6 +44,15 @@
 **Ergebnis:** 7 Gefaehrdungen, davon 6 mit Safety Goal und eine (H-06) mit Ergebnis QM.
 Hoechster resultierender ASIL: **B** (H-01, H-04) — damit ist ASIL B das Ziel-ASIL des Projekts.
 
+> **Maschinenlesbare Form:** Jede Zeile dieser Tabelle existiert zusaetzlich als Datensatz
+> `H-01.md` … `H-07.md` in diesem Ordner (Uebersicht: [`README.md`](README.md)). Die Safety Goals
+> verweisen ueber `derived_from: [H-xx]` darauf; `tools/trace_check.py` meldet jede Gefaehrdung mit
+> ASIL ungleich QM, zu der kein Safety Goal existiert (`hazard-uncovered`).
+>
+> **Bewusste Redundanz:** Die Werte stehen sowohl in dieser Tabelle als auch im Front-Matter der
+> Datensaetze. Bei einer Aenderung sind **beide** zu pflegen — die Pruefung erkennt eine Abweichung
+> zwischen Tabelle und Datensatz nicht.
+
 ---
 
 ## 3 Begruendung der Einstufungen

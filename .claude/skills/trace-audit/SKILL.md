@@ -26,6 +26,7 @@ Report the **actual output**, including failures. Never claim a clean trace with
 | `asil-drop` | Derived requirement with a lower ASIL than its parent without a decomposition note |
 | `duplicate-id` | Same ID in two files |
 | `sg-uncovered` | `SG-xx` without at least one `FSR-` deriving from it |
+| `hazard-uncovered` | `H-xx` with an ASIL other than QM and no `SG-` deriving from it |
 
 ## Coverage KPIs
 
