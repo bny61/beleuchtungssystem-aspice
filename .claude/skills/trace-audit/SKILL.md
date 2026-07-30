@@ -31,9 +31,9 @@ Report the **actual output**, including failures. Never claim a clean trace with
 ## Coverage KPIs
 
 ```
-Anforderungsabdeckung = Anforderungen mit ≥1 downstream-Trace / alle Anforderungen
-Testabdeckung         = Anforderungen mit ≥1 verified_by / alle Anforderungen (Status ≥ reviewed)
-Analyseabdeckung      = Sicherheitsanforderungen, die in FMEA/FTA/FMEDA referenziert sind / alle Sicherheitsanforderungen
+Requirements coverage = requirements with ≥1 downstream trace / all requirements
+Test coverage         = requirements with ≥1 verified_by / all requirements (status ≥ reviewed)
+Analysis coverage     = safety requirements referenced in FMEA/FTA/FMEDA / all safety requirements
 ```
 
 Report each as `n/m = xx %`, and state the CI gate threshold that applies. For the Golden Thread the
@@ -43,7 +43,7 @@ target is 100 % — anything less is a finding, not a rounding issue.
 
 Full bidirectional chain, one row per link level:
 
-`CR → SYS-REQ → FSR/TSR → HW-REQ/SW-REQ → Design-Element → TC → Ergebnis`
+`CR → SYS-REQ → FSR/TSR → HW-REQ/SW-REQ → design element → TC → result`
 
 For everything outside the Golden Thread produce a condensed summary (counts per level plus the list
 of findings), not the full matrix.

@@ -24,7 +24,7 @@ Read `CLAUDE.md` first — its hard rules are your checklist.
 7. **Testability** — requirements that cannot be verified by the stated method; test cases with
    non-observable expected results.
 8. **Depth rule** — Golden Thread actually deep, breadth sections actually 3–8 entries, `🔍 DEEP DIVE`
-   / `📋 ÜBERSICHT` markers present.
+   / `📋 OVERVIEW` markers present.
 9. **Independence** — confirmation measures assigned at the independence level the target ASIL calls
    for; nobody confirming their own work.
 
