@@ -30,7 +30,7 @@ Seed records already in place (they double as the Requirements-as-Code examples)
 ## 2. Quick start
 
 ```bash
-cd /Users/tugcegulbicim/Documents/ClaudeProject
+cd /path/to/beleuchtungssystem   # repo root
 python3 tools/trace_check.py     # sanity check: should report 6 records, no findings
 ```
 
