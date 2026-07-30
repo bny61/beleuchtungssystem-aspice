@@ -9,16 +9,16 @@ All numbers produced here are **plausible example values**, never validated data
 
 ## System-FMEA / DFMEA (AIAG-VDA, 7 steps)
 
-Steps: 1 Planung & Vorbereitung · 2 Strukturanalyse · 3 Funktionsanalyse · 4 Fehleranalyse ·
-5 Risikoanalyse · 6 Optimierung · 7 Ergebnisdokumentation.
+Steps: 1 planning & preparation · 2 structure analysis · 3 function analysis · 4 failure analysis ·
+5 risk analysis · 6 optimisation · 7 results documentation.
 
-Row format (System-FMEA ≥ 8 rows, ≥3 in the Golden Thread; DFMEA extract 5 rows):
+Row format (system FMEA ≥ 8 rows, ≥3 in the Golden Thread; DFMEA extract 5 rows):
 
-| ID | Systemelement | Funktion | Fehlerfolge (FE) | B | Fehlerart (FM) | Fehlerursache (FU) | Vermeidungsmaßnahme | A | Entdeckungsmaßnahme | E | AP | Maßnahme / Verantwortlich |
+| ID | System element | Function | Failure effect (FE) | S | Failure mode (FM) | Failure cause (FC) | Prevention control | O | Detection control | D | AP | Action / owner |
 
-- **B** Bedeutung 1–10 · **A** Auftreten 1–10 · **E** Entdeckung 1–10.
-- **AP** = Aufgabenpriorität **H / M / N**, derived from the B/A/E combination per the AIAG-VDA AP
-  logic (high B with high A drives H). **Never compute or report an RPZ.**
+- **S** severity 1–10 · **O** occurrence 1–10 · **D** detection 1–10.
+- **AP** = action priority **H / M / L**, derived from the S/O/D combination per the AIAG-VDA AP
+  logic (high severity with high occurrence drives H). **Never compute or report an RPN.**
 - Every `AP = H` row must have a concrete follow-up action with an owner, and should produce an
   `SM-xx`, a new requirement, or a `RISK-xx`.
 
@@ -30,24 +30,24 @@ Row format (System-FMEA ≥ 8 rows, ≥3 in the Golden Thread; DFMEA extract 5 r
 - Emit as PlantUML; add a reading guidance sentence.
 - **Minimal cut sets**: derive and list them. Order 1 = **single point fault** → name it explicitly
   and require a safety mechanism or an architecture change.
-- Close with: "Single Point Faults vorhanden: ja/nein — Begründung".
+- Close with: "Single point faults present: yes/no — rationale".
 
 ## FMEDA
 
 Row format:
 
-| Bauteil | λ [FIT] | Fehlermodus | Anteil [%] | sicherheitsbezogen? | DC [%] | SPF | RF | MPF | SF |
+| Component | λ [FIT] | Failure mode | Share [%] | safety-related? | DC [%] | SPF | RF | MPF | SF |
 
 Computation, always shown step by step:
 
 ```
-λ_total   = Σ λ_i (nur sicherheitsbezogene Bauteile)
-λ_SPF/RF  = λ_i · Anteil · (1 − DC)
-λ_MPF, λ_SF nach Klassifikation
+λ_total   = Σ λ_i (safety-related components only)
+λ_SPF/RF  = λ_i · share · (1 − DC)
+λ_MPF, λ_SF per classification
 
-SPFM = 1 − ( Σ λ_SPF+RF / Σ λ_sicherheitsbezogen )
-LFM  = 1 − ( Σ λ_MPF,latent / ( Σ λ_sicherheitsbezogen − Σ λ_SPF+RF ) )
-PMHF = Σ λ_SPF+RF   [1/h]   (Vergleich gegen Zielwert in FIT bzw. 1/h)
+SPFM = 1 − ( Σ λ_SPF+RF / Σ λ_safety-related )
+LFM  = 1 − ( Σ λ_MPF,latent / ( Σ λ_safety-related − Σ λ_SPF+RF ) )
+PMHF = Σ λ_SPF+RF   [1/h]   (compare against the target in FIT resp. 1/h)
 ```
 
 Target values for **ASIL B** per ISO 26262-5: SPFM ≥ 90 %, LFM ≥ 60 %, PMHF < 10⁻⁷ 1/h (100 FIT).
@@ -59,13 +59,12 @@ input numbers to make it pass.
 
 For the decomposed path, one row per coupling factor:
 
-| Kopplungsfaktor | Beschreibung | Betroffene Elemente | Auswirkung | Gegenmaßnahme | Restrisiko |
+| Coupling factor | Description | Affected elements | Effect | Countermeasure | Residual risk |
 
-Cover at minimum: gemeinsame Versorgung, gemeinsamer Takt, gemeinsame Masse, thermische Kopplung,
-räumliche Nähe, gemeinsame Software-Ressourcen, gemeinsames Entwicklungswerkzeug, systematische
-Ursache (gleicher Designfehler).
+Cover at minimum: common supply, common clock, common ground, thermal coupling, spatial proximity,
+shared software resources, shared development tool, systematic cause (same design fault).
 
-## STPA (short form, "Fernlicht ein")
+## STPA (short form, "high beam on")
 
 1. Losses and hazards · 2. Control structure (controller, actuator, controlled process, sensor,
 feedback) · 3. **Unsafe Control Actions** in the four classes:
@@ -76,7 +75,7 @@ feedback) · 3. **Unsafe Control Actions** in the four classes:
 
 ## Verification matrix
 
-| Anforderungs-ID | Analyse | Review | Simulation | Test | Feldnachweis | Nachweisziel |
+| Requirement ID | Analysis | Review | Simulation | Test | Field data | Evidence objective |
 
 One primary method per requirement, secondary methods marked — and every safety requirement needs at
 least one method that produces a retained record.

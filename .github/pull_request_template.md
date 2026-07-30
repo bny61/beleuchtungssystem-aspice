@@ -1,49 +1,50 @@
-# Pull Request — Review-Nachweis (ASPICE SUP.4)
+# Pull Request — review evidence (ASPICE SUP.4)
 
-Dieser PR ist der auditierbare Review-Nachweis. Er wird nicht geloescht und nicht squash-verdichtet,
-wenn er sicherheitsrelevante Artefakte betrifft.
+This PR is the auditable review record. It is neither deleted nor squashed away when it touches
+safety-relevant artefacts.
 
-## Inhalt der Aenderung
+## Content of the change
 
-<!-- Was wurde geaendert und warum -->
+<!-- What changed and why -->
 
-**Betroffene IDs:**
-**Bezug (Issue / CR / Problem Report):**
+**Affected IDs:**
+**Reference (issue / CR / problem report):**
 
-## Klassifikation
+## Classification
 
-- [ ] sicherheitsrelevant (ASIL B) — CODEOWNERS-Freigabe durch Safety Manager erforderlich
+- [ ] safety-relevant (ASIL B) — CODEOWNERS approval by the safety manager required
 - [ ] QM-relevant
-- [ ] nur Prozess-/Infrastrukturaenderung
+- [ ] process/infrastructure change only
 
-## Review-Checkliste
+## Review checklist
 
-### Anforderungen
-- [ ] EARS-konform formuliert, eindeutig, testbar, atomar
-- [ ] `derived_from` gesetzt und korrekt
-- [ ] `allocated_to` gesetzt (Pflicht bei ASIL != QM)
-- [ ] `verified_by` gesetzt (Pflicht ab Status `reviewed`)
-- [ ] ID-Schema eingehalten, keine ID stillschweigend geaendert
+### Requirements
+- [ ] EARS-compliant, unambiguous, verifiable, atomic
+- [ ] `derived_from` set and correct
+- [ ] `allocated_to` set (mandatory for ASIL other than QM)
+- [ ] `verified_by` set (mandatory from status `reviewed` onward)
+- [ ] ID scheme observed, no ID silently changed
 
-### Konsistenz
-- [ ] Werte konsistent zu bereits veroeffentlichten Phasen (ASIL, FTTI, Schwellwerte, DC)
-- [ ] Modellsichten (`03_model/plantuml/`) zur Aenderung nachgezogen
-- [ ] Sicherheitsanalysen (FMEA / FTA / FMEDA / DFA) auf Auswirkung geprueft
-- [ ] Annahmen als `A-xx` in `09_process/assumptions.md` erfasst
+### Consistency
+- [ ] Values consistent with already published phases (ASIL, FTTI, thresholds, DC)
+- [ ] Model views (`03_model/plantuml/`) updated to match the change
+- [ ] Safety analyses (FMEA / FTA / FMEDA / DFA) checked for impact
+- [ ] Assumptions recorded as `A-xx` in `09_process/assumptions.md`
 
-### Nachweis
-- [ ] Traceability-Check gruen (`tools/trace_check.py`)
-- [ ] Betroffene Testfaelle identifiziert bzw. ergaenzt
-- [ ] Keine erfundenen Normzitate, keine woertlichen Normtexte
-- [ ] Zahlenwerte als plausible Beispielwerte gekennzeichnet
+### Evidence
+- [ ] Traceability check green (`tools/trace_check.py`)
+- [ ] Requirement overviews up to date (`tools/gen_index.py --check`)
+- [ ] Affected test cases identified or added
+- [ ] No invented standard citations, no verbatim normative text
+- [ ] Numeric values marked as plausible example values
 
-## Impact-Analyse (bei Aenderung freigegebener Artefakte)
+## Impact analysis (when changing released artefacts)
 
-<!-- Betroffene Baseline (Tag), betroffene Downstream-Artefakte, Regressionsumfang -->
+<!-- Affected baseline (tag), affected downstream artefacts, regression scope -->
 
-## Reviewer
+## Reviewers
 
-- Fachreview: @
-- Sicherheitsreview (bei ASIL-Relevanz, unabhaengig vom Autor): @
+- Technical review: @
+- Safety review (where ASIL-relevant, independent of the author): @
 
-> Der Autor darf sein eigenes Work Product nicht freigeben (ISO 26262-2, Confirmation Measures).
+> The author must not approve their own work product (ISO 26262-2, confirmation measures).

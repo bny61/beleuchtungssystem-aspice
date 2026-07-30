@@ -1,9 +1,9 @@
 ---
 id: SYS-REQ-014
 text: >
-  Wenn der Laststrom eines Abblendlicht-Kanals fuer mehr als 50 ms unter 150 mA faellt,
-  soll das Lighting-ECU den Kanal als "Open Load" klassifizieren und den Fehlerzaehler inkrementieren.
-type: funktional
+  When the load current of a low-beam channel falls below 150 mA for more than 50 ms, the
+  lighting ECU shall classify the channel as "open load" and increment the fault counter.
+type: functional
 asil: B
 source: CR-007
 derived_from: [CR-007, FSR-001]
@@ -11,15 +11,15 @@ allocated_to: [ECU_LightingCtrl, SWC_LightManager, SM-01]
 verified_by: [TC-021]
 status: reviewed
 rationale: >
-  Schwellwert und Entprellzeit aus dem FTTI-Budget von SG-01 abgeleitet
-  (150 mA / 50 ms: plausible Beispielwerte, nicht validiert).
+  Threshold and debounce time derived from the FTTI budget of SG-01
+  (150 mA / 50 ms: plausible example values, not validated data).
 ---
 
-## Kontext
+## Context
 
-Referenz-Datensatz fuer das Requirements-as-Code-Format. Der Schwellwert muss gegen die
-Streuung der Stromsensorik (Toleranzkette) abgesichert werden.
+Reference record for the Requirements-as-Code format. The threshold must be secured against the
+spread of the current sensing chain (tolerance analysis).
 
-## Offene Punkte
+## Open points
 
-1. Toleranzanalyse Stromsensorik offen — Owner: `hardware-engineer`.
+1. Tolerance analysis of the current sensing is open - owner: `hardware-engineer`.

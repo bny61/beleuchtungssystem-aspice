@@ -1,6 +1,6 @@
 ---
 name: phase-run
-description: Run one phase (0-11) of the lighting-system ASPICE/ISO 26262 reference project — loads the phase spec, selects the responsible agent, enforces the Golden Thread depth rule and the mandatory phase closing block. Use when the user says "Phase N", "weiter", "tiefer <Thema>", "kürzer", or asks to start/continue the project.
+description: Run one phase (0-11) of the lighting-system ASPICE/ISO 26262 reference project — loads the phase spec, selects the responsible agent, enforces the Golden Thread depth rule and the mandatory phase closing block. Use when the user says "phase N", "next", "deeper <topic>", "shorter", or asks to start or continue the project.
 ---
 
 # Running a project phase
@@ -15,43 +15,43 @@ Binding project rules: `CLAUDE.md`.
    products of previous phases (do not re-derive what exists — reuse the exact IDs and values).
 2. **Route** to the responsible agent (see table). Multi-owner phases are split by section, not
    merged into one voice.
-3. **Produce** the phase content in German, with the format rules from `CLAUDE.md`.
+3. **Produce** the phase content in English, with the format rules from `CLAUDE.md`.
 4. **Persist** work products to their repo paths. Requirements/test cases as Requirements-as-Code.
 5. **Check** consistency: `python3 tools/trace_check.py` — report real output.
-6. **Close** the phase with the mandatory block, then **stop and wait for `weiter`**.
+6. **Close** the phase with the mandatory block, then **stop and wait for `next`**.
 
 ## Phase → owner
 
 | Phase | Content | Owner agent |
 |---|---|---|
-| 0 | Projektrahmen, Stakeholder, Rollen, Tailoring, Glossar, Annahmen | `safety-manager` + `config-manager` |
-| 1 | Kundenanforderungen `CR-xxx` (SYS.1) | `systems-engineer` |
-| 2 | Item Definition, HARA, Safety Goals, FSC (ISO 26262-3) | `safety-manager` |
-| 3 | `SYS-REQ`, `TSR`, E/E-Architektur (SYS.2, SYS.3, Part 4) | `systems-engineer` |
-| 4 | MagicGrid-Modell, 8 SysML-Sichten | `mbse-modeler` |
-| 5 | FMEA, DFMEA, FTA, FMEDA, DFA, STPA, Verifikationsmatrix | `safety-analyst` |
+| 0 | Project frame, stakeholders, roles, tailoring, glossary, assumptions | `safety-manager` + `config-manager` |
+| 1 | Customer requirements `CR-xxx` (SYS.1) | `systems-engineer` |
+| 2 | Item definition, HARA, safety goals, FSC (ISO 26262-3) | `safety-manager` |
+| 3 | `SYS-REQ`, `TSR`, E/E architecture (SYS.2, SYS.3, Part 4) | `systems-engineer` |
+| 4 | MagicGrid model, 8 SysML views | `mbse-modeler` |
+| 5 | FMEA, DFMEA, FTA, FMEDA, DFA, STPA, verification matrix | `safety-analyst` |
 | 6 | Hardware (HWE.1–4, Part 5) | `hardware-engineer` |
 | 7 | Software (SWE.1–6, Part 6) | `software-engineer` |
-| 8 | Verifikation & Validierung (SYS.4, SYS.5) | `verification-engineer` |
-| 9 | Safety Case, Confirmation Measures | `safety-manager` + `quality-assessor` |
-| 10 | GitHub CM & Nachweis | `config-manager` |
-| 11 | Traceability & Metriken | `config-manager` + `quality-assessor` |
+| 8 | Verification & validation (SYS.4, SYS.5) | `verification-engineer` |
+| 9 | Safety case, confirmation measures | `safety-manager` + `quality-assessor` |
+| 10 | GitHub CM & evidence | `config-manager` |
+| 11 | Traceability & metrics | `config-manager` + `quality-assessor` |
 
 ## Depth control
 
-- Default: breadth `📋 ÜBERSICHT` (3–8 representative entries), depth `🔍 DEEP DIVE` only on the
+- Default: breadth `📋 OVERVIEW` (3–8 representative entries), depth `🔍 DEEP DIVE` only on the
   SG-01 Golden Thread; SG-02 stays deliberately shallower.
-- `tiefer: <Thema>` → expand that topic to full detail level, keeping every existing ID and value.
-- `kürzer` → next phase at overview level only; still emit the closing block.
-- `weiter` → next phase in sequence.
+- `deeper: <topic>` → expand that topic to full detail level, keeping every existing ID and value.
+- `shorter` → next phase at overview level only; still emit the closing block.
+- `next` → next phase in sequence.
 
 ## Mandatory phase closing block
 
 ```markdown
 ---
-**Work Products:** `<Dateiname>` → `<Repo-Pfad>` (one line each)
-**Offene Punkte:** numbered, each with an owner
-**Prozessbezug:** ASPICE <Prozess-IDs> · ISO 26262 <Part, Thema/Clause wenn sicher>
+**Work products:** `<filename>` → `<repo path>` (one line each)
+**Open points:** numbered, each with an owner
+**Process reference:** ASPICE <process IDs> · ISO 26262 <part, topic/clause when certain>
 ```
 
 ## Before starting Phase 0

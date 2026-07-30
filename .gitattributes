@@ -1,4 +1,4 @@
-# Git LFS fuer Binaermodelle und grosse tool-generierte Artefakte (ASPICE SUP.8)
+# Git LFS for binary models and large tool-generated artefacts (ASPICE SUP.8)
 *.mdzip   filter=lfs diff=lfs merge=lfs -text
 *.mdxml   filter=lfs diff=lfs merge=lfs -text
 *.slx     filter=lfs diff=lfs merge=lfs -text
@@ -6,7 +6,7 @@
 *.xlsx    filter=lfs diff=lfs merge=lfs -text
 *.png     filter=lfs diff=lfs merge=lfs -text
 
-# Textartefakte bleiben diff-bar -- sie sind der Review-Nachweis
+# Text artefacts stay diffable -- they are the review evidence
 *.md      text
 *.puml    text
 *.yml     text

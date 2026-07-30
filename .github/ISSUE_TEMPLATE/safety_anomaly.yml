@@ -1,44 +1,44 @@
 name: Safety Anomaly (ISO 26262)
-description: Sicherheitsrelevante Abweichung mit moeglicher Verletzung eines Safety Goal
+description: Safety-relevant deviation with a possible violation of a safety goal
 title: "[SAFETY] "
 labels: ["safety-relevant", "asil-b", "impact-analysis-required"]
 body:
   - type: input
     id: sg
     attributes:
-      label: Betroffenes Safety Goal
+      label: Affected safety goal
       placeholder: "SG-01"
     validations:
       required: true
   - type: textarea
     id: anomaly
     attributes:
-      label: Beschreibung der Anomalie
+      label: Description of the anomaly
     validations:
       required: true
   - type: textarea
     id: violation
     attributes:
-      label: Bewertung der Safety-Goal-Verletzung
+      label: Assessment of the safety goal violation
       value: |
-        - Verletzung moeglich? (ja/nein/unklar):
-        - Betroffener Sicherheitsmechanismus (SM-xx):
-        - Auswirkung auf FTTI / Fault Reaction Time:
-        - Auswirkung auf HW-Metriken (SPFM/LFM/PMHF):
+        - Violation possible? (yes/no/unclear):
+        - Affected safety mechanism (SM-xx):
+        - Effect on FTTI / fault reaction time:
+        - Effect on HW metrics (SPFM/LFM/PMHF):
     validations:
       required: true
   - type: textarea
     id: containment
     attributes:
-      label: Sofortmassnahme / Containment
+      label: Immediate action / containment
     validations:
       required: true
   - type: checkboxes
     id: followup
     attributes:
-      label: Folgeaktivitaeten
+      label: Follow-up activities
       options:
-        - label: Sicherheitsanalysen aktualisiert (FMEA / FTA / FMEDA / DFA)
-        - label: Betroffene Anforderungen aktualisiert
-        - label: Safety Case aktualisiert
-        - label: Confirmation Review erforderlich
+        - label: Safety analyses updated (FMEA / FTA / FMEDA / DFA)
+        - label: Affected requirements updated
+        - label: Safety case updated
+        - label: Confirmation review required

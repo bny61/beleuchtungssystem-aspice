@@ -1,8 +1,8 @@
-# CODEOWNERS -- technisch erzwungene Review-Zustaendigkeit (ASPICE SUP.4)
-# Zusammen mit Branch Protection ("Require review from Code Owners") ist dies der
-# maschinell durchgesetzte Freigabemechanismus fuer sicherheitsrelevante Ordner.
+# CODEOWNERS -- technically enforced review responsibility (ASPICE SUP.4)
+# Together with branch protection ("Require review from Code Owners") this is the
+# machine-enforced approval mechanism for safety-relevant folders.
 #
-# Platzhalter durch echte GitHub-Handles / Teams ersetzen.
+# Replace the placeholders with real GitHub handles / teams.
 
 *                           @project-lead
 
@@ -17,6 +17,6 @@
 /08_safety_case/            @safety-manager @independent-assessor
 /09_process/                @quality-manager @project-lead
 
-# Evidenz-erzeugende CI-Skripte: Tool-Qualifikationskandidaten (ISO 26262-8, Clause 11)
+# Evidence-producing CI scripts: tool qualification candidates (ISO 26262-8, Clause 11)
 /tools/                     @quality-manager @safety-manager
 /.github/                   @quality-manager @project-lead

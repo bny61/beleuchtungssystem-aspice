@@ -5,29 +5,29 @@ description: EARS requirement patterns, the mandatory requirement table format, 
 
 # Authoring requirements
 
-## EARS patterns (German wording, English keywords kept)
+## EARS patterns
 
-| Pattern | Schablone |
+| Pattern | Template |
 |---|---|
-| Ubiquitous | Das `<System>` **soll** `<Antwort>`. |
-| Event-driven | **Wenn** `<Trigger>`, **soll** das `<System>` `<Antwort>`. |
-| State-driven | **Solange** `<Zustand>`, **soll** das `<System>` `<Antwort>`. |
-| Unwanted behaviour | **Wenn** `<unerwünschte Bedingung>`, **soll** das `<System>` `<Antwort>`. |
-| Optional feature | **Sofern** `<Merkmal>` **vorhanden ist**, **soll** das `<System>` `<Antwort>`. |
+| Ubiquitous | The `<system>` **shall** `<response>`. |
+| Event-driven | **When** `<trigger>`, the `<system>` **shall** `<response>`. |
+| State-driven | **While** `<state>`, the `<system>` **shall** `<response>`. |
+| Unwanted behaviour | **If** `<unwanted condition>`, the `<system>` **shall** `<response>`. |
+| Optional feature | **Where** `<feature>` **is present**, the `<system>` **shall** `<response>`. |
 | Complex | Combination of the above — use sparingly, split instead. |
 
-One requirement = one testable statement. "und/oder" in the response part usually means split it.
-Quantify: values, units, tolerances, timing bounds. Never "schnell", "zuverlässig", "geeignet".
+One requirement = one testable statement. "and/or" in the response part usually means split it.
+Quantify: values, units, tolerances, timing bounds. Never "fast", "reliable", "suitable".
 
 ## Mandatory table format
 
-| ID | Text | Typ | ASIL | Quelle/Trace | Verifikationsmethode | Status |
+| ID | Text | Type | ASIL | Source/trace | Verification method | Status |
 |---|---|---|---|---|---|---|
 
-- `Typ` ∈ funktional, gesetzlich, Umwelt/Mechanik, Elektrik, Diagnose, Kommunikation, Lebensdauer,
-  Sicherheit, Schnittstelle, Prozess
+- `Type` ∈ functional, legal, environmental-mechanical, electrical, diagnostics, communication,
+  durability, safety, interface, process
 - `ASIL` ∈ QM, A, B, C, D, decomposition notation `B(D)`
-- `Verifikationsmethode` ∈ Analyse, Review, Simulation, Test, Feldnachweis
+- `Verification method` ∈ Analysis, Review, Simulation, Test, Field data
 - `Status` ∈ draft, reviewed, approved, implemented, verified, rejected
 
 ## Requirements-as-Code schema
@@ -38,9 +38,9 @@ Quantify: values, units, tolerances, timing bounds. Never "schnell", "zuverläss
 ---
 id: SYS-REQ-014
 text: >
-  Wenn der Laststrom eines Abblendlicht-Kanals für mehr als 50 ms unter 150 mA fällt,
-  soll das Lighting-ECU den Kanal als "Open Load" klassifizieren.
-type: funktional
+  When the load current of a low-beam channel falls below 150 mA for more than 50 ms,
+  the lighting ECU shall classify the channel as "open load".
+type: functional
 asil: B
 source: CR-007
 derived_from: [CR-007, FSR-001]
@@ -48,12 +48,12 @@ allocated_to: [ECU_LightingCtrl, SWC_LightManager, SM-01]
 verified_by: [TC-021, TC-022]
 status: reviewed
 rationale: >
-  Schwellwert und Entprellzeit aus dem FTTI-Budget von SG-01 abgeleitet
-  (plausibler Beispielwert, nicht validiert).
+  Threshold and debounce time derived from the FTTI budget of SG-01
+  (plausible example value, not validated).
 ---
 
-## Kontext
-Freitext, Herleitung, offene Punkte.
+## Context
+Free text, derivation, open points.
 ```
 
 Rules:
@@ -66,11 +66,11 @@ Rules:
 
 ## Quality review
 
-Assess each requirement against: **eindeutig** (one reading only), **testbar** (a pass/fail criterion
-exists), **atomar** (one statement), **vollständig** (no dangling condition), **verfolgbar** (trace
-present), **implementierungsfrei** (says what, not how).
+Assess each requirement against: **unambiguous** (one reading only), **verifiable** (a pass/fail
+criterion exists), **atomic** (one statement), **complete** (no dangling condition), **traceable**
+(trace present), **implementation-free** (says what, not how).
 
 In Phase 1, three requirements are deliberately weak. For each, deliver:
-`Review-Kommentar: <Was ist falsch und warum>` + `Verbesserungsvorschlag: <umformulierte Fassung>`.
-Typical planted defects: unquantified performance ("ausreichend hell"), two requirements in one
+`Review comment: <what is wrong and why>` + `Improvement: <reworded version>`.
+Typical planted defects: unquantified performance ("sufficiently bright"), two requirements in one
 sentence, and a solution-prescribing requirement that belongs in the architecture.

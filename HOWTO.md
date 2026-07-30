@@ -4,8 +4,8 @@ Reference/teaching project: **Adaptive front lighting system for a heavy commerc
 developed along **Automotive SPICE (PAM 4.0)** and **ISO 26262:2018**, model-based (MagicGrid /
 SysML v1.6), with GitHub as the configuration management and evidence layer.
 
-**Language convention:** project deliverables are written in **German** (standard terms kept in
-English). The infrastructure — this file, `CLAUDE.md`, agents, skills, CI — is in English.
+**Language:** the project is English throughout. The only German document is the original
+commissioning prompt in `09_process/prompts/`, deliberately left unchanged.
 
 ---
 
@@ -49,9 +49,9 @@ per phase, and then delivers **Phase 0**. After each phase it stops.
 
 | You type | What happens |
 |---|---|
-| `weiter` | next phase |
-| `tiefer: FMEDA` | expands that topic to full detail level, keeping all existing IDs and values |
-| `kürzer` | next phase condensed to overview level |
+| `next` | next phase |
+| `deeper: FMEDA` | expands that topic to full detail level, keeping all existing IDs and values |
+| `shorter` | next phase condensed to overview level |
 | `/phase-run 5` | jumps straight to a specific phase |
 
 ---
@@ -144,8 +144,8 @@ Create `01_requirements/system/SYS-REQ-021.md`:
 ---
 id: SYS-REQ-021
 text: >
-  Wenn <Trigger>, soll das Lighting-ECU <Antwort>.
-type: funktional
+  When <trigger>, the lighting ECU shall <response>.
+type: functional
 asil: B
 source: CR-012
 derived_from: [CR-012]
@@ -153,10 +153,10 @@ allocated_to: [ECU_LightingCtrl]
 verified_by: [TC-031]
 status: draft
 rationale: >
-  Herleitung, plausible Beispielwerte kennzeichnen.
+  Derivation; mark plausible example values as such.
 ---
 
-## Kontext
+## Context
 ```
 
 Then run the trace check. `status: draft` tolerates an empty `verified_by`; from `reviewed` onward
@@ -178,7 +178,7 @@ gh repo create <name> --private --source=. --push
 ```
 
 Then, in the repository settings:
-- Branch protection on `main`: require PR, require the `Traceability-Konsistenzpruefung` check,
+- Branch protection on `main`: require PR, require the `Traceability consistency check` check,
   require Code Owner review, no force pushes.
 - Replace the placeholder handles in `.github/CODEOWNERS` with real users/teams.
 - Labels: `asil-b`, `safety-relevant`, `sys-req`, `swe`, `hwe`, `impact-analysis-required`.
@@ -198,7 +198,7 @@ Then, in the repository settings:
   issue.
 - **Every numeric value is a plausible example value**, labelled as such. Nothing here is validated
   data, and nothing here is a production baseline.
-- **Depth rule:** breadth 3–8 entries per work product (`📋 ÜBERSICHT`), full depth only along the
+- **Depth rule:** breadth 3–8 entries per work product (`📋 OVERVIEW`), full depth only along the
   SG-01 Golden Thread (`🔍 DEEP DIVE`).
 
 ## 9. Known limits

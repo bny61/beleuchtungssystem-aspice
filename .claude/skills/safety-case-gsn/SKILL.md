@@ -19,20 +19,20 @@ description: Builds the safety case argumentation in GSN (Goal - Strategy - Solu
 Structure for `SG-01`:
 
 ```
-G-01  SG-01 ist erfüllt: kein unerkannter Ausfall des Abblendlichts während der Fahrt
- ├ C-01 Item-Grenze, Betriebssituationen
- ├ A-03 Annahme zum Fahrerverhalten bei Warnung
- └ S-01 Argumentation über Fehlerklassen (systematisch / zufällig) und Verifikationsebenen
-    ├ G-02 Zufällige HW-Ausfälle sind hinreichend erkannt und beherrscht
-    │   ├ Sn-01 FMEDA-Auszug SPFM/LFM/PMHF vs. ASIL-B-Ziele
-    │   ├ Sn-02 FTA mit Minimal Cut Sets, keine Order-1-Cut-Sets
-    │   └ Sn-03 Fehlerinjektionstests TC-03x (Erkennungszeit < FTTI)
-    ├ G-03 Systematische Fehler sind durch den Entwicklungsprozess vermieden
-    │   ├ Sn-04 Reviewnachweise (PRs, CODEOWNERS, SUP.4)
-    │   ├ Sn-05 MISRA-C-Konformität + Deviations mit Begründung
-    │   └ Sn-06 Unit-Test-Strukturabdeckung ASIL B
-    └ G-04 Anforderungen sind vollständig verfolgt und verifiziert
-        └ Sn-07 Traceability-Matrix aus CI (trace_check.py, 0 Findings)
+G-01  SG-01 is satisfied: no undetected failure of the low beam while driving
+ ├ C-01 item boundary, operational situations
+ ├ A-03 assumption on driver behaviour on warning
+ └ S-01 argument over fault classes (systematic / random) and verification levels
+    ├ G-02 random HW failures are sufficiently detected and controlled
+    │   ├ Sn-01 FMEDA extract SPFM/LFM/PMHF vs. ASIL B targets
+    │   ├ Sn-02 FTA with minimal cut sets, no order-1 cut sets
+    │   └ Sn-03 fault injection tests TC-03x (detection time < FTTI)
+    ├ G-03 systematic faults are avoided by the development process
+    │   ├ Sn-04 review evidence (PRs, CODEOWNERS, SUP.4)
+    │   ├ Sn-05 MISRA C conformance + deviations with rationale
+    │   └ Sn-06 unit test structural coverage ASIL B
+    └ G-04 requirements are fully traced and verified
+        └ Sn-07 traceability matrix from CI (trace_check.py, 0 findings)
 ```
 
 Emit the same structure as a PlantUML diagram with a reading-guidance sentence.
@@ -40,33 +40,33 @@ Emit the same structure as a PlantUML diagram with a reading-guidance sentence.
 ## Rules
 
 1. **Every Solution node points to a real artefact** with a repo path and a baseline (tag). A GSN
-   leaf without a locatable artefact is an unsupported claim — mark it `offen` rather than drawing it
+   leaf without a locatable artefact is an unsupported claim — mark it `open` rather than drawing it
    as discharged.
 2. Assumptions in the argument reuse the project `A-xx` IDs and must appear in
    `09_process/assumptions.md`; safety-relevant ones are validation targets.
 3. Distinguish **verification** evidence from **validation** evidence at vehicle level — the safety
    goal argument needs both.
-4. State the argument's weaknesses honestly in a "Grenzen der Argumentation" section. A safety case
+4. State the argument's weaknesses honestly in a "limits of the argument" section. A safety case
    that claims no residual uncertainty is not credible.
 
 ## Work product status list
 
-| WP-ID | Work Product | Repo-Pfad | ASPICE | ISO-Part | Status | Baseline (Tag) | Verantwortlich |
+| WP-ID | Work product | Repo path | ASPICE | ISO part | Status | Baseline (tag) | Owner |
 
-`Status` ∈ geplant, in Arbeit, im Review, freigegeben, unter Änderung.
+`Status` ∈ planned, in progress, in review, released, under change.
 
 ## Confirmation measures (ISO 26262-2)
 
-| Maßnahme | Gegenstand | Geforderte Unabhängigkeit (ASIL B) | Durchführender | Nachweis |
+| Measure | Subject | Required independence (ASIL B) | Performed by | Evidence |
 |---|---|---|---|---|
-| Confirmation Review | HARA, FSC, TSC, Safety Case, Safety Plan | I1/I2 depending on work product and ASIL | | Review-Protokoll |
-| Functional Safety Audit | Prozessumsetzung im Projekt | I2/I3 | | Audit-Bericht |
-| Functional Safety Assessment | Gesamtargumentation | I3 for high ASIL | | Assessment-Bericht |
+| Confirmation review | HARA, FSC, TSC, safety case, safety plan | I1/I2 depending on work product and ASIL | | Review record |
+| Functional safety audit | Process implementation in the project | I2/I3 | | Audit report |
+| Functional safety assessment | Overall argument | I3 for high ASIL | | Assessment report |
 
 State the independence level per measure and **name who may not perform it** (nobody confirms their
 own work product; the safety manager does not assess the safety case they authored). Where you are
-not certain of the exact required independence level for ASIL B, say "abhängig vom Work Product,
-gemäß ISO 26262-2 Tabelle" rather than inventing a level.
+not certain of the exact required independence level for ASIL B, say "depends on the work product,
+per the table in ISO 26262-2" rather than inventing a level.
 
 ## Release for production
 

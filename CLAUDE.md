@@ -10,27 +10,28 @@ example value, never validated data.
 | `FAHRZEUG` | Heavy truck, class N3, 18 t tractor unit |
 | `PRODUKT` | Adaptive front lighting system incl. work-lamp control |
 | `ZIEL_ASIL` | ASIL B (loss of low beam during night driving) |
-| `SPRACHE` | **German prose**, standard/technical terms kept in English |
+| `LANGUAGE` | **English throughout**; normative terms keep their established form |
 | `MBSE_METHODE` | MagicGrid (SysML v1.6) |
 | `NOTATION` | PlantUML (fallback: Mermaid) |
 | `TOOLCHAIN` | Cameo/MagicDraw, Requirements-as-Code, Git/GitHub, GitHub Actions only (no Jenkins) |
 | `UMFANG` | Teaching/reference project, no series status |
 
-> Deliverable content is written in **German**. Repo infrastructure (this file, HOWTO,
-> agent/skill definitions, CI scripts) is in English.
+> The project is English throughout. The only exception is
+> `09_process/prompts/prompt_beleuchtungssystem_aspice_iso26262.md` — the original German
+> commissioning document, deliberately left unchanged as the record of what was requested.
 
 ## The Golden Thread (depth rule)
 
 Breadth everywhere (3–8 representative entries per work product), full depth on exactly one thread:
 
-**SG-01 "Kein unerkannter Ausfall des Abblendlichts während der Fahrt" (ASIL B)**
+**SG-01 "No undetected failure of the low beam while driving" (ASIL B)**
 → FSR → TSR → architecture element → HW safety mechanism → SW component incl. detailed design
 → test cases → FTA path → FMEDA row → safety case argument.
 
 Second, deliberately shallower thread for contrast:
-**SG-02 "Keine unbeabsichtigte Blendung durch Fernlicht/Arbeitsscheinwerfer"**
+**SG-02 "No unintended glare caused by high beam or work lamps"**
 
-Mark sections visibly: `🔍 DEEP DIVE` (detail) and `📋 ÜBERSICHT` (overview).
+Mark sections visibly: `🔍 DEEP DIVE` (detail) and `📋 OVERVIEW` (breadth).
 
 ## ID scheme (never reuse, never silently change)
 
@@ -51,10 +52,10 @@ safety goal deriving from it (`derived_from: [H-xx]`) — the trace check enforc
 2. **Assumptions are explicit** as `A-xx` in `09_process/assumptions.md`. Never assume silently.
 3. **Consistency is binding.** Once an ID, value, or architecture element is published it does not
    change without an explicit change note (and a CR/impact analysis entry).
-4. **Requirements always as a table**: ID · Text · Typ · ASIL · Quelle/Trace · Verifikationsmethode · Status.
+4. **Requirements always as a table**: ID · Text · Type · ASIL · Source/trace · Verification method · Status.
    Requirement text follows the **EARS** patterns.
 5. **Diagrams always as renderable PlantUML code blocks**, each followed by 1–2 sentences of reading guidance.
-6. **Every phase ends with**: Work Products (filename + repo path) · Offene Punkte · reference to the
+6. **Every phase ends with**: Work products (filename + repo path) · Open points · reference to the
    ASPICE process and ISO 26262 part/clause.
 7. Realistic numeric values (currents, temperatures, cycle times, failure rates), always labelled as
    plausible example values.
@@ -90,5 +91,5 @@ claiming a phase is complete.
 ## Phase workflow
 
 Phases 0–11 are defined in `09_process/prompts/prompt_beleuchtungssystem_aspice_iso26262.md`.
-Deliver **one phase at a time**, stop, and wait for `weiter`. Honour `tiefer: <Thema>` (expand to
-detail level) and `kürzer` (condense next phase to overview level).
+Deliver **one phase at a time**, stop, and wait for `next`. Honour `deeper: <topic>` (expand to
+detail level) and `shorter` (condense the next phase to overview level).

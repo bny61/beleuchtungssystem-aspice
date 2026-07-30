@@ -1,17 +1,17 @@
-# Annahmenliste (`A-xx`)
+# Assumptions (`A-xx`)
 
-Jede Annahme, die nicht durch eine Anforderung oder ein Stakeholder-Dokument belegt ist, wird hier
-gefuehrt. Sicherheitsrelevante Annahmen sind Validierungsziele (ISO 26262-4, Validierung).
+Every assumption not backed by a requirement or a stakeholder document is tracked here.
+Safety-relevant assumptions are validation targets (ISO 26262-4, validation).
 
-| ID | Annahme | Begruendung / Quelle | Sicherheitsrelevant | Validierungsziel | Status |
+| ID | Assumption | Rationale / source | Safety-relevant | Validation target | Status |
 |---|---|---|---|---|---|
-| A-01 | Das Bordnetz stellt 24 V nominal mit Toleranzen nach ISO 16750-2 bereit. | Standard-Bordnetz N3-Fahrzeug | ja | Nachweis im HW-Verifikationsplan | offen |
-| A-02 | Das Fahrzeug-Gateway leitet Diagnoseanfragen (UDS) unveraendert an das Lighting-ECU weiter. | Systemarchitektur Fahrzeugebene, ausserhalb Item-Grenze | nein | — | offen |
-| A-03 | Der Fahrer reagiert auf eine optische Warnung im Kombiinstrument innerhalb der angenommenen Reaktionszeit. | Controllability-Einstufung in der HARA | ja | Validierung auf Fahrzeugebene | offen |
-| A-04 | Die Anzeigeart der Fahrerwarnung wird vom OEM-HMI-Konzept vorgegeben. | offene Abstimmung zu CR-007 | nein | Klaerung mit OEM | offen |
-| A-05 | Die Objekterkennung fuer das blendfreie Fernlicht wird vom Fahrzeug ueber CAN FD bereitgestellt und liegt ausserhalb der Item-Grenze. | Systemabgrenzung zu CR-003 | ja | Schnittstellenabsicherung in Phase 3, Validierung Fahrzeugebene | offen |
-| A-06 | Lichtschalterstellung und Zuendungsstatus werden vom Fahrzeug als Bussignale bereitgestellt; keine direkte Verdrahtung zum Lighting-ECU. | Systemabgrenzung zu CR-001, CR-006 | ja | Schnittstellentabelle Phase 3 | offen |
-| A-07 | Das Nutzungsprofil entspricht N3-Fernverkehr mit ueberwiegendem Nachtanteil im Winterhalbjahr. | Grundlage fuer Exposure-Einstufung der HARA und fuer CR-022 | ja | Bestaetigung durch OEM-Nutzungsdaten | offen |
+| A-01 | The vehicle supply provides 24 V nominal with tolerances per ISO 16750-2. | Standard supply of an N3 vehicle | yes | Evidence in the HW verification plan | open |
+| A-02 | The vehicle gateway forwards diagnostic requests (UDS) to the lighting ECU unchanged. | Vehicle-level system architecture, outside the item boundary | no | — | open |
+| A-03 | The driver responds to a visual warning in the instrument cluster within the assumed reaction time. | Controllability rating in the HARA | yes | Validation at vehicle level | open |
+| A-04 | The type of driver warning is specified by the OEM HMI concept. | Open alignment relating to CR-007 | no | Clarification with the OEM | open |
+| A-05 | Object detection for the glare-free high beam is provided by the vehicle via CAN FD and lies outside the item boundary. | System delimitation relating to CR-003 | yes | Interface safeguarding in phase 3, validation at vehicle level | open |
+| A-06 | Light switch position and ignition status are provided by the vehicle as bus signals; no direct wiring to the lighting ECU. | System delimitation relating to CR-001, CR-006 | yes | Interface table phase 3 | open |
+| A-07 | The usage profile corresponds to N3 long-haul operation with a predominant night share in the winter half-year. | Basis for the exposure rating of the HARA and for CR-022 | yes | Confirmation through OEM usage data | open |
 
-> Neue Annahmen werden mit fortlaufender Nummer ergaenzt. Eine Annahme wird nie geloescht, sondern
-> auf `bestaetigt`, `widerlegt` oder `ersetzt durch A-xx` gesetzt.
+> New assumptions are added with consecutive numbers. An assumption is never deleted, only set to
+> `confirmed`, `refuted` or `superseded by A-xx`.

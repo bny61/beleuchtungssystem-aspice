@@ -1,20 +1,20 @@
 ---
 id: RISK-01
 text: >
-  Die Exposure-Einstufung von Gefaehrdung H-01 (E3 statt E4) entscheidet ueber ASIL B gegenueber
-  ASIL C fuer den gesamten Golden Thread und damit fuer das Ziel-ASIL des Projekts.
-type: risiko
+  The exposure rating of hazard H-01 (E3 rather than E4) determines ASIL B versus ASIL C for the
+  entire Golden Thread and therefore the target ASIL of the project.
+type: risk
 status: draft
 owner: safety-manager
-source: HARA H-01, Phase 2
+source: HARA H-01, phase 2
 mitigation: >
-  Bestaetigung der E-Einstufung im Confirmation Review von SG-01 durch einen vom Autor
-  unabhaengigen Reviewer; Absicherung ueber Nutzungsdaten des OEM (A-07).
+  Confirmation of the E rating in the confirmation review of SG-01 by a reviewer independent of
+  the author; substantiation through OEM usage data (A-07).
 impact: >
-  Bei E4 ergaebe sich ASIL C: hoehere Zielwerte fuer SPFM/LFM/PMHF, strengere Anforderungen an
-  Unabhaengigkeit und Strukturabdeckung. Rueckwirkung auf alle Folgephasen.
+  At E4 the result would be ASIL C: higher target values for SPFM/LFM/PMHF, stricter requirements
+  on independence and structural coverage. Affects all subsequent phases.
 ---
 
-## Kontext
+## Context
 
-Sensibelste Einzelentscheidung der HARA. Bis zur Bestaetigung gilt ASIL B als Arbeitsstand.
+The most sensitive single decision of the HARA. Until confirmed, ASIL B is the working assumption.

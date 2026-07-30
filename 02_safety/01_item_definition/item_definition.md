@@ -1,93 +1,93 @@
 # Item Definition
 
-**Item:** Adaptives Front-Beleuchtungssystem inkl. Arbeitsscheinwerfer-Steuerung
-**Fahrzeug:** Schwerer LKW, Klasse N3, 18 t Sattelzugmaschine
-**Norm:** ISO 26262-3 (Item Definition)
-**Stand:** Phase 2, Entwurf
-**Verantwortlich:** safety-manager
+**Item:** Adaptive front-lighting system incl. work-lamp control
+**Vehicle:** Heavy truck, class N3, 18 t tractor unit
+**Standard:** ISO 26262-3 (Item Definition)
+**Status:** Phase 2, draft
+**Owner:** safety-manager
 
-> Lehr-/Referenzprojekt, kein Serienstand. Zahlenwerte sind plausible Beispielwerte.
+> Teaching/reference project, not a production baseline. Numeric values are plausible example values.
 
 ---
 
-## 1 Zweck und Funktionen
+## 1 Purpose and functions
 
-Das Item stellt die Beleuchtung nach vorn sowie die Arbeitsscheinwerfer-Steuerung bereit:
+The item provides the forward lighting and the work-lamp control:
 
-| Funktion | Kurzbeschreibung |
+| Function | Short description |
 |---|---|
-| Abblendlicht | Grundausleuchtung der Fahrbahn, mehrkanalig ausgefuehrt |
-| Fernlicht | Reichweitenausleuchtung, blendfrei ausblendbar |
-| Tagfahrlicht | Erkennbarkeit bei Tag |
-| Kurvenlicht | lenkwinkel- und geschwindigkeitsabhaengige Schwenkung |
-| Leuchtweitenregulierung | beladungsabhaengige Neigungskorrektur |
-| Arbeitsscheinwerfer | Ausleuchtung im Stand und beim Rangieren |
-| Diagnose | Fehlererkennung, DTC-Verwaltung, UDS-Zugriff |
+| Low beam | Basic illumination of the carriageway, implemented across several channels |
+| High beam | Long-range illumination, segment-wise maskable for glare-free operation |
+| Daytime running lights | Conspicuity in daylight |
+| Cornering light | Swivelling as a function of steering angle and speed |
+| Headlamp levelling | Load-dependent inclination correction |
+| Work lamps | Illumination at standstill and while manoeuvring |
+| Diagnostics | Fault detection, DTC management, UDS access |
 
-## 2 Item-Grenze
+## 2 Item boundary
 
-### Innerhalb der Item-Grenze
+### Inside the item boundary
 
-| Element | Rolle |
+| Element | Role |
 |---|---|
-| `ECU_LightingCtrl` | Lighting-ECU, Steuerung und Ueberwachung aller Lichtfunktionen |
-| `LED_Driver_Stage_1..n` | LED-Treiberstufen der einzelnen Kanaele |
-| Strom- und Temperatursensorik | Rueckmeldung fuer Diagnose und Derating |
-| Scheinwerfermodule | Abblend-, Fern- und Kurvenlicht |
-| Arbeitsscheinwerfer-Endstufen | Ansteuerung der Arbeitsscheinwerfer |
+| `ECU_LightingCtrl` | Lighting ECU, control and monitoring of all lighting functions |
+| `LED_Driver_Stage_1..n` | LED driver stages of the individual channels |
+| Current and temperature sensing | Feedback for diagnostics and derating |
+| Headlamp modules | Low beam, high beam and cornering light |
+| Work-lamp output stages | Control of the work lamps |
 
-### Ausserhalb der Item-Grenze (Schnittstellen)
+### Outside the item boundary (interfaces)
 
-| Element | Beziehung | Annahme |
+| Element | Relationship | Assumption |
 |---|---|---|
-| Bordnetz 24 V | Versorgung KL30 / KL15, 16–32 V | `A-01` |
-| Fahrzeug-Gateway (CAN FD / J1939) | Lichtanforderung, Geschwindigkeit, Lenkwinkel, Statusrueckmeldung | `A-02` |
-| Umfeldsensorik (Objekterkennung) | Objektliste fuer blendfreies Fernlicht | `A-05` |
-| Lichtschalter, Zuendung | als Bussignale, keine Direktverdrahtung | `A-06` |
-| Kombiinstrument | Anzeige der Fahrerwarnung | `A-04` |
-| Diagnosetester (Werkstatt) | UDS nach ISO 14229 | — |
+| Vehicle supply 24 V | Supply KL30 / KL15, 16–32 V | `A-01` |
+| Vehicle gateway (CAN FD / J1939) | Light request, speed, steering angle, status feedback | `A-02` |
+| Environment sensing (object detection) | Object list for the glare-free high beam | `A-05` |
+| Light switch, ignition | As bus signals, no direct wiring | `A-06` |
+| Instrument cluster | Display of the driver warning | `A-04` |
+| Diagnostic tester (workshop) | UDS per ISO 14229 | — |
 
-### Ausdruecklich nicht im Scope
+### Explicitly out of scope
 
-Heckbeleuchtung · Innenraumbeleuchtung · Blinker und Warnblinker · Nebelscheinwerfer ·
-Beleuchtung des Aufbauherstellers hinter der Aufbau-Schnittstelle.
+Rear lighting · interior lighting · indicators and hazard warning lights · fog lamps ·
+body-builder lighting behind the body interface.
 
-> Die Ausschluesse sind bewusst explizit gelistet. Eine stillschweigende Abgrenzung ist im
-> Assessment ein Befund, keine Vereinfachung.
+> The exclusions are listed explicitly on purpose. A tacit delimitation is a finding in an
+> assessment, not a simplification.
 
-## 3 Kontextdiagramm
+## 3 Context diagram
 
-Quelle: [`../../03_model/plantuml/ctx_item.puml`](../../03_model/plantuml/ctx_item.puml)
+Source: [`../../03_model/plantuml/ctx_item.puml`](../../03_model/plantuml/ctx_item.puml)
 
-Der gelbe Block ist die Item-Grenze — nur was darin liegt, wird in diesem Projekt entwickelt.
-Graue Bloecke sind Fremdsysteme. Jede Kante ueber die Grenze ist eine Schnittstelle, die in Phase 3
-mit Signal, Richtung, Typ, Wertebereich, Timing und ASIL zu spezifizieren ist.
+The yellow block is the item boundary — only what lies inside it is developed in this project.
+Grey blocks are external systems. Every edge crossing the boundary is an interface to be specified
+in phase 3 with signal, direction, type, value range, timing and ASIL.
 
-> Das Diagramm ist bisher **nicht** syntaktisch geprueft (PlantUML lokal nicht installiert,
-> `OP-12`). In der CI uebernimmt das der Job `Modell-Syntaxpruefung`.
+> The diagram has **not** been syntax-checked so far (PlantUML not installed locally, `OP-12`).
+> In CI this is done by the `Modell-Syntaxpruefung` job.
 
-## 4 Betriebsmodi
+## 4 Operating modes
 
-| Modus | Beschreibung |
+| Mode | Description |
 |---|---|
-| Init | Selbsttest nach Zuendung EIN |
-| Betrieb Normal | alle Lichtfunktionen verfuegbar |
-| Degraded | Teilausfall erkannt, verbleibende Kanaele aktiv |
-| Safe State (Notlauf) | reduzierte Leistung, Fahrerwarnung aktiv, DTC gesetzt |
-| Sleep | Zuendung AUS, Ruhestrombetrieb nach Nachlaufzeit |
+| Init | Self-test after ignition on |
+| Normal operation | All lighting functions available |
+| Degraded | Partial failure detected, remaining channels active |
+| Safe state (limp-home) | Reduced power, driver warning active, DTC stored |
+| Sleep | Ignition off, quiescent-current operation after the run-on time |
 
-## 5 Abhaengigkeiten von anderen Items
+## 5 Dependencies on other items
 
-| Abhaengigkeit | Auswirkung auf die Sicherheit |
+| Dependency | Safety impact |
 |---|---|
-| Objekterkennung (Fahrzeugebene) | Teil der Wirkkette von `SG-02`; erfordert eine Schnittstellenvereinbarung (DIA) — `OP-10` |
-| Bordnetz | Versorgungsqualitaet beeinflusst alle Lichtfunktionen; gemeinsame Ausfallursache, in der DFA zu betrachten |
-| Kombiinstrument | traegt die Fahrerwarnung aus `FSR-004` und damit die C-Einstufung von H-01 |
+| Object detection (vehicle level) | Part of the effect chain of `SG-02`; requires an interface agreement (DIA) — `OP-10` |
+| Vehicle supply | Supply quality affects all lighting functions; a common cause of failure, to be considered in the DFA |
+| Instrument cluster | Carries the driver warning from `FSR-004` and thereby the C rating of H-01 |
 
-## 6 Weiterfuehrend
+## 6 Further reading
 
-- Gefaehrdungsanalyse: [`../02_hara/hara.md`](../02_hara/hara.md)
-- Safety Goals und FSC: [`../03_fsc/`](../03_fsc/)
-- Annahmen: [`../../09_process/assumptions.md`](../../09_process/assumptions.md)
+- Hazard analysis: [`../02_hara/hara.md`](../02_hara/hara.md)
+- Safety goals and FSC: [`../03_fsc/`](../03_fsc/)
+- Assumptions: [`../../09_process/assumptions.md`](../../09_process/assumptions.md)
 
-**Prozessbezug:** ISO 26262 **Part 3** (Item Definition) · ASPICE **SYS.1** (Systemkontext).
+**Process reference:** ISO 26262 **Part 3** (Item Definition) · ASPICE **SYS.1** (system context).

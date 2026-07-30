@@ -1,42 +1,41 @@
-# Tool-Qualifikation — Hinweis fuer die CI-Skripte (ISO 26262-8, Clause 11)
+# Tool qualification — note on the CI scripts (ISO 26262-8, Clause 11)
 
-**Status:** Vorbetrachtung, kein Qualifikationsnachweis. Lehr-/Referenzprojekt.
+**Status:** Preliminary consideration, not a qualification record. Teaching/reference project.
 
-## Betrachtete Werkzeuge
+## Tools considered
 
-| Werkzeug | Zweck im Projekt | Erzeugt Nachweis? | Betrachtung |
+| Tool | Purpose in the project | Produces evidence? | Consideration |
 |---|---|---|---|
-| `tools/trace_check.py` | Prueft Traceability-Konsistenz, erzeugt Traceability-Matrix und Coverage-KPIs | **ja** | Qualifikationskandidat — siehe unten |
-| `tools/gen_index.py` | Erzeugt die Ordner-Uebersichten der Anforderungen | mittelbar | Abgeleitetes Artefakt: die Quelle bleibt der Datensatz. Ein Fehler waere im Review sichtbar, da Uebersicht und Datensatz nebeneinander liegen. Geringerer Vertrauensbedarf als `trace_check.py`. |
-| GitHub Actions Runner | Fuehrt die Pruefungen aus, archiviert Artefakte | mittelbar | Infrastruktur; Nachweis liegt in den archivierten Artefakten |
-| PlantUML | Rendert Modellsichten aus Textquellen | nein (Darstellung) | Quelle ist der Text, nicht das Bild — Fehlrendering ist im Review erkennbar |
-| Compiler / statische Analyse / Coverage-Tool | SW-Verifikation | ja | Eigene Betrachtung im SW-Plan (Phase 7) erforderlich |
+| `tools/trace_check.py` | Checks traceability consistency, produces the traceability matrix and coverage KPIs | **yes** | Qualification candidate — see below |
+| `tools/gen_index.py` | Produces the folder overviews of the requirements | indirectly | Derived artefact: the record remains the source. An error would be visible in review since overview and record sit side by side. Lower confidence need than `trace_check.py`. |
+| GitHub Actions runner | Executes the checks, archives artefacts | indirectly | Infrastructure; the evidence lies in the archived artefacts |
+| PlantUML | Renders model views from text sources | no (presentation) | The source is the text, not the image — a rendering error is detectable in review |
+| Compiler / static analysis / coverage tool | Software verification | yes | Separate consideration required in the SW plan (phase 7) |
 
-## Argumentationslinie fuer `trace_check.py`
+## Line of argument for `trace_check.py`
 
-**Anwendungsfall:** Das Skript kann einen Fehler *einfuehren* (falsche Matrix) oder einen
-vorhandenen Fehler *nicht erkennen* (fehlende Trace bleibt unentdeckt). Der zweite Fall ist der
-relevantere: das Skript wirkt als Verifikationsmassnahme.
+**Use case:** the script can *introduce* an error (wrong matrix) or *fail to detect* an existing one
+(a missing trace stays unnoticed). The second case is the more relevant one: the script acts as a
+verification measure.
 
-**Fehlermoeglichkeiten:**
-1. Front-Matter wird falsch geparst → Datensatz wird stillschweigend ignoriert.
-2. Prueflogik enthaelt einen Fehler → Finding wird nicht gemeldet.
-3. Ein Verzeichnis liegt ausserhalb von `SEARCH_DIRS` → Datensaetze werden nicht erfasst.
+**Failure modes:**
+1. Front matter is parsed incorrectly → a record is silently ignored.
+2. The check logic contains an error → a finding is not reported.
+3. A folder lies outside `SEARCH_DIRS` → records are not captured.
 
-**Massnahmen zur Reduktion des Vertrauensbedarfs:**
-- Ausschliesslich Standardbibliothek — keine unqualifizierte Drittabhaengigkeit.
-- Das Skript gibt die Anzahl gefundener Datensaetze aus; ein unerwartet niedriger Wert ist im
-  Review erkennbar (Fehlermoeglichkeit 1 und 3 werden dadurch beobachtbar).
-- Zusaetzliche menschliche Reviewpflicht (CODEOWNERS, PR-Checkliste) — der CI-Check ersetzt das
-  Review nicht, er ergaenzt es.
-- Negativtests: bewusst fehlerhafte Datensaetze muessen die erwarteten Findings ausloesen.
+**Measures reducing the confidence need:**
+- Standard library only — no unqualified third-party dependency.
+- The script reports the number of records found; an unexpectedly low value is detectable in review
+  (failure modes 1 and 3 thereby become observable).
+- Additional mandatory human review (CODEOWNERS, PR checklist) — the CI check does not replace the
+  review, it complements it.
+- Negative tests: deliberately faulty records must trigger the expected findings.
 
-**Offener Punkt:** Ein tatsaechlicher Qualifikationsnachweis (Tool Classification mit TI/TD,
-resultierendes TCL und die daraus folgende Qualifikationsmethode) ist **nicht** erbracht. Fuer einen
-Serienstand waere er zu fuehren. Diese Datei benennt die Luecke, sie schliesst sie nicht.
+**Open point:** an actual qualification record (tool classification with TI/TD, the resulting TCL and
+the qualification method following from it) has **not** been produced. For a production baseline it
+would have to be. This file names the gap; it does not close it.
 
-## Ehrliche Grenze
+## Honest limitation
 
-Solange die Toolqualifikation offen ist, darf ein gruener CI-Lauf im Safety Case nur als
-*unterstuetzender* Nachweis (Sn-07) argumentiert werden, nicht als alleiniger Nachweis der
-Anforderungsvollstaendigkeit.
+As long as tool qualification is open, a green CI run may be argued in the safety case only as
+*supporting* evidence (Sn-07), not as sole evidence of requirements completeness.

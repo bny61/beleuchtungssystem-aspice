@@ -1,177 +1,176 @@
-# Gefaehrdungsanalyse und Risikobewertung (HARA)
+# Hazard Analysis and Risk Assessment (HARA)
 
-**Item:** Adaptives Front-Beleuchtungssystem inkl. Arbeitsscheinwerfer-Steuerung
-**Fahrzeug:** Schwerer LKW, Klasse N3, 18 t Sattelzugmaschine
-**Norm:** ISO 26262-3 (Hazard Analysis and Risk Assessment)
-**Stand:** Phase 2, Entwurf — nicht durch ein Confirmation Review bestaetigt
-**Verantwortlich:** safety-manager
+**Item:** Adaptive front-lighting system incl. work-lamp control
+**Vehicle:** Heavy truck, class N3, 18 t tractor unit
+**Standard:** ISO 26262-3 (Hazard Analysis and Risk Assessment)
+**Status:** Phase 2, draft — not confirmed by a confirmation review
+**Owner:** safety-manager
 
-> **Kein Serienstand.** Alle Einstufungen und Zahlenwerte sind plausible Beispielwerte eines
-> Lehr-/Referenzprojekts, keine validierten Daten und kein Ersatz fuer eine reale HARA.
+> **Not a production baseline.** All ratings and numeric values are plausible example values of a
+> teaching/reference project, not validated data and no substitute for a real HARA.
 
 ---
 
-## 1 Methodik
+## 1 Method
 
-1. **Item-Grenze festlegen** — siehe [`../01_item_definition/item_definition.md`](../01_item_definition/item_definition.md).
-2. **Betriebssituationen bilden** als Kreuzprodukt Fahrsituation x Betriebsmodus x Umgebung,
-   anschliessend auf die relevanten Kombinationen reduzieren — siehe
-   [`betriebssituationen.md`](betriebssituationen.md).
-3. **Fehlverhalten je Funktion systematisch ableiten** ueber die Fehlerklassen
+1. **Define the item boundary** — see [`../01_item_definition/item_definition.md`](../01_item_definition/item_definition.md).
+2. **Build operational situations** as the cross product of driving situation x operating mode x
+   environment, then reduce to the relevant combinations — see
+   [`operational_situations.md`](operational_situations.md).
+3. **Derive malfunctioning behaviour systematically** per function using the fault classes
    *loss of function · unintended activation · incorrect value · too early / too late · stuck*.
-4. **Gefaehrdung auf Fahrzeugebene** formulieren (nicht die Bauteilstoerung, sondern die Wirkung
-   im Verkehr).
-5. **S/E/C einstufen** mit schriftlicher Begruendung je Einstufung —
-   siehe [`sec_klassifikation.md`](sec_klassifikation.md).
-6. **ASIL** aus der Kombination gemaess Einstufungstabelle ISO 26262-3 bestimmen.
-7. **Safety Goals ableiten**, Gefaehrdungen mit identischer Zielformulierung zusammenfassen und
-   dabei den hoechsten ASIL fuehren.
+4. **State the hazard at vehicle level** (the effect in traffic, not the component fault).
+5. **Rate S/E/C** with a written rationale per rating —
+   see [`sec_classification.md`](sec_classification.md).
+6. **Determine the ASIL** from the combination per the determination table of ISO 26262-3.
+7. **Derive safety goals**, merging hazards with identical goal wording and carrying the highest
+   ASIL.
 
 ---
 
-## 2 Gefaehrdungstabelle
+## 2 Hazard table
 
-| ID | BS | Fehlverhalten | Gefaehrdung auf Fahrzeugebene | S | E | C | **ASIL** | Safety Goal |
+| ID | OS | Malfunctioning behaviour | Hazard at vehicle level | S | E | C | **ASIL** | Safety goal |
 |---|---|---|---|---|---|---|---|---|
-| **H-01** | BS-01 | Ausfall Abblendlicht (beide Kanaele) | Fahrbahn unbeleuchtet bei 80 km/h, Abkommen von der Fahrbahn oder Auffahren auf unbeleuchtetes Hindernis | 3 | 3 | 2 | **B** | SG-01 |
-| **H-02** | BS-02 | Fernlicht bleibt bei Gegenverkehr aktiv | Blendung des entgegenkommenden Fahrers, Frontalkollision | 3 | 2 | 2 | **A** | SG-02 |
-| **H-03** | BS-01 | Arbeitsscheinwerfer unbeabsichtigt waehrend der Fahrt aktiv | Blendung von Gegenverkehr und Nachfolgeverkehr | 3 | 2 | 2 | **A** | SG-02 |
-| **H-04** | BS-03 | Unbeabsichtigtes Abschalten des Abblendlichts im Betrieb | wie H-01, zusaetzlich ueberraschend fuer den Fahrer | 3 | 3 | 2 | **B** | SG-01 |
-| **H-05** | BS-01 | Leuchtweitenregulierung dauerhaft zu hoch | Dauerblendung des Gegenverkehrs | 2 | 3 | 2 | **A** | SG-02 |
-| **H-06** | BS-06 | Ausfall Tagfahrlicht bei Tagfahrt | verminderte Erkennbarkeit des Fahrzeugs bei guter Sicht | 1 | 3 | 1 | **QM** | — |
-| **H-07** | BS-05 | Kurvenlicht schwenkt in die Gegenfahrbahn | Blendung des Gegenverkehrs, unerwartet und vom Fahrer nicht korrigierbar | 2 | 2 | 3 | **A** | SG-02 |
+| **H-01** | BS-01 | Failure of the low beam (both channels) | Carriageway unlit at 80 km/h, running off the road or colliding with an unlit obstacle | 3 | 3 | 2 | **B** | SG-01 |
+| **H-02** | BS-02 | High beam stays active with oncoming traffic | Glare to the oncoming driver, head-on collision | 3 | 2 | 2 | **A** | SG-02 |
+| **H-03** | BS-01 | Work lamps unintentionally active while driving | Glare to oncoming and following traffic | 3 | 2 | 2 | **A** | SG-02 |
+| **H-04** | BS-03 | Unintended deactivation of the low beam | As H-01, additionally unexpected for the driver | 3 | 3 | 2 | **B** | SG-01 |
+| **H-05** | BS-01 | Headlamp levelling permanently too high | Sustained glare to oncoming traffic | 2 | 3 | 2 | **A** | SG-02 |
+| **H-06** | BS-06 | Failure of the daytime running lights | Reduced conspicuity of the vehicle in good visibility | 1 | 3 | 1 | **QM** | — |
+| **H-07** | BS-05 | Cornering light swivels into the oncoming lane | Glare to oncoming traffic, unexpected and not correctable by the affected driver | 2 | 2 | 3 | **A** | SG-02 |
 
-**Ergebnis:** 7 Gefaehrdungen, davon 6 mit Safety Goal und eine (H-06) mit Ergebnis QM.
-Hoechster resultierender ASIL: **B** (H-01, H-04) — damit ist ASIL B das Ziel-ASIL des Projekts.
+**Result:** 7 hazards, 6 of them leading to a safety goal and one (H-06) resulting in QM.
+Highest resulting ASIL: **B** (H-01, H-04) — ASIL B is therefore the target ASIL of the project.
 
-> **Maschinenlesbare Form:** Jede Zeile dieser Tabelle existiert zusaetzlich als Datensatz
-> `H-01.md` … `H-07.md` in diesem Ordner (Uebersicht: [`README.md`](README.md)). Die Safety Goals
-> verweisen ueber `derived_from: [H-xx]` darauf; `tools/trace_check.py` meldet jede Gefaehrdung mit
-> ASIL ungleich QM, zu der kein Safety Goal existiert (`hazard-uncovered`).
+> **Machine-readable form:** every row of this table also exists as a record `H-01.md` … `H-07.md`
+> in this folder (overview: [`README.md`](README.md)). The safety goals reference them via
+> `derived_from: [H-xx]`; `tools/trace_check.py` reports any hazard with an ASIL other than QM that
+> has no safety goal (`hazard-uncovered`).
 >
-> **Bewusste Redundanz:** Die Werte stehen sowohl in dieser Tabelle als auch im Front-Matter der
-> Datensaetze. Bei einer Aenderung sind **beide** zu pflegen — die Pruefung erkennt eine Abweichung
-> zwischen Tabelle und Datensatz nicht.
+> **Deliberate redundancy:** the values appear both in this table and in the front matter of the
+> records. When changing either, update **both** — the check does not detect a divergence between
+> table and record.
 
 ---
 
-## 3 Begruendung der Einstufungen
+## 3 Rationale for the ratings
 
-### H-01 — Ausfall Abblendlicht (auslegender Fall)
+### H-01 — Failure of the low beam (design-driving case)
 
-| | Einstufung | Begruendung |
+| | Rating | Rationale |
 |---|---|---|
-| **S** | **S3** | Vollstaendiger Verlust der Fahrbahnausleuchtung bei 80 km/h auf unbeleuchteter Landstrasse. Ein Abkommen von der Fahrbahn oder ein Auffahren auf ein unbeleuchtetes Hindernis mit 18 t Gesamtmasse fuehrt mit hoher Wahrscheinlichkeit zu lebensbedrohlichen oder toedlichen Verletzungen, auch bei unbeteiligten Dritten. |
-| **E** | **E3** | Nachtfahrt auf unbeleuchteter Landstrasse ist im N3-Fernverkehr regelmaessig, aber nicht ueberwiegend. Unter dem Nutzungsprofil `A-07` liegt der Anteil im Bereich weniger Prozent der Betriebsdauer — mittlere Wahrscheinlichkeit. |
-| **C** | **C2** | Der Fahrer bemerkt den Ausfall unmittelbar (die Fahrbahn wird dunkel) und kann kontrolliert verzoegern; Restlicht durch Standlicht/Tagfahrlicht und Fremdlicht bleibt erhalten. Ein sicheres Anhalten gelingt dem ueberwiegenden Teil der Fahrer, aber nicht praktisch allen — daher C2 und nicht C1. |
+| **S** | **S3** | Complete loss of carriageway illumination at 80 km/h on an unlit rural road. Running off the road or colliding with an unlit obstacle at 18 t gross mass is highly likely to cause life-threatening or fatal injuries, including to uninvolved third parties. |
+| **E** | **E3** | Night driving on unlit rural roads occurs regularly in N3 long-haul operation, but not predominantly. Under usage profile `A-07` the share is in the range of a few percent of operating time — medium probability. |
+| **C** | **C2** | The driver notices the failure immediately (the carriageway goes dark) and can decelerate in a controlled manner; residual light from position lamps/daytime running lights and ambient light remains. A safe stop succeeds for the majority of drivers, but not practically all — hence C2 and not C1. |
 
-**Grenzfalldiskussion (bewusst offengelegt, gefuehrt als `RISK-01`):**
-Mit **E4** statt E3 ergaebe die Einstufungstabelle **ASIL C** statt B. E3 wurde gewaehlt, weil die
-Gefaehrdung an die Kombination *Nacht + unbeleuchtet + Landstrassengeschwindigkeit* gebunden ist,
-nicht an Nachtfahrt allgemein. Dies ist die sensibelste Einzelentscheidung der gesamten HARA — sie
-bestimmt das Ziel-ASIL des Projekts und damit die Zielwerte fuer SPFM, LFM und PMHF, die geforderte
-Unabhaengigkeit und die Strukturabdeckung in der Software. Sie ist im Confirmation Review von SG-01
-ausdruecklich zu bestaetigen.
+**Borderline discussion (deliberately disclosed, tracked as `RISK-01`):**
+With **E4** instead of E3 the determination table would yield **ASIL C** instead of B. E3 was chosen
+because the hazard is bound to the combination *night + unlit + rural-road speed*, not to night
+driving in general. This is the most sensitive single decision of the entire HARA — it determines
+the target ASIL of the project and thereby the target values for SPFM, LFM and PMHF, the required
+independence and the structural coverage in software. It must be explicitly confirmed in the
+confirmation review of SG-01.
 
-### H-02 und H-03 — Blendung durch Fernlicht bzw. Arbeitsscheinwerfer
+### H-02 and H-03 — Glare from high beam or work lamps
 
-| | Einstufung | Begruendung |
+| | Rating | Rationale |
 |---|---|---|
-| **S** | S3 | Blendung des Gegenverkehrs kann zur Frontalkollision fuehren; bei Beteiligung eines 18-t-Zugs sind toedliche Verletzungen wahrscheinlich. |
-| **E** | E2 | Die Gefaehrdung setzt gleichzeitig Nacht, Gegenverkehr und einen Fehlerfall voraus — geringe Exposition. |
-| **C** | C2 | Der geblendete Fahrer kann typischerweise durch Verzoegern und Spurhalten reagieren; die Blendung ist kurzzeitig und wird als solche erkannt. |
+| **S** | S3 | Glare to oncoming traffic can cause a head-on collision; with an 18 t combination involved, fatal injuries are likely. |
+| **E** | E2 | The hazard requires night, oncoming traffic and a fault to coincide — low exposure. |
+| **C** | C2 | The dazzled driver can typically respond by decelerating and holding the lane; the glare is brief and recognised as such. |
 
-### H-04 — Unbeabsichtigtes Abschalten
+### H-04 — Unintended deactivation
 
-Wirkung identisch zu H-01, daher gleiche Einstufung **S3/E3/C2**. Unterschied ist die Fehlerklasse:
-H-01 ist ein Ausfall, H-04 eine unbeabsichtigte Deaktivierung. Beide fuehren auf **SG-01**, werden
-aber durch unterschiedliche Sicherheitsanforderungen adressiert (`FSR-001` gegenueber `FSR-002`).
+The effect is identical to H-01, hence the same rating **S3/E3/C2**. The difference is the fault
+class: H-01 is a failure, H-04 an unintended deactivation. Both lead to **SG-01** but are addressed
+by different safety requirements (`FSR-001` versus `FSR-002`).
 
-### H-05 — Leuchtweitenregulierung zu hoch
+### H-05 — Headlamp levelling too high
 
-**S2** — die Blendung baut sich weniger abrupt auf als bei H-02, dem Gegenverkehr bleibt
-Reaktionszeit; schwere, aber ueberlebbare Verletzungen sind der wahrscheinlichere Ausgang.
-**E3** — betrifft grundsaetzlich jede Nachtfahrt mit Gegenverkehr.
-**C2** — beherrschbar durch Verzoegern.
+**S2** — the glare builds up less abruptly than in H-02, leaving oncoming traffic reaction time;
+severe but survivable injuries are the more likely outcome.
+**E3** — affects essentially every night drive with oncoming traffic.
+**C2** — controllable by decelerating.
 
-### H-06 — Ausfall Tagfahrlicht (Ergebnis QM)
+### H-06 — Failure of the daytime running lights (result QM)
 
-**S1** — ein 18-t-Fahrzeug bleibt bei Tag und guter Sicht durch seine Silhouette gut erkennbar;
-allenfalls leichte Verletzungen sind zu erwarten.
-**E3** — Tagfahrt bei guter Sicht ist haeufig, der Ausfall selbst ist jedoch die Voraussetzung.
-**C1** — die Situation ist von praktisch allen Verkehrsteilnehmern beherrschbar.
+**S1** — an 18 t vehicle remains clearly visible by its silhouette in daylight and good visibility;
+at most light injuries are to be expected.
+**E3** — daytime driving in good visibility is frequent, though the failure itself is the precondition.
+**C1** — the situation is controllable by practically all road users.
 
-> **Ergebnis QM — es entsteht kein Safety Goal.** Die zugehoerige Anforderung bleibt gesetzlich
-> relevant (ECE R48, Schaltvorschrift Tagfahrlicht), aber nicht sicherheitsrelevant im Sinne der
-> ISO 26262. Dieser Fall ist bewusst enthalten, um zu zeigen, dass nicht jede Gefaehrdung in ein
-> Safety Goal muendet.
+> **Result QM — no safety goal arises.** The associated requirement remains legally relevant
+> (ECE R48, daytime running light switching requirement) but is not safety-relevant in the sense of
+> ISO 26262. This case is included deliberately to show that not every hazard leads to a safety goal.
 
-### H-07 — Kurvenlicht schwenkt in die Gegenfahrbahn
+### H-07 — Cornering light swivels into the oncoming lane
 
-**S2** — Blendung mit Reaktionszeit, wie H-05.
-**E2** — setzt Kurvenfahrt bei Nacht mit Gegenverkehr und Fehlerfall voraus.
-**C3** — die Fehlausrichtung tritt unerwartet auf und ist vom betroffenen Fahrer selbst nicht
-korrigierbar; er kann lediglich verzoegern. Daher schwer beherrschbar.
+**S2** — glare with remaining reaction time, as H-05.
+**E2** — requires cornering at night with oncoming traffic and a fault.
+**C3** — the misalignment occurs unexpectedly and cannot be corrected by the affected driver
+himself; he can only decelerate. Therefore difficult to control.
 
 ---
 
-## 4 Abgeleitete Safety Goals
+## 4 Derived safety goals
 
-| ID | Formulierung | ASIL | Safe State | FTTI | Fault Reaction Time | Quelle |
+| ID | Wording | ASIL | Safe state | FTTI | Fault reaction time | Source |
 |---|---|---|---|---|---|---|
-| **SG-01** | Kein unerkannter Ausfall des Abblendlichts waehrend der Fahrt | **B** | Notlaufbetrieb: verbleibende Kanaele aktiv mit reduzierter Leistung, Fahrerwarnung aktiv, DTC gesetzt | **300 ms** | **150 ms** | H-01, H-04 |
-| **SG-02** | Keine unbeabsichtigte Blendung anderer Verkehrsteilnehmer durch Fernlicht oder Arbeitsscheinwerfer | **A** | Fernlicht und Arbeitsscheinwerfer deaktiviert, Abblendlicht bleibt aktiv | 500 ms | 250 ms | H-02, H-03, H-05, H-07 |
+| **SG-01** | No undetected failure of the low beam while driving | **B** | Limp-home operation: remaining channels active at reduced power, driver warning active, DTC stored | **300 ms** | **150 ms** | H-01, H-04 |
+| **SG-02** | No unintended glare to other road users caused by high beam or work lamps | **A** | High beam and work lamps deactivated, low beam remains active | 500 ms | 250 ms | H-02, H-03, H-05, H-07 |
 
-Datensaetze: [`../03_fsc/SG-01.md`](../03_fsc/SG-01.md) · [`../03_fsc/SG-02.md`](../03_fsc/SG-02.md)
+Records: [`../03_fsc/SG-01.md`](../03_fsc/SG-01.md) · [`../03_fsc/SG-02.md`](../03_fsc/SG-02.md)
 
-### Begruendung des Safe State von SG-01
+### Rationale for the safe state of SG-01
 
-"Licht aus" waere der falsche sichere Zustand — er *ist* die Gefaehrdung. Der Safe State ist
-deshalb *degradiert sichtbar*: der intakte Kanal wird weiterbetrieben (`FSR-003`), der Fahrer wird
-gewarnt (`FSR-004`) und kann die Fahrt kontrolliert beenden. Genau diese Warnung traegt die
-C2-Einstufung von H-01. Damit ist Annahme **`A-03`** (Fahrerreaktion auf die Warnung)
-sicherheitsrelevant und Validierungsziel auf Fahrzeugebene, nicht nur eine Randnotiz.
+"Lights off" would be the wrong safe state — it *is* the hazard. The safe state is therefore
+*degraded but visible*: the intact channel keeps operating (`FSR-003`), the driver is warned
+(`FSR-004`) and can end the journey in a controlled manner. It is precisely this warning that
+underpins the C2 rating of H-01. Assumption **`A-03`** (driver response to the warning) is thereby
+safety-relevant and a validation target at vehicle level, not a side note.
 
-### Zeitbudget SG-01
+### Timing budget SG-01
 
 ```
-Erkennung        SM-01:  50 ms Schwellwert + 20 ms Entprellung  =  70 ms
-Fehlerreaktion   Uebergang in den Notlauf                       = 150 ms   (Fault Reaction Time)
-                                                          Summe = 220 ms
-FTTI                                                            = 300 ms
-Reserve                                                         =  80 ms   (27 %)
+Detection       SM-01:  50 ms threshold + 20 ms debounce      =  70 ms
+Fault reaction  transition to limp-home                       = 150 ms   (fault reaction time)
+                                                        Total = 220 ms
+FTTI                                                          = 300 ms
+Margin                                                        =  80 ms   (27 %)
 ```
 
-Das Budget schliesst gegen die in `SG-01` und `SM-01` hinterlegten Werte. Die 2 s Fahrerwarnung aus
-`CR-007` / `FSR-004` liegen **ausserhalb** dieses Budgets: sie sind Informationsanforderung, nicht
-Fehlerreaktion. Diese Trennung ist bindend — sonst wird gegen die falsche Zeitschranke ausgelegt.
+The budget closes against the values held in `SG-01` and `SM-01`. The 2 s driver warning from
+`CR-007` / `FSR-004` lies **outside** this budget: it is an information requirement, not a fault
+reaction. This separation is binding — otherwise the design is dimensioned against the wrong
+time limit.
 
 ---
 
-## 5 Verwendete Annahmen
+## 5 Assumptions used
 
-| ID | Annahme | Sicherheitsrelevant |
+| ID | Assumption | Safety-relevant |
 |---|---|---|
-| `A-03` | Der Fahrer reagiert auf die optische Warnung innerhalb der angenommenen Reaktionszeit | ja — traegt die C-Einstufung von H-01 |
-| `A-05` | Objekterkennung fuer das blendfreie Fernlicht liegt ausserhalb der Item-Grenze | ja — Teil der SG-02-Kette |
-| `A-06` | Lichtschalterstellung und Zuendungsstatus kommen als Bussignale | ja |
-| `A-07` | Nutzungsprofil N3-Fernverkehr mit ueberwiegendem Nachtanteil im Winterhalbjahr | ja — Grundlage der E-Einstufung |
+| `A-03` | The driver responds to the visual warning within the assumed reaction time | yes — underpins the C rating of H-01 |
+| `A-05` | Object detection for the glare-free high beam lies outside the item boundary | yes — part of the SG-02 chain |
+| `A-06` | Light switch position and ignition status arrive as bus signals | yes |
+| `A-07` | Usage profile N3 long-haul with a predominant night share in the winter half-year | yes — basis of the E rating |
 
-Vollstaendige Liste: [`../../09_process/assumptions.md`](../../09_process/assumptions.md)
+Full list: [`../../09_process/assumptions.md`](../../09_process/assumptions.md)
 
 ---
 
-## 6 Offene Punkte
+## 6 Open points
 
-| ID | Punkt | Owner |
+| ID | Point | Owner |
 |---|---|---|
-| OP-7 / `RISK-01` | E-Einstufung von H-01 (E3 gegenueber E4) im Confirmation Review bestaetigen | safety-manager |
-| OP-9 | `A-03` als Validierungsziel auf Fahrzeugebene einplanen | verification-engineer |
-| OP-10 | Schnittstellenvereinbarung (DIA) zur Objekterkennung ausserhalb der Item-Grenze | safety-manager |
-| OP-13 | Rollenmodell und Unabhaengigkeitsgrade fehlen (Phase 0 uebersprungen) — Voraussetzung fuer das Confirmation Review dieser HARA | safety-manager |
+| OP-7 / `RISK-01` | Confirm the E rating of H-01 (E3 versus E4) in the confirmation review | safety-manager |
+| OP-9 | Plan `A-03` as a validation target at vehicle level | verification-engineer |
+| OP-10 | Interface agreement (DIA) for the object detection outside the item boundary | safety-manager |
+| OP-13 | Role model and independence levels are missing (phase 0 skipped) — a precondition for the confirmation review of this HARA | safety-manager |
 
 ---
 
-**Work Products:** `hara.md`, `betriebssituationen.md`, `sec_klassifikation.md` → `02_safety/02_hara/`
-**Prozessbezug:** ISO 26262 **Part 3** (Hazard Analysis and Risk Assessment, Safety Goals) ·
-**Part 2** (Confirmation Review der HARA) · ASPICE **SYS.1/SYS.2** als Anforderungsgrundlage.
+**Work products:** `hara.md`, `operational_situations.md`, `sec_classification.md` → `02_safety/02_hara/`
+**Process reference:** ISO 26262 **Part 3** (Hazard Analysis and Risk Assessment, Safety Goals) ·
+**Part 2** (confirmation review of the HARA) · ASPICE **SYS.1/SYS.2** as the requirements basis.
