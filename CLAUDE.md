@@ -34,11 +34,15 @@ Mark sections visibly: `🔍 DEEP DIVE` (detail) and `📋 ÜBERSICHT` (overview
 
 ## ID scheme (never reuse, never silently change)
 
-`CR-` customer req · `SYS-REQ-` system req · `SG-` safety goal · `FSR-` functional safety req ·
-`TSR-` technical safety req · `HW-REQ-` · `SW-REQ-` · `SM-` safety mechanism · `TC-` test case ·
-`A-` assumption · `RISK-` risk
+`CR-` customer req · `SYS-REQ-` system req · `H-` hazard (HARA) · `SG-` safety goal ·
+`FSR-` functional safety req · `TSR-` technical safety req · `HW-REQ-` · `SW-REQ-` ·
+`SM-` safety mechanism · `TC-` test case · `A-` assumption · `RISK-` risk
 
-Numbering is 3-digit zero-padded (`CR-001`), safety goals 2-digit (`SG-01`).
+Numbering is 3-digit zero-padded (`CR-001`), safety goals and hazards 2-digit (`SG-01`, `H-01`).
+
+`H-` records are the machine-readable form of the HARA rows: they carry situation, malfunction,
+S/E/C, resulting ASIL and the safety goal. Every hazard with an ASIL other than QM must have a
+safety goal deriving from it (`derived_from: [H-xx]`) — the trace check enforces this.
 
 ## Hard rules
 

@@ -43,6 +43,10 @@ TITLES = {
         "Systemanforderungen (SYS-REQ)",
         "Abgeleitet aus CR und FSR, ASPICE SYS.2.",
     ),
+    "02_safety/02_hara": (
+        "Gefaehrdungen (H)",
+        "Strukturierte Form der HARA-Zeilen, ISO 26262-3. Herleitung und Methodik in hara.md.",
+    ),
     "02_safety/03_fsc": (
         "Safety Goals und Functional Safety Concept (SG, FSR)",
         "ISO 26262-3. Safety Goals mit Safe State und FTTI, daraus abgeleitete FSR.",

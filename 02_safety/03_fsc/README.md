@@ -16,8 +16,8 @@ ISO 26262-3. Safety Goals mit Safe State und FTTI, daraus abgeleitete FSR.
 | [FSR-006](FSR-006.md) | Das Beleuchtungssystem soll aus den gemeldeten Objektdaten den zu deaktivierenden Fernlichtbereich bestimmen und ansteuern. | sicherheit | QM(A) | draft | FSR-005 | — |
 | [FSR-007](FSR-007.md) | Wenn der Fernlichtzustand der gemeldeten Verkehrssituation widerspricht, soll ein vom Ansteuerpfad unabhaengiger Monitor das Fern… | sicherheit | A(A) | draft | FSR-005 | — |
 | [FSR-008](FSR-008.md) | Solange die Fahrzeuggeschwindigkeit 10 km/h ueberschreitet, soll das Beleuchtungssystem die Aktivierung der Arbeitsscheinwerfer u… | sicherheit | A | draft | SG-02, CR-004 | — |
-| [SG-01](SG-01.md) | Kein unerkannter Ausfall des Abblendlichts waehrend der Fahrt. | safety-goal | B | reviewed | HARA H-01 | TC-021 |
-| [SG-02](SG-02.md) | Keine unbeabsichtigte Blendung anderer Verkehrsteilnehmer durch Fernlicht oder Arbeitsscheinwerfer. | safety-goal | A | draft | HARA H-02, H-03, H-05, H-07 | — |
+| [SG-01](SG-01.md) | Kein unerkannter Ausfall des Abblendlichts waehrend der Fahrt. | safety-goal | B | reviewed | H-01, H-04 | TC-021 |
+| [SG-02](SG-02.md) | Keine unbeabsichtigte Blendung anderer Verkehrsteilnehmer durch Fernlicht oder Arbeitsscheinwerfer. | safety-goal | A | draft | H-02, H-03, H-05, H-07 | — |
 
 **Status:** draft: 8 · reviewed: 2
 

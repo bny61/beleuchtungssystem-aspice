@@ -112,7 +112,8 @@ Claude picks them up automatically.
 
 `orphan` · `dangling` · `untested` · `unallocated` (ASIL ≠ QM without allocation) · `asil-drop`
 (derived requirement below its parent's ASIL without decomposition) · `duplicate-id` ·
-`sg-uncovered` (safety goal with no FSR) · `id-scheme`.
+`sg-uncovered` (safety goal with no FSR) · `hazard-uncovered` (hazard with ASIL ≠ QM and no safety
+goal) · `id-scheme`.
 
 Exit code 1 on findings — that is what makes it usable as a required check.
 
