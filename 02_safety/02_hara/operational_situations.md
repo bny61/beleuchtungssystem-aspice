@@ -1,51 +1,51 @@
-# Betriebssituationen (Situationskatalog)
+# Operational situations (situation catalogue)
 
-Grundlage der Gefaehrdungsanalyse in [`hara.md`](hara.md). Der Katalog entsteht als Kreuzprodukt
-**Fahrsituation x Betriebsmodus x Umgebung** und wird anschliessend auf die Kombinationen reduziert,
-die fuer die Beleuchtungsfunktionen relevant sind.
+Basis of the hazard analysis in [`hara.md`](hara.md). The catalogue is formed as the cross product
+**driving situation x operating mode x environment** and then reduced to the combinations relevant
+to the lighting functions.
 
-> Werte sind plausible Beispielwerte eines Lehrprojekts, keine validierten Nutzungsdaten.
-> Grundlage des Nutzungsprofils ist Annahme `A-07`.
+> Values are plausible example values of a teaching project, not validated usage data.
+> The usage profile is based on assumption `A-07`.
 
-## 1 Dimensionen
+## 1 Dimensions
 
-| Dimension | Auspraegungen |
+| Dimension | Values |
 |---|---|
-| **Fahrsituation** | Stillstand · Rangieren (< 10 km/h) · Stadt (50 km/h) · Landstrasse (80 km/h) · Autobahn (85 km/h) |
-| **Betriebsmodus** | Tagfahrlicht · Abblendlicht · Fernlicht · Kurvenlicht · Arbeitsscheinwerfer · Notlauf |
-| **Umgebung** | Tag / Daemmerung / Nacht · beleuchtet / unbeleuchtet · trocken / Regen / Nebel · Gegenverkehr ja / nein |
+| **Driving situation** | standstill · manoeuvring (< 10 km/h) · urban (50 km/h) · rural road (80 km/h) · motorway (85 km/h) |
+| **Operating mode** | daytime running lights · low beam · high beam · cornering light · work lamps · limp-home |
+| **Environment** | day / dusk / night · lit / unlit · dry / rain / fog · oncoming traffic yes / no |
 
-Das vollstaendige Kreuzprodukt umfasst mehrere hundert Kombinationen. Reduziert wurde nach zwei
-Kriterien: (1) technisch moegliche Kombination, (2) Relevanz fuer mindestens eine Lichtfunktion.
-Kombinationen ohne Gefaehrdungspotenzial (z. B. Stillstand mit Tagfahrlicht bei Tag) sind bewusst
-nicht gefuehrt.
+The full cross product spans several hundred combinations. It was reduced by two criteria:
+(1) the combination is technically possible, (2) it is relevant to at least one lighting function.
+Combinations without hazard potential (e.g. standstill with daytime running lights in daylight) are
+deliberately not carried.
 
-## 2 Relevante Betriebssituationen
+## 2 Relevant operational situations
 
-| ID | Fahrsituation | Betriebsmodus | Umgebung | Verwendet in |
+| ID | Driving situation | Operating mode | Environment | Used in |
 |---|---|---|---|---|
-| **BS-01** | Landstrasse, 80 km/h | Abblendlicht aktiv | Nacht, unbeleuchtet, trocken | H-01, H-03, H-05 |
-| **BS-02** | Landstrasse, 80 km/h | Fernlicht aktiv | Nacht, Gegenverkehr | H-02 |
-| **BS-03** | Autobahn, 85 km/h | Abblendlicht aktiv | Nacht, Regen | H-04 |
-| **BS-04** | Baustelle / Hof, < 10 km/h | Arbeitsscheinwerfer aktiv | Nacht | — (bestimmungsgemaesse Nutzung) |
-| **BS-05** | Stadtverkehr, 50 km/h | Abblendlicht + Kurvenlicht | Nacht, beleuchtet | H-07 |
-| **BS-06** | Landstrasse, 80 km/h | Tagfahrlicht aktiv | Tag, gute Sicht | H-06 |
-| **BS-07** | Stillstand, Zuendung EIN | Arbeitsscheinwerfer aktiv | Nacht, Ladestelle | — (bestimmungsgemaesse Nutzung) |
+| **BS-01** | Rural road, 80 km/h | Low beam active | Night, unlit, dry | H-01, H-03, H-05 |
+| **BS-02** | Rural road, 80 km/h | High beam active | Night, oncoming traffic | H-02 |
+| **BS-03** | Motorway, 85 km/h | Low beam active | Night, rain | H-04 |
+| **BS-04** | Construction site / yard, < 10 km/h | Work lamps active | Night | — (intended use) |
+| **BS-05** | Urban traffic, 50 km/h | Low beam + cornering light | Night, lit | H-07 |
+| **BS-06** | Rural road, 80 km/h | Daytime running lights active | Day, good visibility | H-06 |
+| **BS-07** | Standstill, ignition on | Work lamps active | Night, loading point | — (intended use) |
 
-**BS-04** und **BS-07** fuehren auf keine Gefaehrdung, weil der Arbeitsscheinwerferbetrieb dort
-bestimmungsgemaess ist. Sie bleiben im Katalog, weil sie die Abgrenzung zu H-03 begruenden: erst die
-Kombination *Arbeitsscheinwerfer aktiv* mit *Fahrbetrieb* ist gefaehrdend, nicht der Betriebsmodus
-an sich. Genau diese Unterscheidung realisiert `FSR-008` ueber die Geschwindigkeitsschwelle.
+**BS-04** and **BS-07** lead to no hazard because work-lamp operation is intended there. They remain
+in the catalogue because they justify the delimitation against H-03: only the combination of *work
+lamps active* with *driving operation* is hazardous, not the operating mode as such. It is exactly
+this distinction that `FSR-008` implements via the speed threshold.
 
-## 3 Nutzungsprofil (Grundlage der E-Einstufung)
+## 3 Usage profile (basis of the E rating)
 
-| Situation | Geschaetzter Anteil an der Betriebsdauer | Einstufung |
+| Situation | Estimated share of operating time | Rating |
 |---|---|---|
-| Nachtfahrt gesamt | ca. 25 % | — |
-| davon Nachtfahrt auf unbeleuchteter Landstrasse (BS-01) | wenige Prozent | **E3** |
-| Nachtfahrt mit Gegenverkehr und aktivem Fernlicht (BS-02) | gering | **E2** |
-| Tagfahrt bei guter Sicht (BS-06) | ueberwiegend | **E3** im Kontext von H-06 |
+| Night driving overall | approx. 25 % | — |
+| Of which night driving on unlit rural roads (BS-01) | a few percent | **E3** |
+| Night driving with oncoming traffic and high beam active (BS-02) | low | **E2** |
+| Daytime driving in good visibility (BS-06) | predominant | **E3** in the context of H-06 |
 
-> Die Zuordnung *unbeleuchtete Landstrasse bei Nacht* zu **E3** statt E4 ist die kritische
-> Entscheidung der HARA und wird als `RISK-01` gefuehrt. Eine Bestaetigung durch reale
-> Nutzungsdaten des OEM steht aus (`A-07`).
+> Assigning *unlit rural road at night* to **E3** rather than E4 is the critical decision of the
+> HARA and is tracked as `RISK-01`. Confirmation through real OEM usage data is outstanding
+> (`A-07`).
