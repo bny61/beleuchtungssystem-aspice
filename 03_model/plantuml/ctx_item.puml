@@ -1,0 +1,40 @@
+@startuml ctx_item
+title Kontextdiagramm - Item "Adaptives Front-Beleuchtungssystem" (ISO 26262-3, Item Definition)
+skinparam rectangle {BackgroundColor White}
+skinparam componentStyle rectangle
+
+rectangle "ITEM-GRENZE" as ITEM #LightYellow {
+  rectangle "Lighting-ECU\n(ECU_LightingCtrl)" as ECU
+  rectangle "LED-Treiberstufen\n(LED_Driver_Stage_1..n)" as DRV
+  rectangle "Strom- / Temperatursensorik" as SENS
+  rectangle "Scheinwerfermodule\nAbblend- / Fernlicht / Kurvenlicht" as LAMP
+  rectangle "Arbeitsscheinwerfer-\nEndstufen" as WORK
+  ECU --> DRV
+  DRV --> LAMP
+  DRV --> WORK
+  SENS --> ECU
+  DRV --> SENS
+}
+
+actor "Fahrer" as DRIVER
+actor "Werkstatt" as SERVICE
+rectangle "Fahrzeug-Gateway\n(CAN FD / J1939)" as GW #LightGray
+rectangle "Bordnetz 24 V" as PWR #LightGray
+rectangle "Umfeldsensorik\n(Objekterkennung)" as CAM #LightGray
+rectangle "Kombiinstrument\n(Fahrerwarnung)" as HMI #LightGray
+
+DRIVER --> GW : Lichtschalter, Zuendung
+GW --> ECU : Lichtanforderung, v_Fzg, Lenkwinkel
+CAM --> GW : Objektliste (A-05)
+ECU --> GW : Status, Fehlerreaktion
+ECU --> HMI : Warnung (FSR-004)
+SERVICE --> ECU : UDS-Diagnose (ISO 14229)
+PWR --> ECU : KL30 / KL15, 16-32 V
+LAMP --> DRIVER : Lichtverteilung nach vorn
+
+note bottom of ITEM
+  Grau = ausserhalb der Item-Grenze.
+  Annahmen A-05 (Objektdaten) und A-06 (Schalter-/Zuendungssignale)
+  gelten fuer die externen Schnittstellen.
+end note
+@enduml
