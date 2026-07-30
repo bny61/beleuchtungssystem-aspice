@@ -1,10 +1,10 @@
 name: Traceability & Requirements Gate
 
-# ASPICE: SUP.1 (QA), SUP.8 (Konfigurationsmanagement), SYS.2/SYS.5 (Traceability)
-# ISO 26262: Part 8 (Requirements Management) -- erzeugt auditierbaren Nachweis pro PR.
+# ASPICE: SUP.1 (QA), SUP.8 (configuration management), SYS.2/SYS.5 (traceability)
+# ISO 26262: Part 8 (requirements management) -- produces auditable evidence per PR.
 #
-# Der Job ist ein Required Check in den Branch Protection Rules: ohne gruenen Lauf
-# ist kein Merge nach main moeglich (technisch erzwungene Freigabe, SUP.4).
+# This job is a required check in the branch protection rules: without a green run
+# no merge into main is possible (technically enforced approval, SUP.4).
 
 on:
   pull_request:
@@ -19,20 +19,20 @@ permissions:
 
 jobs:
   traceability:
-    name: Traceability-Konsistenzpruefung
+    name: Traceability consistency check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (volle Historie fuer Baseline-Bezug)
+      - name: Checkout (full history for baseline reference)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Python bereitstellen
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Traceability pruefen und Matrix erzeugen
+      - name: Check traceability and generate matrix
         id: trace
         run: |
           set -o pipefail
@@ -41,11 +41,11 @@ jobs:
             | tee trace_report.txt
         continue-on-error: true
 
-      - name: KPIs als JSON erzeugen
+      - name: Generate KPIs as JSON
         if: always()
         run: python3 tools/trace_check.py --json > trace_report.json || true
 
-      - name: Nachweis als Artefakt aufbewahren
+      - name: Retain evidence as an artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -56,7 +56,7 @@ jobs:
             07_verification/reports/traceability_matrix.md
           retention-days: 90
 
-      - name: Ergebnis als PR-Kommentar
+      - name: Post result as a PR comment
         if: always() && github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
@@ -67,35 +67,35 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '### Traceability-Check\n\n```\n' + report.slice(0, 60000) + '\n```'
+              body: '### Traceability check\n\n```\n' + report.slice(0, 60000) + '\n```'
             });
 
-      - name: Gate durchsetzen
+      - name: Enforce gate
         if: steps.trace.outcome == 'failure'
         run: |
-          echo "::error::Traceability-Findings vorhanden - Merge blockiert."
+          echo "::error::Traceability findings present - merge blocked."
           exit 1
 
   plantuml:
-    name: Modell-Syntaxpruefung
+    name: Model syntax check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: PlantUML installieren
+      - name: Install PlantUML
         run: sudo apt-get update && sudo apt-get install -y plantuml
 
-      - name: PlantUML-Quellen pruefen
+      - name: Check PlantUML sources
         run: |
           shopt -s nullglob
           files=(03_model/plantuml/*.puml)
           if [ ${#files[@]} -eq 0 ]; then
-            echo "Noch keine PlantUML-Quellen vorhanden - Pruefung uebersprungen."
+            echo "No PlantUML sources yet - check skipped."
             exit 0
           fi
           plantuml -checkonly "${files[@]}"
 
-      - name: Modellsichten rendern
+      - name: Render model views
         if: success()
         run: |
           shopt -s nullglob
@@ -104,7 +104,7 @@ jobs:
           mkdir -p 03_model/exports
           plantuml -tsvg -o "$(pwd)/03_model/exports" "${files[@]}"
 
-      - name: Gerenderte Sichten aufbewahren
+      - name: Retain rendered views
         if: always()
         uses: actions/upload-artifact@v4
         with:

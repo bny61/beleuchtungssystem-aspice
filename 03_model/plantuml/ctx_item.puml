@@ -1,14 +1,14 @@
 @startuml ctx_item
-title Kontextdiagramm - Item "Adaptives Front-Beleuchtungssystem" (ISO 26262-3, Item Definition)
+title Context diagram - Item "Adaptive front-lighting system" (ISO 26262-3, Item Definition)
 skinparam rectangle {BackgroundColor White}
 skinparam componentStyle rectangle
 
-rectangle "ITEM-GRENZE" as ITEM #LightYellow {
+rectangle "ITEM BOUNDARY" as ITEM #LightYellow {
   rectangle "Lighting-ECU\n(ECU_LightingCtrl)" as ECU
-  rectangle "LED-Treiberstufen\n(LED_Driver_Stage_1..n)" as DRV
-  rectangle "Strom- / Temperatursensorik" as SENS
-  rectangle "Scheinwerfermodule\nAbblend- / Fernlicht / Kurvenlicht" as LAMP
-  rectangle "Arbeitsscheinwerfer-\nEndstufen" as WORK
+  rectangle "LED driver stages\n(LED_Driver_Stage_1..n)" as DRV
+  rectangle "Current / temperature sensing" as SENS
+  rectangle "Headlamp modules\nlow / high / cornering" as LAMP
+  rectangle "Work-lamp\noutput stages" as WORK
   ECU --> DRV
   DRV --> LAMP
   DRV --> WORK
@@ -16,25 +16,25 @@ rectangle "ITEM-GRENZE" as ITEM #LightYellow {
   DRV --> SENS
 }
 
-actor "Fahrer" as DRIVER
-actor "Werkstatt" as SERVICE
-rectangle "Fahrzeug-Gateway\n(CAN FD / J1939)" as GW #LightGray
-rectangle "Bordnetz 24 V" as PWR #LightGray
-rectangle "Umfeldsensorik\n(Objekterkennung)" as CAM #LightGray
-rectangle "Kombiinstrument\n(Fahrerwarnung)" as HMI #LightGray
+actor "Driver" as DRIVER
+actor "Workshop" as SERVICE
+rectangle "Vehicle gateway\n(CAN FD / J1939)" as GW #LightGray
+rectangle "Vehicle supply 24 V" as PWR #LightGray
+rectangle "Environment sensing\n(object detection)" as CAM #LightGray
+rectangle "Instrument cluster\n(driver warning)" as HMI #LightGray
 
-DRIVER --> GW : Lichtschalter, Zuendung
-GW --> ECU : Lichtanforderung, v_Fzg, Lenkwinkel
-CAM --> GW : Objektliste (A-05)
-ECU --> GW : Status, Fehlerreaktion
-ECU --> HMI : Warnung (FSR-004)
-SERVICE --> ECU : UDS-Diagnose (ISO 14229)
+DRIVER --> GW : light switch, ignition
+GW --> ECU : light request, v_veh, steering angle
+CAM --> GW : object list (A-05)
+ECU --> GW : status, fault reaction
+ECU --> HMI : warning (FSR-004)
+SERVICE --> ECU : UDS diagnostics (ISO 14229)
 PWR --> ECU : KL30 / KL15, 16-32 V
-LAMP --> DRIVER : Lichtverteilung nach vorn
+LAMP --> DRIVER : forward light distribution
 
 note bottom of ITEM
-  Grau = ausserhalb der Item-Grenze.
-  Annahmen A-05 (Objektdaten) und A-06 (Schalter-/Zuendungssignale)
-  gelten fuer die externen Schnittstellen.
+  Grey = outside the item boundary.
+  Assumptions A-05 (object data) and A-06 (switch / ignition signals)
+  apply to the external interfaces.
 end note
 @enduml

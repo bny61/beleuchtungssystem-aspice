@@ -35,8 +35,8 @@ SEARCH_DIRS = [
 
 ID_PATTERN = re.compile(r"^(CR|SYS-REQ|SG|FSR|TSR|HW-REQ|SW-REQ|SM|TC|A|RISK|H)-\d+")
 
-# Datensatzarten, die keine Anforderung sind: Gefaehrdungen, Testfaelle, Annahmen, Risiken.
-# Fuer sie gelten die Anforderungspruefungen (untested, unallocated, orphan) nicht.
+# Record kinds that are not requirements: hazards, test cases, assumptions, risks.
+# The requirement checks (untested, unallocated, orphan) do not apply to them.
 NON_REQUIREMENT_KINDS = ("TC", "A", "RISK", "H")
 
 ASIL_ORDER = {"QM": 0, "A": 1, "B": 2, "C": 3, "D": 4}
@@ -135,7 +135,7 @@ def load_records(root: Path) -> tuple[dict, list]:
                 text = path.read_text(encoding="utf-8")
             except OSError as exc:  # pragma: no cover - IO edge case
                 findings.append(
-                    finding("io", "major", str(path), f"Datei nicht lesbar: {exc}")
+                    finding("io", "major", str(path), f"File not readable: {exc}")
                 )
                 continue
             fm = parse_front_matter(text)
@@ -147,7 +147,7 @@ def load_records(root: Path) -> tuple[dict, list]:
 
             if not ID_PATTERN.match(rid):
                 findings.append(
-                    finding("id-scheme", "major", rel, f"ID '{rid}' folgt nicht dem ID-Schema")
+                    finding("id-scheme", "major", rel, f"ID '{rid}' does not follow the ID scheme")
                 )
             if rid in records:
                 findings.append(
@@ -155,7 +155,7 @@ def load_records(root: Path) -> tuple[dict, list]:
                         "duplicate-id",
                         "blocker",
                         rel,
-                        f"ID '{rid}' bereits vergeben in {records[rid]['_file']}",
+                        f"ID '{rid}' already used in {records[rid]['_file']}",
                     )
                 )
                 continue
@@ -206,13 +206,13 @@ def check(records: dict) -> list[dict]:
 
         if status not in STATUS_VALUES:
             findings.append(
-                finding("status", "minor", where, f"Unbekannter Status '{status}'")
+                finding("status", "minor", where, f"Unknown status '{status}'")
             )
 
         # orphan: everything except CR, SG, A, RISK needs an upstream link
         if kind not in ("CR", "SG", "H", "A", "RISK", "TC") and not rec["derived_from"]:
             findings.append(
-                finding("orphan", "major", where, "Kein 'derived_from' - Anforderung ohne Quelle")
+                finding("orphan", "major", where, "No 'derived_from' - requirement without a source")
             )
 
         # dangling references
@@ -224,7 +224,7 @@ def check(records: dict) -> list[dict]:
                             "dangling",
                             "major",
                             where,
-                            f"{field} verweist auf unbekannte ID '{ref}'",
+                            f"{field} references unknown ID '{ref}'",
                         )
                     )
 
@@ -235,7 +235,7 @@ def check(records: dict) -> list[dict]:
                     "untested",
                     "major",
                     where,
-                    f"Status '{status}' ohne 'verified_by' - kein Verifikationsnachweis",
+                    f"Status '{status}' without 'verified_by' - no verification evidence",
                 )
             )
 
@@ -248,7 +248,7 @@ def check(records: dict) -> list[dict]:
                         "unallocated",
                         "major",
                         where,
-                        f"ASIL {asil} ohne 'allocated_to' - keine Zuordnung zu einem Element",
+                        f"ASIL {asil} without 'allocated_to' - not allocated to an element",
                     )
                 )
 
@@ -268,12 +268,12 @@ def check(records: dict) -> list[dict]:
                             "asil-drop",
                             "blocker",
                             where,
-                            f"ASIL {asil} niedriger als Elternanforderung {parent} "
-                            f"(ASIL {prec.get('asil')}) ohne Dekompositionsnachweis",
+                            f"ASIL {asil} lower than parent requirement {parent} "
+                            f"(ASIL {prec.get('asil')}) without decomposition evidence",
                         )
                     )
 
-        # hazard coverage: jede Gefaehrdung mit ASIL != QM braucht ein Safety Goal
+        # hazard coverage: jede Hazard with ASIL != QM braucht ein Safety Goal
         if kind == "H":
             rank = asil_rank(asil)
             if rank is not None and rank > 0:
@@ -284,7 +284,7 @@ def check(records: dict) -> list[dict]:
                             "hazard-uncovered",
                             "blocker",
                             where,
-                            f"Gefaehrdung mit ASIL {asil} ohne abgeleitetes Safety Goal",
+                            f"Hazard with ASIL {asil} without a derived safety goal",
                         )
                     )
 
@@ -293,7 +293,7 @@ def check(records: dict) -> list[dict]:
             fsrs = [c for c in derived_children.get(rid, []) if c.startswith("FSR-")]
             if not fsrs:
                 findings.append(
-                    finding("sg-uncovered", "blocker", where, "Safety Goal ohne abgeleitete FSR")
+                    finding("sg-uncovered", "blocker", where, "Safety goal without a derived FSR")
                 )
 
     return findings
@@ -320,16 +320,16 @@ def kpis(records: dict) -> dict:
         return f"{n}/{m} = {(100.0 * n / m):.0f} %" if m else f"{n}/0 = n/a"
 
     return {
-        "Anforderungsabdeckung": pct(len(downstream), len(reqs)),
-        "Testabdeckung": pct(len(tested), len(mature)),
-        "Datensaetze gesamt": str(len(records)),
+        "Requirements coverage": pct(len(downstream), len(reqs)),
+        "Test coverage": pct(len(tested), len(mature)),
+        "Records total": str(len(records)),
     }
 
 
 def build_matrix(records: dict) -> str:
-    rows = ["# Traceability-Matrix (generiert)", "",
-            "> Automatisch erzeugt von `tools/trace_check.py` - nicht manuell bearbeiten.", "",
-            "| ID | Typ | ASIL | Status | derived_from | allocated_to | verified_by | Datei |",
+    rows = ["# Traceability matrix (generated)", "",
+            "> Generated automatically by `tools/trace_check.py` - do not edit manually.", "",
+            "| ID | Type | ASIL | Status | derived_from | allocated_to | verified_by | File |",
             "|---|---|---|---|---|---|---|---|"]
     for rid, rec in sorted(records.items()):
         rows.append(
@@ -375,17 +375,17 @@ def main() -> int:
                           "record_count": len(records)}, indent=2, ensure_ascii=False))
         return 1 if findings else 0
 
-    print(f"Traceability-Check - {len(records)} Datensaetze aus {root}")
+    print(f"Traceability check - {len(records)} records from {root}")
     print("-" * 72)
     if not records:
-        print("Keine Requirements-as-Code Datensaetze gefunden.")
-        print("Erwartet: Markdown mit YAML-Front-Matter unter " + ", ".join(SEARCH_DIRS))
+        print("No Requirements-as-Code records found.")
+        print("Expected: Markdown with YAML front matter under " + ", ".join(SEARCH_DIRS))
     for key, value in metrics.items():
         print(f"  {key:<24} {value}")
     print("-" * 72)
 
     if not findings:
-        print("Keine Findings.")
+        print("No findings.")
         return 0
 
     order = {"blocker": 0, "major": 1, "minor": 2, "observation": 3}

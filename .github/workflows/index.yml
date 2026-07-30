@@ -1,13 +1,13 @@
-name: Anforderungs-Uebersichten
+name: Requirement overviews
 
-# Haelt die generierten Ordner-Uebersichten (README.md je Anforderungsordner) aktuell.
-# ASPICE: SUP.8 (Konfigurationsmanagement), SUP.1 (QA)
-# ISO 26262: Part 8 (Requirements Management) -- die Uebersichten sind abgeleitete
-# Artefakte, die Quelle bleibt der jeweilige Datensatz.
+# Keeps the generated folder overviews (README.md per requirement folder) up to date.
+# ASPICE: SUP.8 (configuration management), SUP.1 (QA)
+# ISO 26262: Part 8 (requirements management) -- the overviews are derived
+# artefacts; the source remains the respective record.
 #
-# Zwei Betriebsarten:
-#   Pull Request -> nur pruefen. Veraltete Uebersicht blockiert den Merge.
-#   Push auf main -> neu erzeugen und automatisch zurueckcommitten.
+# Two modes:
+#   Pull request -> check only. A stale overview blocks the merge.
+#   Push to main -> regenerate and commit back automatically.
 
 on:
   pull_request:
@@ -18,7 +18,7 @@ on:
 
 jobs:
   check:
-    name: Uebersichten aktuell?
+    name: Overviews up to date?
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
@@ -26,11 +26,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Aktualitaet pruefen
+      - name: Check freshness
         run: python3 tools/gen_index.py --check
 
   update:
-    name: Uebersichten nachfuehren
+    name: Update overviews
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
@@ -38,27 +38,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # Token mit Schreibrecht, damit der Commit zurueckgeschrieben werden kann
+          # Token with write permission so the commit can be pushed back
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Uebersichten erzeugen
+      - name: Generate overviews
         run: python3 tools/gen_index.py
 
-      - name: Aenderungen zurueckcommitten
+      - name: Commit changes back
         run: |
           if git diff --quiet; then
-            echo "Keine Aenderung an den Uebersichten - nichts zu committen."
+            echo "No change to the overviews - nothing to commit."
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "*/README.md"
-          git commit -m "chore(index): Anforderungs-Uebersichten nachgefuehrt
+          git commit -m "chore(index): update requirement overviews
 
-          Automatisch erzeugt von tools/gen_index.py.
+          Generated automatically by tools/gen_index.py.
           [skip ci]"
           git push

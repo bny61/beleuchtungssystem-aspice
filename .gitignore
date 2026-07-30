@@ -1,4 +1,4 @@
-# Tool-generierte Artefakte: werden von der CI erzeugt, nicht eingecheckt
+# Tool-generated artefacts: produced by CI, not checked in
 03_model/exports/
 trace_report.txt
 trace_report.json

@@ -1,52 +1,52 @@
 name: Change Request (SUP.10)
-description: Aenderung an einem freigegebenen Work Product beantragen
+description: Request a change to a released work product
 title: "[CR] "
 labels: ["change-request", "impact-analysis-required"]
 body:
   - type: input
     id: affected
     attributes:
-      label: Betroffene IDs / Work Products
+      label: Affected IDs / work products
       placeholder: "SYS-REQ-014, SM-01, 03_model/plantuml/stm_lighting.puml"
     validations:
       required: true
   - type: textarea
     id: change
     attributes:
-      label: Beschreibung der Aenderung
+      label: Description of the change
     validations:
       required: true
   - type: textarea
     id: reason
     attributes:
-      label: Begruendung
+      label: Rationale
     validations:
       required: true
   - type: textarea
     id: impact
     attributes:
-      label: Impact-Analyse
-      description: Auswirkung auf Anforderungen, Architektur, Sicherheitsanalysen, Tests, Baseline
+      label: Impact analysis
+      description: Effect on requirements, architecture, safety analyses, tests, baseline
       value: |
-        - Anforderungen:
-        - Architektur / Modell:
-        - Sicherheitsanalysen (FMEA/FTA/FMEDA/DFA):
-        - Tests / Regression:
-        - Betroffene Baseline (Tag):
+        - Requirements:
+        - Architecture / model:
+        - Safety analyses (FMEA/FTA/FMEDA/DFA):
+        - Tests / regression:
+        - Affected baseline (tag):
     validations:
       required: true
   - type: dropdown
     id: safety
     attributes:
-      label: Sicherheitsrelevant?
-      options: ["ja - ASIL B", "ja - QM", "nein"]
+      label: Safety-relevant?
+      options: ["yes - ASIL B", "yes - QM", "no"]
     validations:
       required: true
   - type: checkboxes
     id: gates
     attributes:
-      label: Freigabe
+      label: Approval
       options:
-        - label: Impact-Analyse durchgefuehrt
-        - label: Safety Manager informiert (falls sicherheitsrelevant)
-        - label: Betroffene Tests identifiziert
+        - label: Impact analysis performed
+        - label: Safety manager informed (if safety-relevant)
+        - label: Affected tests identified

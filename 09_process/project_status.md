@@ -1,67 +1,73 @@
-# Projektstatus — Arbeitsstand und offene Punkte
+# Project status — current state and open points
 
-> Diese Datei ist der Wiedereinstiegspunkt. Sie wird am Ende jeder Phase fortgeschrieben.
-> Letzter Stand: nach Phase 2.
+> This file is the re-entry point. It is updated at the end of every phase.
+> Last update: after phase 2.
 
-## Phasenstatus
+## Phase status
 
-| Phase | Inhalt | Status | Federfuehrend |
+| Phase | Content | Status | Lead |
 |---|---|---|---|
-| 0 | Projektrahmen, Stakeholder, Rollen, Tailoring, Glossar | **uebersprungen** | safety-manager, config-manager |
-| 1 | Kundenanforderungen `CR-001 … CR-023` (SYS.1) | **abgeschlossen** (Entwurf) | systems-engineer |
-| 2 | Item Definition, HARA, Safety Goals, FSC (ISO 26262-3) | **abgeschlossen** (Entwurf) | safety-manager |
-| 3 | `SYS-REQ`, `TSR`, E/E-Architektur (SYS.2, SYS.3) | **naechste Phase** | systems-engineer |
-| 4 | MBSE-Modell, MagicGrid, 8 SysML-Sichten | offen | mbse-modeler |
-| 5 | FMEA, DFMEA, FTA, FMEDA, DFA, STPA | offen | safety-analyst |
-| 6 | Hardware (HWE.1–4, Part 5) | offen | hardware-engineer |
-| 7 | Software (SWE.1–6, Part 6) | offen | software-engineer |
-| 8 | Verifikation & Validierung (SYS.4, SYS.5) | offen | verification-engineer |
-| 9 | Safety Case, Confirmation Measures | offen | safety-manager, quality-assessor |
-| 10 | GitHub-Konfigurationsmanagement und Nachweis | teilweise vorbereitet | config-manager |
-| 11 | Traceability & Metriken | offen | config-manager, quality-assessor |
+| 0 | Project frame, stakeholders, roles, tailoring, glossary | **skipped** | safety-manager, config-manager |
+| 1 | Customer requirements `CR-001 … CR-023` (SYS.1) | **complete** (draft) | systems-engineer |
+| 2 | Item definition, HARA, safety goals, FSC (ISO 26262-3) | **complete** (draft) | safety-manager |
+| 3 | `SYS-REQ`, `TSR`, E/E architecture (SYS.2, SYS.3) | **next phase** | systems-engineer |
+| 4 | MBSE model, MagicGrid, 8 SysML views | open | mbse-modeler |
+| 5 | FMEA, DFMEA, FTA, FMEDA, DFA, STPA | open | safety-analyst |
+| 6 | Hardware (HWE.1–4, Part 5) | open | hardware-engineer |
+| 7 | Software (SWE.1–6, Part 6) | open | software-engineer |
+| 8 | Verification & validation (SYS.4, SYS.5) | open | verification-engineer |
+| 9 | Safety case, confirmation measures | open | safety-manager, quality-assessor |
+| 10 | GitHub configuration management and evidence | partly prepared | config-manager |
+| 11 | Traceability & metrics | open | config-manager, quality-assessor |
 
-**Phase 0 wurde uebersprungen** und ist nachzuholen — Rollenmodell, Unabhaengigkeitsgrade und
-Tailoring-Entscheidungen fehlen, werden aber spaetestens fuer Phase 9 gebraucht.
+**Phase 0 was skipped** and needs to be caught up — the role model, independence levels and
+tailoring decisions are missing but will be required at the latest for phase 9.
 
-## Ergebnisse bisher
+## Results so far
 
-- **23 Kundenanforderungen** `CR-001 … CR-023`, alle Kategorien des Lastenhefts abgedeckt.
-  Drei davon (`CR-002`, `CR-005`, `CR-016`) sind **bewusst schwach** formuliert und im
-  `rationale`-Feld als solche markiert (Lehrzweck).
-- **7 Gefaehrdungen** `H-01 … H-07`, davon 6 mit Safety Goal, eine mit Ergebnis QM.
-- **2 Safety Goals**: `SG-01` (ASIL B, Golden Thread) und `SG-02` (ASIL A, zweiter Faden).
-- **8 FSR** `FSR-001 … FSR-008`, inkl. ASIL-Dekomposition `FSR-005 → FSR-006 QM(A) + FSR-007 A(A)`.
-- **Zeitbudget SG-01** geschlossen: 70 ms Erkennung + 150 ms Reaktion = 220 ms < FTTI 300 ms.
-- Traceability-Check gruen, 38 Datensaetze.
-- **Dokumentierte Work Products Phase 2:** `02_safety/01_item_definition/item_definition.md`,
-  `02_safety/02_hara/hara.md`, `betriebssituationen.md`, `sec_klassifikation.md`.
+- **23 customer requirements** `CR-001 … CR-023`, covering all categories of the customer
+  specification. Three of them (`CR-002`, `CR-005`, `CR-016`) are **deliberately weak** and marked
+  as such in the `rationale` field (teaching purpose).
+- **7 hazards** `H-01 … H-07`, six of them with a safety goal, one resulting in QM.
+- **2 safety goals**: `SG-01` (ASIL B, Golden Thread) and `SG-02` (ASIL A, second thread).
+- **8 FSR** `FSR-001 … FSR-008`, incl. the ASIL decomposition
+  `FSR-005 → FSR-006 QM(A) + FSR-007 A(A)`.
+- **Timing budget SG-01** closes: 70 ms detection + 150 ms reaction = 220 ms < FTTI 300 ms.
+- **Documented phase 2 work products:** `02_safety/01_item_definition/item_definition.md`,
+  `02_safety/02_hara/hara.md`, `operational_situations.md`, `sec_classification.md`.
+- Traceability check green, 45 records.
 
-## Offene Punkte
+## Open points
 
-| ID | Punkt | Owner | Faellig |
+| ID | Point | Owner | Due |
 |---|---|---|---|
-| OP-1 | ASIL-Einstufung der `tbd`-Kundenanforderungen aus der HARA nachziehen | systems-engineer | Phase 3 |
-| OP-2 | Verhalten ausserhalb des Bordnetz-Normalbereichs (Unter-/Ueberspannung, Load Dump) fehlt | systems-engineer | Phase 3 |
-| OP-3 | `CR-007` ist nicht atomar (Erkennung + Anzeige); Aenderung nur ueber Requirement-Change-Issue | systems-engineer | vor Baseline |
-| OP-4 | Geforderte Funktionsklasse je ISO-7637-2-Puls in `CR-017` festlegen | hardware-engineer | Phase 6 |
-| OP-5 | Schwache Anforderungen `CR-002`, `CR-005`, `CR-016` vor einer echten Baseline ersetzen | quality-manager | vor Baseline |
-| OP-6 | ASCII-Transliteration in den Datensaetzen auf echte Umlaute normalisieren | config-manager | vor Baseline |
-| OP-7 | `RISK-01`: E-Einstufung H-01 (E3 vs. E4) im Confirmation Review bestaetigen | safety-manager | Phase 9 |
-| OP-8 | `RISK-02`: DFA fuer die Dekomposition von `FSR-005` durchfuehren | safety-analyst | Phase 5 |
-| OP-9 | `A-03` (Fahrerreaktion auf Warnung) als Validierungsziel auf Fahrzeugebene planen | verification-engineer | Phase 8 |
-| OP-10 | Schnittstellenvereinbarung (DIA) zur Objekterkennung ausserhalb der Item-Grenze (`A-05`) | safety-manager | Phase 3 |
-| OP-11 | ~~`RISK-01`/`RISK-02` als Datensaetze anlegen~~ | config-manager | **erledigt** |
-| OP-12 | Kontextdiagramm `ctx_item.puml` syntaktisch pruefen (PlantUML lokal nicht installiert) | mbse-modeler | Phase 4 |
-| OP-14 | ~~HARA und Item Definition waren nur im Chat, nicht als Work Product abgelegt~~ | safety-manager | **erledigt** |
-| OP-13 | Phase 0 nachholen: Rollenmodell, Unabhaengigkeitsgrade, Tailoring, Glossar | safety-manager | vor Phase 9 |
+| OP-1 | Carry the ASIL of the `tbd` customer requirements over from the HARA | systems-engineer | Phase 3 |
+| OP-2 | Behaviour outside the normal supply range (under/overvoltage, load dump) is missing | systems-engineer | Phase 3 |
+| OP-3 | `CR-007` is not atomic (detection + indication); change only via a requirement-change issue | systems-engineer | before baseline |
+| OP-4 | Define the required function class per ISO 7637-2 pulse in `CR-017` | hardware-engineer | Phase 6 |
+| OP-5 | Replace the weak requirements `CR-002`, `CR-005`, `CR-016` before a real baseline | quality-manager | before baseline |
+| OP-6 | ~~Normalise the ASCII transliteration in the records to proper umlauts~~ | config-manager | **obsolete** — resolved by the translation to English |
+| OP-7 | `RISK-01`: confirm the E rating of H-01 (E3 vs. E4) in the confirmation review | safety-manager | Phase 9 |
+| OP-8 | `RISK-02`: perform the DFA for the decomposition of `FSR-005` | safety-analyst | Phase 5 |
+| OP-9 | Plan `A-03` (driver response to the warning) as a validation target at vehicle level | verification-engineer | Phase 8 |
+| OP-10 | Interface agreement (DIA) for the object detection outside the item boundary (`A-05`) | safety-manager | Phase 3 |
+| OP-11 | ~~Create `RISK-01`/`RISK-02` as records~~ | config-manager | **done** |
+| OP-12 | Syntax-check the context diagram `ctx_item.puml` (PlantUML not installed locally) | mbse-modeler | Phase 4 |
+| OP-13 | Catch up phase 0: role model, independence levels, tailoring, glossary | safety-manager | before phase 9 |
+| OP-14 | ~~HARA and item definition existed only in chat, not as work products~~ | safety-manager | **done** |
 
-## Naechster Schritt
+## Next step
 
-**Phase 3** — `SYS-REQ-xxx` aus `CR-xxx` und `FSR-xxx` ableiten, `TSR-xxx` bilden, E/E-Architektur
-mit Schnittstellentabelle und Allokationsmatrix. Dabei zu beachten:
+**Phase 3** — derive `SYS-REQ-xxx` from `CR-xxx` and `FSR-xxx`, form `TSR-xxx`, produce the E/E
+architecture with interface table and allocation matrix. Points to observe:
 
-- `SYS-REQ-014` existiert bereits (Golden Thread) und darf nicht neu vergeben oder umformuliert werden.
-- Die ASIL der Kundenanforderungen aus OP-1 werden hier gesetzt.
-- Elementnamen aus Phase 2 sind bindend: `ECU_LightingCtrl`, `LED_Driver_Stage_1`,
+- `SYS-REQ-014` already exists (Golden Thread) and must not be reassigned or reworded.
+- The ASIL of the customer requirements from OP-1 are set here.
+- Element names from phase 2 are binding: `ECU_LightingCtrl`, `LED_Driver_Stage_1`,
   `SWC_LightManager`, `SWC_HighBeamControl`, `SWC_HighBeamMonitor`, `SWC_WorkLampControl`,
-  `Fahrzeug_Gateway`, `Item_Beleuchtungssystem`.
+  `Vehicle_Gateway`, `Item_LightingSystem`.
+
+> **Language:** the project is English throughout since the translation. German remains only in
+> `09_process/prompts/` — that is the original commissioning document and is deliberately unchanged.
+> Two element names were renamed with the translation: `Item_Beleuchtungssystem` →
+> `Item_LightingSystem` and `Fahrzeug_Gateway` → `Vehicle_Gateway`.
