@@ -1,0 +1,26 @@
+@startuml stm_lighting
+title State machine - Lighting system operating states incl. safe state (SG-01)
+
+[*] --> Init : ignition on
+state Init : self-test of sense chain,\nwatchdog and driver stages
+state Normal_Operation : all lighting functions available
+state Degraded : partial failure detected,\nremaining channels active
+state "Safe state: limp-home" as SAFE #LightBlue
+state Sleep : ignition off,\nquiescent current <= 1 mA
+
+Init --> Normal_Operation : self-test passed
+Init --> SAFE : self-test failed
+Normal_Operation --> Degraded : SM-01 reports open load\n(t <= 80 ms)
+Degraded --> SAFE : fault reaction complete\n(t <= 230 ms < FTTI 300 ms)
+SAFE --> Normal_Operation : fault cleared &&\nignition OFF/ON
+Normal_Operation --> Sleep : ignition off + run-on time
+Sleep --> Init : ignition on
+Normal_Operation --> SAFE : watchdog not served\nwithin 50 ms (TSR-001)
+
+note right of SAFE
+  Safe state is degraded but visible:
+  remaining channel active at reduced
+  power, driver warning active, DTC set.
+  "Lights off" would be the hazard.
+end note
+@enduml

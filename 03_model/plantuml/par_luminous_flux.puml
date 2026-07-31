@@ -1,0 +1,27 @@
+@startuml par_luminous_flux
+title Parametric diagram - Luminous flux vs. junction temperature vs. channel current
+skinparam rectangle {
+  BackgroundColor White
+}
+
+rectangle "<<constraint>>\nLED_Flux_Model\n\nPhi = Phi_ref * (I / I_ref)\n      * (1 - k * (T_j - T_ref))" as C
+
+rectangle "I : channel current\n0.40 ... 1.20 A\n(floor: HW-REQ-008)" as I
+rectangle "T_j : junction temperature\n-40 ... +125 C" as TJ
+rectangle "Phi : luminous flux\nrequired >= 1000 lm\n(ECE R112, CR-010)" as PHI
+rectangle "k = 0.004 1/K\nPhi_ref = 1200 lm at\nI_ref = 1.20 A, T_ref = 25 C\n(A-13, example values)" as P
+
+I --> C : binds I
+TJ --> C : binds T_j
+P --> C : binds parameters
+C --> PHI : yields Phi
+
+note bottom of C
+  Derating: above T_j = 110 C the set point is reduced,
+  but never below 400 mA (HW-REQ-008), otherwise the
+  open-load threshold of 150 mA loses its margin.
+  At I = 0.40 A and T_j = 110 C: Phi ~ 264 lm - below the
+  legal minimum, so the limp-home state is a fault state,
+  not a permitted operating mode.
+end note
+@enduml

@@ -1,0 +1,33 @@
+@startuml req_golden_thread
+title Requirements diagram - Golden Thread SG-01 (MagicGrid, Requirements)
+skinparam rectangle {
+  BackgroundColor White
+}
+
+rectangle "<<hazard>>\nH-01 / H-04\nLow beam lost at night" as H
+rectangle "<<requirement>>\nSG-01  ASIL B\nNo undetected failure\nof the low beam" as SG01
+rectangle "<<requirement>>\nCR-007  ASIL B\nDetect and indicate\nchannel failure" as CR007
+rectangle "<<requirement>>\nFSR-001  ASIL B\nDetect, reach safe state,\nwarn the driver" as FSR001
+rectangle "<<requirement>>\nTSR-003  ASIL B\nReport loss of load current\nwithin 100 ms" as TSR003
+rectangle "<<requirement>>\nSYS-REQ-014  ASIL B\nClassify open load\n(< 150 mA, > 50 ms)" as SYSREQ014
+rectangle "<<requirement>>\nHW-REQ-001  ASIL B\nMeasurement uncertainty\n<= +/-20 mA" as HWREQ001
+rectangle "<<block>>\nSM-01\nOpen-load detection" as SM01
+rectangle "<<block>>\nSWC_LightManager" as SWC
+rectangle "<<testCase>>\nTC-021\nFault injection, HiL" as TC021
+
+H --> SG01 : derives hazard
+SG01 <.. FSR001 : <<deriveReqt>>
+SG01 <.. CR007 : <<refine>>
+FSR001 <.. TSR003 : <<deriveReqt>>
+TSR003 <.. SYSREQ014 : <<deriveReqt>>
+SYSREQ014 <.. HWREQ001 : <<deriveReqt>>
+SM01 ..> TSR003 : <<satisfy>>
+SWC ..> SYSREQ014 : <<satisfy>>
+TC021 ..> SG01 : <<verify>>
+TC021 ..> TSR003 : <<verify>>
+TC021 ..> SYSREQ014 : <<verify>>
+
+note bottom of SM01
+  Detection 80 ms + reaction 150 ms = 230 ms < FTTI 300 ms
+end note
+@enduml

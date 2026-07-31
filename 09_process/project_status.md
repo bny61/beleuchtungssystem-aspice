@@ -11,8 +11,8 @@
 | 1 | Customer requirements `CR-001 … CR-023` (SYS.1) | **complete** (draft) | systems-engineer |
 | 2 | Item definition, HARA, safety goals, FSC (ISO 26262-3) | **complete** (draft) | safety-manager |
 | 3 | `SYS-REQ`, `TSR`, E/E architecture (SYS.2, SYS.3) | **complete** (draft) | systems-engineer |
-| 4 | MBSE model, MagicGrid, 8 SysML views | **next phase** | mbse-modeler |
-| 5 | FMEA, DFMEA, FTA, FMEDA, DFA, STPA | open | safety-analyst |
+| 4 | MBSE model, MagicGrid, 8 SysML views | **complete** (draft) | mbse-modeler |
+| 5 | FMEA, DFMEA, FTA, FMEDA, DFA, STPA | **next phase** | safety-analyst |
 | 6 | Hardware (HWE.1–4, Part 5) | open | hardware-engineer |
 | 7 | Software (SWE.1–6, Part 6) | open | software-engineer |
 | 8 | Verification & validation (SYS.4, SYS.5) | open | verification-engineer |
@@ -43,6 +43,10 @@ tailoring decisions are missing but will be required at the latest for phase 9.
   safety requirements `TSR-001` … `TSR-008` incl. the decomposed pair `TSR-006 QM(A)` /
   `TSR-007 A(A)`, E/E architecture with interface table and TSR allocation matrix
   (`04_architecture/ee_architecture.md`). ASIL of all customer requirements set from the HARA.
+- **Phase 4:** MagicGrid matrix and the eight SysML views as PlantUML
+  (`03_model/magicgrid.md`, `03_model/plantuml/`), function allocation
+  (`04_architecture/allocation.md`). PlantUML installed locally, all ten diagrams
+  syntax-checked and rendered.
 - Traceability check green, 83 records.
 
 ## Open points
@@ -70,17 +74,23 @@ tailoring decisions are missing but will be required at the latest for phase 9.
 | OP-9 | Plan `A-03` (driver response to the warning) as a validation target at vehicle level | verification-engineer | Phase 8 |
 | OP-10 | Interface agreement (DIA) for the object detection outside the item boundary (`A-05`) | safety-manager | Phase 3 |
 | OP-11 | ~~Create `RISK-01`/`RISK-02` as records~~ | config-manager | **done** |
-| OP-12 | Syntax-check the context diagram `ctx_item.puml` (PlantUML not installed locally) | mbse-modeler | Phase 4 |
+| OP-12 | ~~Syntax-check the context diagram~~ — PlantUML installed; both existing diagrams were in fact broken (`skinparam` single-line block) and are fixed | mbse-modeler | **done** (phase 4) |
+| OP-25 | No behavioural views for the `SG-02` thread (state machine and sequence cover the low beam only) | mbse-modeler | Phase 5 |
+| OP-26 | Freedom-from-interference view for `SWC_HighBeamControl` QM(A) vs. `SWC_HighBeamMonitor` A(A) — needs the SW architecture | software-engineer | Phase 7 |
 | OP-13 | Catch up phase 0: role model, independence levels, tailoring, glossary | safety-manager | before phase 9 |
 | OP-14 | ~~HARA and item definition existed only in chat, not as work products~~ | safety-manager | **done** |
 
 ## Next step
 
-**Phase 4** — MagicGrid matrix and the eight SysML views as PlantUML. Points to observe:
+**Phase 5** — safety analyses: System-FMEA and DFMEA per AIAG-VDA with B/A/E and AP, FTA with
+minimal cut sets, FMEDA with SPFM/LFM/PMHF against the ASIL B targets, DFA for the decomposed path,
+STPA, verification matrix. Points to observe:
 
-- The architecture blocks and the interface table of `04_architecture/ee_architecture.md` are the
-  input; the views must not introduce elements that do not exist there.
-- `03_model/plantuml/ctx_item.puml` and `bdd_ee_architecture.puml` already exist and stay valid.
+- The DFA is blocking: `RISK-02` states the decomposition `TSR-006` / `TSR-007` is not demonstrated
+  until it exists.
+- The FMEDA must re-derive the diagnostic coverage of `SM-01`; the 90 % claim is conditional
+  (`OP-15`) and the bare scheme is worth about 60 %.
+- `OP-23`: the decision against per-string sensing has to be revisited against the FMEDA result.
 - Element names are binding: `ECU_LightingCtrl`, `LED_Driver_Stage_1`,
   `SWC_LightManager`, `SWC_HighBeamControl`, `SWC_HighBeamMonitor`, `SWC_WorkLampControl`,
   `Vehicle_Gateway`, `Item_LightingSystem`, `Current_Sense_Chain`, `MCU_Lockstep`,

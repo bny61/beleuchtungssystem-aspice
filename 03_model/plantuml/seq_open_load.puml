@@ -1,0 +1,39 @@
+@startuml seq_open_load
+title Sequence - Open load detection, fault reaction, diagnostic DTC (Golden Thread)
+
+participant "LED_Driver_Stage_1" as DRV
+participant "Current_Sense_Chain\nSM-01" as CS
+participant "SWC_LightManager" as LM
+participant "SWC_DiagnosticManager" as DM
+participant "Vehicle_Gateway" as GW
+actor "Driver" as D
+
+== Normal operation ==
+LM -> DRV : PWM 400 Hz, enable
+DRV -> CS : shunt voltage
+CS -> LM : I_load = 1.20 A (PWM-synchronous, 2.5 ms raster)
+
+== Fault occurs: open load ==
+DRV -> CS : shunt voltage ~ 0
+CS -> LM : I_load < 150 mA
+note right of LM
+  t = 0 ms   fault occurs
+  qualification window 50 ms
+  debounce            20 ms
+  sync + acquisition   2.6 ms
+  task latency         5 ms
+end note
+LM -> LM : classify "open load"\n(SYS-REQ-014) at t <= 80 ms
+LM -> CS : off-phase zero check (HW-REQ-005)
+CS --> LM : sense chain healthy
+LM -> DRV : keep remaining channel,\nreduce set point
+note right of LM : safe state reached\nat t <= 230 ms < FTTI 300 ms
+LM -> DM : set DTC "low beam ch.1 open load"
+LM -> GW : DriverWarningReq = lowBeamFault
+GW -> D : warning in instrument cluster (<= 2 s)
+
+== Workshop ==
+participant "Diagnostic tester" as T
+T -> DM : UDS 0x19 read DTC
+DM --> T : DTC + snapshot (<= 100 ms)
+@enduml

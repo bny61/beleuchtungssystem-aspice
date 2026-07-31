@@ -1,0 +1,36 @@
+@startuml act_low_beam
+title Activity - Activate low beam including the fault case (SYS-REQ-001, FSR-001)
+
+start
+:Receive LightRequest = low\nfrom Vehicle_Gateway;
+if (Request valid and not timed out?) then (yes)
+  :SWC_LightManager commands\nPWM and enable to LED_Driver_Stage_1;
+  :LED driver regulates channel\nto the commanded set point;
+  repeat
+    :Current_Sense_Chain samples\nI_load in the PWM on-phase;
+    if (PWM on-time >= 150 us?) then (yes)
+      if (I_load < 150 mA for > 50 ms?) then (yes)
+        :Debounce 20 ms;
+        :Discriminate cause\n(SYS-REQ-019);
+        if (Cause = open load?) then (yes)
+          #FFDDDD:Classify channel as "open load"\n(SYS-REQ-014);
+          #FFDDDD:Enter safe state: operate remaining\nchannel, set DTC (TSR-004);
+          #FFDDDD:Request driver warning\nwithin 2 s (FSR-004);
+          stop
+        else (no)
+          :Handle as short-to-battery\nor commanded reduction;
+        endif
+      else (no)
+        :Channel healthy;
+      endif
+    else (no)
+      :Report diagnosis\n"not available" (SYS-REQ-017);
+    endif
+  repeat while (Low beam still requested?) is (yes)
+  ->no;
+  :De-energise channel;
+else (no)
+  :Keep previous state,\nset communication DTC;
+endif
+stop
+@enduml

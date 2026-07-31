@@ -1,0 +1,43 @@
+@startuml bdd_system
+title Block definition diagram - System decomposition (MagicGrid, Structure)
+skinparam rectangle {
+  BackgroundColor White
+}
+
+rectangle "<<block>>\nItem_LightingSystem" as ITEM
+rectangle "<<block>>\nECU_LightingCtrl" as ECU
+rectangle "<<block>>\nMCU_Lockstep" as MCU
+rectangle "<<block>>\nASIC_Watchdog" as WD
+rectangle "<<block>>\nPower_Supply_Unit" as PSU
+rectangle "<<block>>\nLED_Driver_Stage_1..n" as DRV
+rectangle "<<block>>\nCurrent_Sense_Chain" as CS
+rectangle "<<block>>\nTemp_Sense_Chain" as TS
+rectangle "<<block>>\nHeadlamp modules" as LAMP
+rectangle "<<block>>\nWork-lamp output stages" as WORK
+
+rectangle "<<software>>\nSWC_LightManager" as SWLM
+rectangle "<<software>>\nSWC_HighBeamControl" as SWHC
+rectangle "<<software>>\nSWC_HighBeamMonitor" as SWHM
+rectangle "<<software>>\nSWC_WorkLampControl" as SWWL
+rectangle "<<software>>\nSWC_DiagnosticManager" as SWDM
+
+ITEM *-- ECU
+ITEM *-- LAMP
+ITEM *-- WORK
+ECU *-- MCU
+ECU *-- WD
+ECU *-- PSU
+ECU *-- DRV
+ECU *-- CS
+ECU *-- TS
+MCU *-- SWLM
+MCU *-- SWHC
+MCU *-- SWHM
+MCU *-- SWWL
+MCU *-- SWDM
+
+note bottom of SWLM
+  Software components are shown as named blocks only.
+  Their internal design is phase 7 (SWE.2/SWE.3).
+end note
+@enduml

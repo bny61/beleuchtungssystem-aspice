@@ -1,0 +1,36 @@
+@startuml ibd_ecu
+title Internal block diagram - ECU_LightingCtrl, ports and signal flows (MagicGrid, Structure)
+skinparam componentStyle rectangle
+
+component "ECU_LightingCtrl" {
+  component "MCU_Lockstep" as MCU
+  component "ASIC_Watchdog" as WD
+  component "Power_Supply_Unit" as PSU
+  component "LED_Driver_Stage_1..n" as DRV
+  component "Current_Sense_Chain" as CS
+  component "Temp_Sense_Chain" as TS
+  portin " " as pKL30
+  portin " " as pCANin
+  portout " " as pCANout
+  portout " " as pCH
+}
+
+pKL30 --> PSU : KL30 / KL15, 16-32 V
+pCANin --> MCU : LightRequest, VehicleSpeed,\nSteeringAngle, AmbientLight, ObjectList
+MCU --> pCANout : LightingStatus, DriverWarningReq
+MCU --> DRV : PWM_Ch1..n (400 Hz), Enable_Ch1..n
+WD --> DRV : WD_Disable (TSR-001)
+MCU <--> WD : question / answer
+DRV --> CS : shunt voltage
+CS --> MCU : I_Load_Ch1..n (12 bit, PWM-synchronous)
+DRV --> MCU : U_Channel_Ch1..n, DriverStatus_Ch1..n
+TS --> MCU : T_LED, T_Board
+DRV --> pCH : channel current to the headlamp modules
+PSU --> MCU : 5 V / 3.3 V
+PSU --> DRV : supply
+
+note bottom
+  Signals, ranges, cycle times and ASIL per signal:
+  04_architecture/ee_architecture.md, interface table.
+end note
+@enduml

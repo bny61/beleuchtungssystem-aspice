@@ -1,0 +1,34 @@
+@startuml uc_lighting
+title Use cases - Adaptive front-lighting system (MagicGrid, Problem Domain / Behavior)
+left to right direction
+skinparam actorStyle awesome
+
+actor "Driver" as DRV
+actor "Workshop" as WS
+actor "Vehicle gateway" as GW
+actor "Environment" as ENV
+
+rectangle "Item_LightingSystem" {
+  usecase "UC-1 Operate low beam\n(CR-001, CR-002)" as UC1
+  usecase "UC-2 Operate high beam\nglare-free (CR-003)" as UC2
+  usecase "UC-3 Operate cornering light\n(CR-005)" as UC3
+  usecase "UC-4 Operate work lamps\n(CR-004)" as UC4
+  usecase "UC-5 Detect channel failure\nand warn (CR-007, SG-01)" as UC5
+  usecase "UC-6 Provide diagnostics\nvia UDS (CR-019)" as UC6
+  usecase "UC-7 Enter safe state\n(SG-01, SG-02)" as UC7
+}
+
+DRV --> UC1
+DRV --> UC2
+DRV --> UC3
+DRV --> UC4
+WS --> UC6
+GW --> UC1
+GW --> UC2
+GW --> UC4
+ENV --> UC2
+UC5 --> DRV : warning
+UC1 ..> UC5 : <<include>>
+UC5 ..> UC7 : <<extend>>
+UC2 ..> UC7 : <<extend>>
+@enduml

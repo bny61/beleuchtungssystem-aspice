@@ -1,7 +1,9 @@
 @startuml bdd_ee_architecture
 title E/E architecture - Lighting ECU (SYS.3)
 skinparam componentStyle rectangle
-skinparam rectangle {BackgroundColor White}
+skinparam rectangle {
+  BackgroundColor White
+}
 
 rectangle "Vehicle" as VEH #LightGray {
   rectangle "Vehicle_Gateway\nCAN FD / J1939" as GW

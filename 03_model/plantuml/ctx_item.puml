@@ -1,6 +1,8 @@
 @startuml ctx_item
 title Context diagram - Item "Adaptive front-lighting system" (ISO 26262-3, Item Definition)
-skinparam rectangle {BackgroundColor White}
+skinparam rectangle {
+  BackgroundColor White
+}
 skinparam componentStyle rectangle
 
 rectangle "ITEM BOUNDARY" as ITEM #LightYellow {

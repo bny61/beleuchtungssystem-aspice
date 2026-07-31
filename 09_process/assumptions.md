@@ -17,6 +17,7 @@ Safety-relevant assumptions are validation targets (ISO 26262-4, validation).
 | A-10 | The LED driver provides OVP/OCP/thermal status as a signal readable by the microcontroller. | Precondition for HW-REQ-007 and for the diagnostic coverage of SM-01 | yes | Component selection, datasheet review | open |
 | A-11 | The sensing chain is qualified over -40 C to +85 C ambient; the sense amplifier junction temperature does not exceed +105 C. | Basis of the drift terms in the tolerance chain (HW-REQ-001) | yes | ISO 16750-4 environmental test | open |
 | A-12 | The thermal derating curve of a low-beam channel never commands below 400 mA. | Precondition for the fixed-threshold approach (HW-REQ-008) | yes | Derating curve review, DV over temperature | open |
+| A-13 | The luminous flux of a low-beam channel follows Phi = Phi_ref * (I / I_ref) * (1 - k * (T_j - T_ref)) with Phi_ref = 1200 lm at I_ref = 1.20 A, T_ref = 25 C and k = 0.004 1/K. | Basis of the parametric diagram and of the assessment of the limp-home state against the legal minimum luminous flux | yes | Photometric measurement, LED supplier data | open |
 
 > New assumptions are added with consecutive numbers. An assumption is never deleted, only set to
 > `confirmed`, `refuted` or `superseded by A-xx`.
