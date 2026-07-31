@@ -19,6 +19,48 @@ ISO 26262-3. Safety goals with safe state and FTTI, and the FSR derived from the
 | [SG-01](SG-01.md) | No undetected failure of the low beam while driving. | safety-goal | B | reviewed | H-01, H-04 | FSR-001, FSR-002, FSR-003, FSR-004, TC-021 |
 | [SG-02](SG-02.md) | No unintended glare to other road users caused by high beam or work lamps. | safety-goal | A | draft | H-02, H-03, H-05, H-07 | FSR-005, FSR-008 |
 
+## By allocated element
+
+A record appears under every element it is allocated to — allocation is
+many-to-many, which is why this is a grouping and not a folder split.
+
+**ECU_LightingCtrl** (7)
+
+[FSR-001](FSR-001.md), [FSR-002](FSR-002.md), [FSR-003](FSR-003.md), [FSR-004](FSR-004.md), [FSR-005](FSR-005.md), [FSR-007](FSR-007.md), [FSR-008](FSR-008.md)
+
+**Item_LightingSystem** (2)
+
+[SG-01](SG-01.md), [SG-02](SG-02.md)
+
+**LED_Driver_Stage_1** (1)
+
+[FSR-003](FSR-003.md)
+
+**SM-01** (1)
+
+[FSR-001](FSR-001.md)
+
+**SWC_HighBeamControl** (1)
+
+[FSR-006](FSR-006.md)
+
+**SWC_HighBeamMonitor** (1)
+
+[FSR-007](FSR-007.md)
+
+**SWC_LightManager** (1)
+
+[FSR-002](FSR-002.md)
+
+**SWC_WorkLampControl** (1)
+
+[FSR-008](FSR-008.md)
+
+**Vehicle_Gateway** (1)
+
+[FSR-004](FSR-004.md)
+
+
 **Status:** draft: 8 · reviewed: 2
 
 **ASIL:** A: 3 · A(A): 1 · B: 5 · QM(A): 1

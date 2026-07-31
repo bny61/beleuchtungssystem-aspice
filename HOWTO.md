@@ -150,6 +150,18 @@ the link table under each view. **A diagram is never the completeness evidence**
   docstring of a script;
 - container folders additionally list their subfolders.
 
+Record folders with enough variety additionally get a **grouping by allocated element**. A record
+appears under *every* element it is allocated to — allocation is many-to-many, which is exactly why
+this is a grouping and not a folder split. The grouping is suppressed where it would not
+discriminate (e.g. customer requirements, which nearly all allocate to the item as a whole).
+
+**When to introduce subfolders.** The generator prints a note once a folder passes 40 records, and
+it prints the evidence with it: split only by a field that is **single-valued for every record** in
+that folder. For hardware requirements `allocated_to` is not — every single one is allocated to
+several elements, so a split by component would force an arbitrary filing decision per record and
+send readers to the wrong folder. For software requirements it may well be single-valued per
+`SWC_*`; the note tells you which case you are in instead of leaving it to taste.
+
 `03_model/plantuml/` also documents the file name prefixes (`uc_`, `req_`, `act_`, `seq_`, `stm_`,
 `bdd_`, `ibd_`, `par_`, `ctx_`), which is what the view type is encoded in.
 

@@ -20,6 +20,28 @@ HWE.1-HWE.4, ISO 26262-5.
 | [HW-REQ-010](HW-REQ-010.md) | The microcontroller shall verify the plausibility of the analogue-to-digital converter re… | diagnostics | B | draft | FSR-001, HW-REQ-001 | SM-01 |
 | [SM-01](SM-01.md) | Open-load detection in the low-beam channel via PWM-synchronous shunt current measurement… | safety-mechanism | B | draft | FSR-001, HW-REQ-001, HW-REQ-002, HW-REQ-003,… | TC-021 |
 
+## By allocated element
+
+A record appears under every element it is allocated to — allocation is
+many-to-many, which is why this is a grouping and not a folder split.
+
+**SM-01** (10)
+
+[HW-REQ-001](HW-REQ-001.md), [HW-REQ-002](HW-REQ-002.md), [HW-REQ-003](HW-REQ-003.md), [HW-REQ-004](HW-REQ-004.md), [HW-REQ-005](HW-REQ-005.md), [HW-REQ-006](HW-REQ-006.md), [HW-REQ-007](HW-REQ-007.md), [HW-REQ-008](HW-REQ-008.md), [HW-REQ-009](HW-REQ-009.md), [HW-REQ-010](HW-REQ-010.md)
+
+**LED_Driver_Stage_1** (8)
+
+[HW-REQ-001](HW-REQ-001.md), [HW-REQ-002](HW-REQ-002.md), [HW-REQ-003](HW-REQ-003.md), [HW-REQ-004](HW-REQ-004.md), [HW-REQ-006](HW-REQ-006.md), [HW-REQ-007](HW-REQ-007.md), [HW-REQ-008](HW-REQ-008.md), [SM-01](SM-01.md)
+
+**ECU_LightingCtrl** (6)
+
+[HW-REQ-003](HW-REQ-003.md), [HW-REQ-005](HW-REQ-005.md), [HW-REQ-007](HW-REQ-007.md), [HW-REQ-009](HW-REQ-009.md), [HW-REQ-010](HW-REQ-010.md), [SM-01](SM-01.md)
+
+**Current_Sense_Chain** (4)
+
+[HW-REQ-001](HW-REQ-001.md), [HW-REQ-002](HW-REQ-002.md), [HW-REQ-005](HW-REQ-005.md), [SM-01](SM-01.md)
+
+
 ## Other documents in this folder
 
 | File | Purpose |

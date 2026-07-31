@@ -17,6 +17,52 @@ ISO 26262-4. Technical safety requirements and their allocation.
 | [TSR-007](TSR-007.md) | The lighting ECU shall evaluate, in a monitor independent of the high-beam control path,… | safety | A(A) | draft | FSR-007 | — |
 | [TSR-008](TSR-008.md) | The lighting ECU shall inhibit energising of the work-lamp output stages while the vehicl… | safety | A | draft | FSR-008 | — |
 
+## By allocated element
+
+A record appears under every element it is allocated to — allocation is
+many-to-many, which is why this is a grouping and not a folder split.
+
+**ECU_LightingCtrl** (7)
+
+[TSR-001](TSR-001.md), [TSR-002](TSR-002.md), [TSR-003](TSR-003.md), [TSR-004](TSR-004.md), [TSR-005](TSR-005.md), [TSR-007](TSR-007.md), [TSR-008](TSR-008.md)
+
+**SWC_LightManager** (3)
+
+[TSR-002](TSR-002.md), [TSR-003](TSR-003.md), [TSR-004](TSR-004.md)
+
+**ASIC_Watchdog** (1)
+
+[TSR-001](TSR-001.md)
+
+**Current_Sense_Chain** (1)
+
+[TSR-002](TSR-002.md)
+
+**LED_Driver_Stage_1** (1)
+
+[TSR-004](TSR-004.md)
+
+**SM-01** (1)
+
+[TSR-003](TSR-003.md)
+
+**SWC_HighBeamControl** (1)
+
+[TSR-006](TSR-006.md)
+
+**SWC_HighBeamMonitor** (1)
+
+[TSR-007](TSR-007.md)
+
+**SWC_WorkLampControl** (1)
+
+[TSR-008](TSR-008.md)
+
+**Vehicle_Gateway** (1)
+
+[TSR-005](TSR-005.md)
+
+
 **Status:** draft: 8
 
 **ASIL:** A: 1 · A(A): 1 · B: 5 · QM(A): 1

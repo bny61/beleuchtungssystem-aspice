@@ -30,6 +30,40 @@ Derived from CR and FSR, ASPICE SYS.2.
 | [SYS-REQ-020](SYS-REQ-020.md) | The lighting ECU shall exchange light request, vehicle speed, steering angle, ambient bri… | communication | B | draft | CR-020 | — |
 | [SYS-REQ-021](SYS-REQ-021.md) | When a diagnostic tester sends a UDS request according to ISO 14229, the lighting ECU sha… | diagnostics | QM | draft | CR-019 | — |
 
+## By allocated element
+
+A record appears under every element it is allocated to — allocation is
+many-to-many, which is why this is a grouping and not a folder split.
+
+**ECU_LightingCtrl** (21)
+
+[SYS-REQ-001](SYS-REQ-001.md), [SYS-REQ-002](SYS-REQ-002.md), [SYS-REQ-003](SYS-REQ-003.md), [SYS-REQ-004](SYS-REQ-004.md), [SYS-REQ-005](SYS-REQ-005.md), [SYS-REQ-006](SYS-REQ-006.md), [SYS-REQ-007](SYS-REQ-007.md), [SYS-REQ-008](SYS-REQ-008.md), [SYS-REQ-009](SYS-REQ-009.md), [SYS-REQ-010](SYS-REQ-010.md), [SYS-REQ-011](SYS-REQ-011.md), [SYS-REQ-012](SYS-REQ-012.md), [SYS-REQ-013](SYS-REQ-013.md), [SYS-REQ-014](SYS-REQ-014.md), [SYS-REQ-015](SYS-REQ-015.md), [SYS-REQ-016](SYS-REQ-016.md), [SYS-REQ-017](SYS-REQ-017.md), [SYS-REQ-018](SYS-REQ-018.md), [SYS-REQ-019](SYS-REQ-019.md), [SYS-REQ-020](SYS-REQ-020.md), [SYS-REQ-021](SYS-REQ-021.md)
+
+**SWC_LightManager** (8)
+
+[SYS-REQ-001](SYS-REQ-001.md), [SYS-REQ-002](SYS-REQ-002.md), [SYS-REQ-003](SYS-REQ-003.md), [SYS-REQ-008](SYS-REQ-008.md), [SYS-REQ-014](SYS-REQ-014.md), [SYS-REQ-015](SYS-REQ-015.md), [SYS-REQ-017](SYS-REQ-017.md), [SYS-REQ-019](SYS-REQ-019.md)
+
+**LED_Driver_Stage_1** (7)
+
+[SYS-REQ-001](SYS-REQ-001.md), [SYS-REQ-006](SYS-REQ-006.md), [SYS-REQ-007](SYS-REQ-007.md), [SYS-REQ-009](SYS-REQ-009.md), [SYS-REQ-011](SYS-REQ-011.md), [SYS-REQ-013](SYS-REQ-013.md), [SYS-REQ-016](SYS-REQ-016.md)
+
+**SM-01** (2)
+
+[SYS-REQ-014](SYS-REQ-014.md), [SYS-REQ-018](SYS-REQ-018.md)
+
+**Vehicle_Gateway** (2)
+
+[SYS-REQ-010](SYS-REQ-010.md), [SYS-REQ-020](SYS-REQ-020.md)
+
+**SWC_HighBeamControl** (1)
+
+[SYS-REQ-004](SYS-REQ-004.md)
+
+**SWC_WorkLampControl** (1)
+
+[SYS-REQ-005](SYS-REQ-005.md)
+
+
 **Status:** draft: 21
 
 **ASIL:** A: 5 · B: 14 · QM: 2
