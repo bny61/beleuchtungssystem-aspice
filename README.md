@@ -19,57 +19,25 @@ The block diagram is the graphical form of
 [`02_safety/01_item_definition/item_definition.md`](02_safety/01_item_definition/item_definition.md)
 and defines the item boundary per ISO 26262-3.
 
-```mermaid
-flowchart LR
-    subgraph EXT["External interfaces — outside the item boundary"]
-        direction TB
-        PWR["<b>Vehicle supply 24 V</b><br/>KL30 / KL15 · 16–32 V<br/><small>A-01</small>"]
-        GW["<b>Vehicle gateway</b><br/>CAN FD / SAE J1939<br/><small>light request · speed · steering angle · A-06</small>"]
-        CAM["<b>Environment sensing</b><br/>object detection<br/><small>glare-free high beam · A-05</small>"]
-        HMI["<b>Instrument cluster</b><br/>driver warning<br/><small>carries FSR-004 · A-04</small>"]
-        TEST["<b>Diagnostic tester</b><br/>UDS per ISO 14229"]
-    end
+![Block diagram of the project scope: the item boundary in green with ECU logic, LED drivers and
+current/temperature sensing; external systems in blue — environment sensor, vehicle gateway
+(CAN FD / SAE J1939), 24 V vehicle supply, instrument cluster, diagnostic tester, headlamp modules
+and work-lamp output stages; a grey panel lists what is excluded from the project scope: rear
+lighting, interior lighting, indicators and hazard warning, fog lamps and body-builder
+lighting.](project-scope.png)
 
-    subgraph ITEM["ITEM BOUNDARY — developed in this project"]
-        direction TB
-        ECU["<b>ECU_LightingCtrl</b><br/>Lighting ECU<br/><small>control · monitoring · DTC management</small>"]
-        DRV["<b>LED_Driver_Stage_1..n</b><br/>LED driver stages<br/><small>one per lighting channel</small>"]
-        SENS["<b>Current / temperature sensing</b><br/><small>feeds SM-01 open-load detection · derating</small>"]
-        LAMP["<b>Headlamp modules</b><br/>low beam · high beam · cornering<br/><small>ECE R112 / R123</small>"]
-        WORK["<b>Work-lamp output stages</b><br/><small>inhibited above 10 km/h · FSR-008</small>"]
-    end
+**How to read it:** the green block is the item boundary — ECU logic, LED drivers and the
+current/temperature sensing are specified, designed and verified in this project. Blue blocks are
+external systems; only the interface to them is in scope, and each carries the assumption
+(`A-01` … `A-06`) under which it is treated as given. The grey panel lists what is explicitly
+excluded — naming exclusions rather than leaving them tacit is what makes the boundary auditable.
 
-    OOS["<b>Out of scope</b><br/>rear lighting · interior lighting<br/>indicators / hazard warning · fog lamps<br/>body-builder lighting behind the body interface"]
-
-    PWR -->|"KL30 / KL15"| ECU
-    GW <-->|"light request · status"| ECU
-    CAM -->|"object list"| GW
-    ECU -->|"driver warning"| HMI
-    TEST -->|"UDS requests"| ECU
-
-    ECU -->|"PWM · enable"| DRV
-    DRV --> LAMP
-    DRV --> WORK
-    DRV --> SENS
-    SENS -->|"I_load · T_j"| ECU
-
-    ITEM -.->|"explicitly excluded"| OOS
-
-    classDef inside fill:#eaf4ea,stroke:#4a8a4a,color:#102a10
-    classDef outside fill:#e7f0fb,stroke:#3b6ea5,color:#10233a
-    classDef excluded fill:#f2f2f4,stroke:#9a9aa5,color:#3a3a44
-    class ECU,DRV,SENS,LAMP,WORK inside
-    class PWR,GW,CAM,HMI,TEST outside
-    class OOS excluded
-
-    style ITEM fill:#fafcfa,stroke:#4a8a4a,stroke-width:2px,color:#37503a
-    style EXT fill:#fafbfd,stroke:#b9c6d6,color:#37475c
-```
-
-**How to read it:** green is inside the item boundary — those elements are specified, designed and
-verified here. Blue elements are external systems; only the interface to them is in scope, and each
-one carries the assumption (`A-01` … `A-06`) under which it is treated as given. Grey is explicitly
-out of scope: naming exclusions rather than leaving them tacit is what makes the boundary auditable.
+> **Note on this graphic:** it is an AI-generated illustration and several labels are garbled or
+> wrong — among them `KL30 / KL5` (correct: KL30 / KL15) and `UDS per ISD 1/229` (correct:
+> ISO 14229). The authoritative boundary definition is
+> [`02_safety/01_item_definition/item_definition.md`](02_safety/01_item_definition/item_definition.md)
+> and the PlantUML source [`03_model/plantuml/ctx_item.puml`](03_model/plantuml/ctx_item.puml),
+> not this image.
 
 | Aspect | In scope | Interface only | Out of scope |
 |---|---|---|---|
