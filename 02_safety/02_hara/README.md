@@ -16,6 +16,14 @@ Structured form of the HARA rows, ISO 26262-3. Derivation and method in hara.md.
 | [H-06](H-06.md) | Failure of the daytime running lights during daytime driving with good visibility: reduce… | hazard | QM | draft | — | — |
 | [H-07](H-07.md) | Cornering light swivels into the oncoming lane: glare to oncoming traffic, unexpected and… | hazard | A | draft | — | SG-02 |
 
+## Other documents in this folder
+
+| File | Purpose |
+|---|---|
+| [hara.md](hara.md) | Hazard Analysis and Risk Assessment (HARA) |
+| [operational_situations.md](operational_situations.md) | Operational situations (situation catalogue) |
+| [sec_classification.md](sec_classification.md) | S/E/C classification — interpretation applied in this project |
+
 **Status:** draft: 7
 
 **ASIL:** A: 4 · B: 2 · QM: 1

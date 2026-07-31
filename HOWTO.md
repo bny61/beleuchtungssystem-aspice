@@ -141,9 +141,19 @@ the link table under each view. **A diagram is never the completeness evidence**
 
 ### Folder overviews — kept up to date automatically
 
-Every folder holding requirement records gets a generated `README.md` with a clickable table of its
-records (ID → file, text, type, ASIL, status, trace, verifying test). GitHub renders it as soon as
-you open the folder. Three layers keep it current:
+**Every folder** gets a generated `README.md`, so opening one tells you what it is for:
+
+- folders holding requirement records get the record table (ID → file, text, type, ASIL, status,
+  upstream, downstream) plus a list of the other documents in that folder;
+- all other folders get a purpose line and a file listing, with each file's purpose extracted from
+  its own content — the `title` of a PlantUML view, the first heading of a Markdown file, the
+  docstring of a script;
+- container folders additionally list their subfolders.
+
+`03_model/plantuml/` also documents the file name prefixes (`uc_`, `req_`, `act_`, `seq_`, `stm_`,
+`bdd_`, `ibd_`, `par_`, `ctx_`), which is what the view type is encoded in.
+
+GitHub renders these as soon as you open the folder. Three layers keep them current:
 
 | Layer | What it does | Setup |
 |---|---|---|
