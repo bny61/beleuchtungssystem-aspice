@@ -174,69 +174,26 @@ Phases 0–11 are not worked by a generalist but by **nine specialist agents** w
 responsibilities. The `phase-run` skill routes each phase to the lead agent, the **method skills**
 supply the procedures, and two gates secure the result.
 
-```mermaid
-flowchart TB
-    U["<b>You</b><br/>/phase-run · next<br/>deeper: topic · shorter"]
-    SK["<b>Skill phase-run</b><br/>Routing phase → agent<br/>Golden Thread depth rule<br/><small>DEEP DIVE vs. OVERVIEW</small>"]
+![V-model of the project: six stages from system concept and requirements, through architecture and
+analysis, hardware and software design, implementation, unit testing, system and integration test,
+to validation and release. Each stage lists its assigned agents. config-manager and quality-assessor
+run continuously as supporting processes. A quick-start panel shows /phase-run followed by "next",
+and direct invocation such as "use the safety-analyst agent to..." or /hara.](v-model.png)
 
-    subgraph AGENTS["Specialist agents — one leads per phase"]
-        direction TB
-        A1["<b>systems-engineer</b><br/>CR · SYS-REQ · E/E architecture<br/><small>phase 1 · 3</small>"]
-        A2["<b>safety-manager</b><br/>HARA · SG · FSC · TSC · safety case<br/><small>phase 0 · 2 · 9</small>"]
-        A3["<b>safety-analyst</b><br/>FMEA · FTA · FMEDA · DFA · STPA<br/><small>phase 5</small>"]
-        A4["<b>mbse-modeler</b><br/>MagicGrid · SysML views<br/><small>phase 4</small>"]
-        A5["<b>hardware-engineer</b><br/>HW-REQ · SM-xx · HW verification<br/><small>phase 6</small>"]
-        A6["<b>software-engineer</b><br/>SW-REQ · SWC_LightManager<br/><small>phase 7</small>"]
-        A7["<b>verification-engineer</b><br/>TC-xxx · fault injection<br/><small>phase 8</small>"]
-        A8["<b>config-manager</b><br/>CM · baselines · GitHub evidence<br/><small>phase 10 · 11</small>"]
-    end
+**How to read it:** the left branch descends from requirements to design, the right branch ascends
+from unit test to release, and the dashed arrows are the bi-directional traceability between the two
+— every verification level refers back to the specification level opposite it. Each stage names the
+agents that lead it; `config-manager` and `quality-assessor` are not stages but run continuously
+alongside all of them.
 
-    subgraph METH["Method skills — loaded by the agents"]
-        direction TB
-        S1["requirements-authoring<br/><small>EARS · req table · RaC schema</small>"]
-        S2["hara<br/><small>S/E/C · safe state · FTTI</small>"]
-        S3["safety-analyses<br/><small>AP not RPZ · SPFM/LFM/PMHF</small>"]
-        S4["mbse-magicgrid<br/><small>PlantUML conventions</small>"]
-        S5["safety-case-gsn<br/><small>Goal → Strategy → Evidence</small>"]
-        S6["trace-audit<br/><small>coverage KPIs</small>"]
-    end
+Two gates are not shown in the diagram but apply at every stage: `tools/trace_check.py` checks the
+traces mechanically, and the `quality-assessor` reviews independently and read-only. Both return
+findings to the responsible agent before a PR or baseline follows. The agents also hand off to each
+other — an FMEA finding from the `safety-analyst`, for instance, becomes a new requirement for the
+`systems-engineer`.
 
-    WP["<b>Work products</b><br/>Requirements-as-Code<br/>PlantUML · analyses · test cases<br/><small>01_… to 09_</small>"]
-    TCK{"<b>tools/trace_check.py</b><br/>orphan · dangling · untested<br/>unallocated · asil-drop"}
-    QA{"<b>quality-assessor</b><br/>independent review<br/><small>read-only · findings only</small>"}
-    OUT["<b>PR + baseline</b><br/>Review evidence SUP.4 · Git tag SUP.8<br/><small>then: next → following phase</small>"]
-
-    U --> SK
-    SK --> AGENTS
-    METH -.->|"method"| AGENTS
-    AGENTS -->|"produce"| WP
-    WP --> TCK
-    TCK -->|"findings → rework"| AGENTS
-    TCK -->|"green"| QA
-    QA -->|"blocker / major"| AGENTS
-    QA -->|"approval"| OUT
-
-    classDef user fill:#e7f0fb,stroke:#3b6ea5,color:#10233a
-    classDef agent fill:#eaf4ea,stroke:#4a8a4a,color:#102a10
-    classDef skill fill:#f0edf7,stroke:#7a5ea8,color:#241a3a
-    classDef gate fill:#fdf0e3,stroke:#c07d29,color:#3a2408
-    classDef out fill:#fbeaea,stroke:#b05252,color:#3a1010
-    class U,SK user
-    class A1,A2,A3,A4,A5,A6,A7,A8 agent
-    class S1,S2,S3,S4,S5,S6 skill
-    class WP,TCK,QA gate
-    class OUT out
-
-    style AGENTS fill:#fafcfa,stroke:#bcd4bc,color:#37503a
-    style METH fill:#fcfbfd,stroke:#cbc0dd,color:#4a3e63
-```
-
-**How to read it:** the flow runs top to bottom — you start with `/phase-run`, the skill selects the
-responsible agent, that agent produces the work products. Two gates then apply: `tools/trace_check.py`
-checks the traces mechanically, the `quality-assessor` reviews independently and read-only. Both
-gates loop back to the agents on findings — only after approval do PR and baseline follow. The agents
-hand off to each other, e.g. an FMEA finding from the `safety-analyst` becomes a new requirement for
-the `systems-engineer`.
+> The six stages of the diagram summarise the twelve project phases (0–11); the exact mapping of
+> phase to agent is in [HOWTO.md](HOWTO.md), section 3.
 
 ### Control words
 

@@ -6,6 +6,11 @@
 *.xlsx    filter=lfs diff=lfs merge=lfs -text
 *.png     filter=lfs diff=lfs merge=lfs -text
 
+# Exception: images at the repo root are documentation assets for README.md.
+# They stay in plain git so GitHub renders them directly -- an LFS-stored image
+# would have to be served over LFS bandwidth and breaks in mirrors and exports.
+/*.png    -filter -diff -merge -text
+
 # Text artefacts stay diffable -- they are the review evidence
 *.md      text
 *.puml    text
