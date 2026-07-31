@@ -144,15 +144,21 @@ supply the procedures, and two gates secure the result.
 
 ![V-model of the project: six stages from system concept and requirements, through architecture and
 analysis, hardware and software design, implementation, unit testing, system and integration test,
-to validation and release. Each stage lists its assigned agents. config-manager and quality-assessor
-run continuously as supporting processes. A quick-start panel shows /phase-run followed by "next",
-and direct invocation such as "use the safety-analyst agent to..." or /hara.](v-model.svg)
+to validation and release. Each stage names the agents that lead it together with their scope — for
+example systems-engineer for CR elicitation and SYS-REQ derivation, safety-manager for item
+definition, HARA and the functional safety concept. config-manager and quality-assessor run
+continuously as supporting processes. A quick-start panel shows /phase-run followed by "next", and
+direct invocation such as "use the safety-analyst agent to..." or /hara.](v-model.svg)
 
 **How to read it:** the left branch descends from requirements to design, the right branch ascends
 from unit test to release, and the dashed arrows are the bi-directional traceability between the two
-— every verification level refers back to the specification level opposite it. Each stage names the
-agents that lead it; `config-manager` and `quality-assessor` are not stages but run continuously
-alongside all of them.
+— every verification level refers back to the specification level opposite it. `config-manager` and
+`quality-assessor` are not stages but run continuously alongside all of them.
+
+**What makes this V-model different** from the textbook one is stated in the banner at the top: each
+stage carries the **agent that leads it and that agent's scope**. No stage is worked by a
+generalist — the `safety-analyst` owns FMEA, FTA and FMEDA, the `mbse-modeler` owns the SysML views,
+and the handoffs between them are part of the agent definitions rather than a matter of habit.
 
 Two gates are not shown in the diagram but apply at every stage: `tools/trace_check.py` checks the
 traces mechanically, and the `quality-assessor` reviews independently and read-only. Both return
