@@ -1,0 +1,38 @@
+@startuml bdd_ee_architecture
+title E/E architecture - Lighting ECU (SYS.3)
+skinparam componentStyle rectangle
+skinparam rectangle {BackgroundColor White}
+
+rectangle "Vehicle" as VEH #LightGray {
+  rectangle "Vehicle_Gateway\nCAN FD / J1939" as GW
+  rectangle "Vehicle supply 24 V" as PWR
+}
+
+rectangle "ECU_LightingCtrl" as ECU #LightYellow {
+  rectangle "MCU_Lockstep\n«block» ASIL B" as MCU
+  rectangle "ASIC_Watchdog\n«block» ASIL B\nTSR-001" as WD
+  rectangle "Power_Supply_Unit\n16-32 V" as PSU
+  rectangle "CAN_FD_Transceiver" as CAN
+  rectangle "LIN_Transceiver" as LIN
+  rectangle "LED_Driver_Stage_1..n\n«block» ASIL B" as DRV
+  rectangle "Current_Sense_Chain\nSM-01 / HW-REQ-001" as CS
+  rectangle "Temp_Sense_Chain" as TS
+}
+
+rectangle "Headlamp modules\nlow / high / cornering" as LAMP
+rectangle "Work-lamp output stages" as WORK
+
+PWR --> PSU : KL30 / KL15
+GW <--> CAN : light request, v_veh,\nsteering angle, object data, status
+CAN <--> MCU
+MCU --> DRV : PWM, enable
+MCU <--> WD : question / answer
+WD --> DRV : disable (TSR-001)
+DRV --> LAMP : channel current
+DRV --> WORK
+DRV --> CS : shunt voltage
+CS --> MCU : I_load (PWM-synchronous)
+TS --> MCU : T_LED, T_board
+DRV --> MCU : OVP / OCP / thermal status
+MCU --> LIN : actuator command
+@enduml

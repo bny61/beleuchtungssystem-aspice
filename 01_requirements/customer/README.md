@@ -8,14 +8,14 @@ Extract of the customer specification, ASPICE SYS.1. The ASIL is determined by t
 
 | ID | Text | Type | ASIL | Status | Source / trace | Verified by |
 |---|---|---|---|---|---|---|
-| [CR-001](CR-001.md) | When the driver moves the light switch to the "low beam" position, the lighting system shall activate the low beam within 300 ms. | functional | tbd | draft | Customer specification, sect. 4.1 (fict… | — |
-| [CR-002](CR-002.md) | When ambient brightness decreases, the lighting system shall switch to low beam in good time and with sufficient brightness. | functional | tbd | draft | Customer specification, sect. 4.1 (fict… | — |
-| [CR-003](CR-003.md) | When the vehicle sensor system reports oncoming or preceding vehicles, the lighting system shall mask the affected high-beam segm… | functional | tbd | draft | Customer specification, sect. 4.2 (fict… | — |
-| [CR-004](CR-004.md) | While the vehicle speed exceeds 10 km/h, the lighting system shall prevent activation of the work lamps. | functional | tbd | draft | Customer specification, sect. 4.4 (fict… | — |
-| [CR-005](CR-005.md) | When the steering angle exceeds 15 degrees, the lighting system shall switch on the cornering light via the LIN-controlled steppe… | functional | tbd | draft | Customer specification, sect. 4.3 (fict… | — |
-| [CR-006](CR-006.md) | When the ignition is switched on, the lighting system shall activate the daytime running lights within 2 s. | functional | tbd | draft | ECE R48 switching requirement, customer… | — |
+| [CR-001](CR-001.md) | When the driver moves the light switch to the "low beam" position, the lighting system shall activate the low beam within 300 ms. | functional | B | draft | Customer specification, sect. 4.1 (fict… | — |
+| [CR-002](CR-002.md) | When ambient brightness decreases, the lighting system shall switch to low beam in good time and with sufficient brightness. | functional | B | draft | Customer specification, sect. 4.1 (fict… | — |
+| [CR-003](CR-003.md) | When the vehicle sensor system reports oncoming or preceding vehicles, the lighting system shall mask the affected high-beam segm… | functional | A | draft | Customer specification, sect. 4.2 (fict… | — |
+| [CR-004](CR-004.md) | While the vehicle speed exceeds 10 km/h, the lighting system shall prevent activation of the work lamps. | functional | A | draft | Customer specification, sect. 4.4 (fict… | — |
+| [CR-005](CR-005.md) | When the steering angle exceeds 15 degrees, the lighting system shall switch on the cornering light via the LIN-controlled steppe… | functional | A | draft | Customer specification, sect. 4.3 (fict… | — |
+| [CR-006](CR-006.md) | When the ignition is switched on, the lighting system shall activate the daytime running lights within 2 s. | functional | QM | draft | ECE R48 switching requirement, customer… | — |
 | [CR-007](CR-007.md) | The lighting system shall detect the failure of a low-beam channel and indicate it visually to the driver in the instrument clust… | functional | B | reviewed | Stakeholder OEM customer specification,… | TC-021 |
-| [CR-008](CR-008.md) | When a low-beam channel fails, the lighting system shall continue to operate the remaining channel and store the failure in the f… | functional | tbd | draft | Customer specification, sect. 4.6 (fict… | — |
+| [CR-008](CR-008.md) | When a low-beam channel fails, the lighting system shall continue to operate the remaining channel and store the failure in the f… | functional | B | draft | Customer specification, sect. 4.6 (fict… | — |
 | [CR-009](CR-009.md) | The lighting system shall comply with the installation and switching requirements of ECE Regulation R48 for class N3 vehicles. | legal | QM | draft | Homologation requirement | — |
 | [CR-010](CR-010.md) | The low-beam and high-beam functions shall meet the photometric requirements of ECE Regulations R112 and R123. | legal | QM | draft | Homologation requirement | — |
 | [CR-011](CR-011.md) | Where a rotating beacon is fitted, its control shall meet the requirements of ECE Regulation R65. | legal | QM | draft | Homologation requirement | — |
@@ -23,18 +23,18 @@ Extract of the customer specification, ASPICE SYS.1. The ASIL is determined by t
 | [CR-013](CR-013.md) | The lighting system shall withstand the mechanical loads per ISO 16750-3 for the front-module mounting location. | environmental-mechanical | QM | draft | Customer specification, environmental s… | — |
 | [CR-014](CR-014.md) | The lighting system shall remain functional across an ambient temperature range from -40 °C to +85 °C. | environmental-mechanical | QM | draft | Customer specification, environmental s… | — |
 | [CR-015](CR-015.md) | The ECU housing shall meet protection class IP6K9K per ISO 20653. | environmental-mechanical | QM | draft | Customer specification, environmental s… | — |
-| [CR-016](CR-016.md) | The lighting system shall be supplied via a buck converter with a downstream 5 V linear regulator so that it operates across the… | electrical | tbd | draft | Customer specification, electrical sect… | — |
-| [CR-017](CR-017.md) | While transients per ISO 7637-2 are present at the vehicle supply connection, the lighting system shall maintain the low-beam fun… | electrical | tbd | draft | Customer specification, electrical sect… | — |
+| [CR-016](CR-016.md) | The lighting system shall be supplied via a buck converter with a downstream 5 V linear regulator so that it operates across the… | electrical | B | draft | Customer specification, electrical sect… | — |
+| [CR-017](CR-017.md) | While transients per ISO 7637-2 are present at the vehicle supply connection, the lighting system shall maintain the low-beam fun… | electrical | B | draft | Customer specification, electrical sect… | — |
 | [CR-018](CR-018.md) | While the vehicle is in the ignition-off state, the lighting system shall not exceed a quiescent current of 1 mA after the run-on… | electrical | QM | draft | Customer specification, electrical sect… | — |
-| [CR-019](CR-019.md) | When a diagnostic tester sends a UDS request per ISO 14229, the lighting system shall provide the stored DTCs within 100 ms. | diagnostics | tbd | draft | Customer specification, diagnostics sec… | — |
-| [CR-020](CR-020.md) | The lighting system shall exchange control and status information with the vehicle via CAN FD per SAE J1939. | communication | tbd | draft | Customer specification, communication s… | — |
+| [CR-019](CR-019.md) | When a diagnostic tester sends a UDS request per ISO 14229, the lighting system shall provide the stored DTCs within 100 ms. | diagnostics | QM | draft | Customer specification, diagnostics sec… | — |
+| [CR-020](CR-020.md) | The lighting system shall exchange control and status information with the vehicle via CAN FD per SAE J1939. | communication | B | draft | Customer specification, communication s… | — |
 | [CR-021](CR-021.md) | The lighting system shall connect actuator-side components via LIN per ISO 17987. | communication | QM | draft | Customer specification, communication s… | — |
-| [CR-022](CR-022.md) | The lighting system shall achieve an operating life of 30,000 h or a mileage of 1,500,000 km without exceeding the permissible fa… | durability | tbd | draft | Customer specification, reliability sec… | — |
+| [CR-022](CR-022.md) | The lighting system shall achieve an operating life of 30,000 h or a mileage of 1,500,000 km without exceeding the permissible fa… | durability | QM | draft | Customer specification, reliability sec… | — |
 | [CR-023](CR-023.md) | The lighting system shall meet the interface requirements of the vehicle-level cybersecurity concept per ISO 21434. | interface | QM | draft | Vehicle-level cybersecurity concept | — |
 
 **Status:** draft: 22 · reviewed: 1
 
-**ASIL:** B: 1 · QM: 10 · tbd: 12
+**ASIL:** A: 3 · B: 7 · QM: 13
 
 ---
 

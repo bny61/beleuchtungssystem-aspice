@@ -18,7 +18,7 @@ HWE.1-HWE.4, ISO 26262-5.
 | [HW-REQ-008](HW-REQ-008.md) | The thermal derating function of a low-beam channel shall not command a channel set point below 400 mA while the channel is comma… | electrical | B | draft | SYS-REQ-014, HW-REQ-002 | — |
 | [HW-REQ-009](HW-REQ-009.md) | The hardware detection path of the low-beam open-load mechanism shall report a detected open load to the software fault reaction… | safety | B | draft | SYS-REQ-018, FSR-001 | — |
 | [HW-REQ-010](HW-REQ-010.md) | The microcontroller shall verify the plausibility of the analogue-to-digital converter reference used for the low-beam current me… | diagnostics | B | draft | FSR-001, HW-REQ-001 | — |
-| [SM-01](SM-01.md) | Open-load detection in the low-beam channel via PWM-synchronous shunt current measurement with threshold comparison, debouncing,… | safety-mechanism | B | draft | FSR-001 | TC-021 |
+| [SM-01](SM-01.md) | Open-load detection in the low-beam channel via PWM-synchronous shunt current measurement with threshold comparison, debouncing,… | safety-mechanism | B | draft | FSR-001, TSR-003 | TC-021 |
 
 **Status:** draft: 11
 

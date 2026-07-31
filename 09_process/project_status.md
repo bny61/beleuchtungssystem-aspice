@@ -10,8 +10,8 @@
 | 0 | Project frame, stakeholders, roles, tailoring, glossary | **skipped** | safety-manager, config-manager |
 | 1 | Customer requirements `CR-001 … CR-023` (SYS.1) | **complete** (draft) | systems-engineer |
 | 2 | Item definition, HARA, safety goals, FSC (ISO 26262-3) | **complete** (draft) | safety-manager |
-| 3 | `SYS-REQ`, `TSR`, E/E architecture (SYS.2, SYS.3) | **next phase** | systems-engineer |
-| 4 | MBSE model, MagicGrid, 8 SysML views | open | mbse-modeler |
+| 3 | `SYS-REQ`, `TSR`, E/E architecture (SYS.2, SYS.3) | **complete** (draft) | systems-engineer |
+| 4 | MBSE model, MagicGrid, 8 SysML views | **next phase** | mbse-modeler |
 | 5 | FMEA, DFMEA, FTA, FMEDA, DFA, STPA | open | safety-analyst |
 | 6 | Hardware (HWE.1–4, Part 5) | open | hardware-engineer |
 | 7 | Software (SWE.1–6, Part 6) | open | software-engineer |
@@ -39,21 +39,29 @@ tailoring decisions are missing but will be required at the latest for phase 9.
   sensing closed. `SYS-REQ-014` split, `SYS-REQ-015` … `SYS-REQ-019` and `HW-REQ-001` … `HW-REQ-010`
   created, `SM-01` detection time 70 → 80 ms, diagnostic coverage 90 % made conditional.
   Analysis: `05_hardware/analysis_current_sensing.md`.
-- Traceability check green, 60 records.
+- **Phase 3:** 15 further system requirements (`SYS-REQ-001` … `013`, `020`, `021`), 8 technical
+  safety requirements `TSR-001` … `TSR-008` incl. the decomposed pair `TSR-006 QM(A)` /
+  `TSR-007 A(A)`, E/E architecture with interface table and TSR allocation matrix
+  (`04_architecture/ee_architecture.md`). ASIL of all customer requirements set from the HARA.
+- Traceability check green, 83 records.
 
 ## Open points
 
 | ID | Point | Owner | Due |
 |---|---|---|---|
-| OP-1 | Carry the ASIL of the `tbd` customer requirements over from the HARA | systems-engineer | Phase 3 |
-| OP-2 | Behaviour outside the normal supply range (under/overvoltage, load dump) is missing | systems-engineer | Phase 3 |
+| OP-1 | ~~Carry the ASIL of the `tbd` customer requirements over from the HARA~~ | systems-engineer | **done** (phase 3) |
+| OP-2 | ~~Behaviour outside the normal supply range is missing~~ — undervoltage covered by `SYS-REQ-013`; overvoltage and load dump remain open for phase 6 | systems-engineer | **partly done** |
 | OP-3 | `CR-007` is not atomic (detection + indication); change only via a requirement-change issue | systems-engineer | before baseline |
 | OP-15 | Confirm the 90 % diagnostic coverage of `SM-01` against the FMEDA — blocks `SM-01` returning to `reviewed` | safety-analyst | Phase 5 |
 | OP-16 | Feasibility of the 400 mA derating floor (`HW-REQ-008`, `A-12`) against the LED module thermal design | hardware-engineer | Phase 6 |
-| OP-17 | Decide the gating scheme below the minimum PWM on-time: forced window (`HW-REQ-004`) vs. "diagnosis not available" (`SYS-REQ-017`) — changes diagnosis availability, not just implementation | systems-engineer | Phase 3 |
-| OP-18 | Decide whether per-string current sensing is added — the only way to see parallel-string loss in the current domain | systems-engineer | Phase 3 |
+| OP-17 | ~~Decide the gating scheme below the minimum PWM on-time~~ — decided for `SYS-REQ-017` ("diagnosis not available"); `HW-REQ-004` not implemented in the base variant | systems-engineer | **done** (phase 3) |
+| OP-18 | ~~Decide whether per-string current sensing is added~~ — decided against; channel voltage (`HW-REQ-006`) covers the failure mode. Revisit after the FMEDA (`OP-23`) | systems-engineer | **done** (phase 3) |
 | OP-19 | New test cases for `HW-REQ-001` … `HW-REQ-010` | verification-engineer | Phase 8 |
 | OP-20 | Re-review `SYS-REQ-014`, `SM-01` and `TC-021` — dropped to `draft` by the refinement | safety-manager | Phase 3 |
+| OP-21 | CAN FD / J1939 message catalogue and signal encoding not specified at frame level | systems-engineer | Phase 4 |
+| OP-22 | Bus load and timing analysis for the cycle times of the interface table | systems-engineer | Phase 4 |
+| OP-23 | Revisit the decision against per-string sensing after the FMEDA | safety-analyst | Phase 5 |
+| OP-24 | Overvoltage and load-dump behaviour still undefined (`OP-2` remainder) | hardware-engineer | Phase 6 |
 | OP-4 | Define the required function class per ISO 7637-2 pulse in `CR-017` | hardware-engineer | Phase 6 |
 | OP-5 | Replace the weak requirements `CR-002`, `CR-005`, `CR-016` before a real baseline | quality-manager | before baseline |
 | OP-6 | ~~Normalise the ASCII transliteration in the records to proper umlauts~~ | config-manager | **obsolete** — resolved by the translation to English |
@@ -68,14 +76,15 @@ tailoring decisions are missing but will be required at the latest for phase 9.
 
 ## Next step
 
-**Phase 3** — derive `SYS-REQ-xxx` from `CR-xxx` and `FSR-xxx`, form `TSR-xxx`, produce the E/E
-architecture with interface table and allocation matrix. Points to observe:
+**Phase 4** — MagicGrid matrix and the eight SysML views as PlantUML. Points to observe:
 
-- `SYS-REQ-014` already exists (Golden Thread) and must not be reassigned or reworded.
-- The ASIL of the customer requirements from OP-1 are set here.
-- Element names from phase 2 are binding: `ECU_LightingCtrl`, `LED_Driver_Stage_1`,
+- The architecture blocks and the interface table of `04_architecture/ee_architecture.md` are the
+  input; the views must not introduce elements that do not exist there.
+- `03_model/plantuml/ctx_item.puml` and `bdd_ee_architecture.puml` already exist and stay valid.
+- Element names are binding: `ECU_LightingCtrl`, `LED_Driver_Stage_1`,
   `SWC_LightManager`, `SWC_HighBeamControl`, `SWC_HighBeamMonitor`, `SWC_WorkLampControl`,
-  `Vehicle_Gateway`, `Item_LightingSystem`, `Current_Sense_Chain`.
+  `Vehicle_Gateway`, `Item_LightingSystem`, `Current_Sense_Chain`, `MCU_Lockstep`,
+  `ASIC_Watchdog`, `Power_Supply_Unit`, `Temp_Sense_Chain`, `SWC_DiagnosticManager`.
 
 > **Language:** the project is English throughout since the translation. German remains only in
 > `09_process/prompts/` — that is the original commissioning document and is deliberately unchanged.
