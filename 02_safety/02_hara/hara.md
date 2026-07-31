@@ -133,12 +133,18 @@ safety-relevant and a validation target at vehicle level, not a side note.
 ### Timing budget SG-01
 
 ```
-Detection       SM-01:  50 ms threshold + 20 ms debounce      =  70 ms
-Fault reaction  transition to limp-home                       = 150 ms   (fault reaction time)
-                                                        Total = 220 ms
-FTTI                                                          = 300 ms
-Margin                                                        =  80 ms   (27 %)
+Detection       SM-01, PWM-synchronous (HW-REQ-009):
+                2.5 ms sync + 0.1 ms acquisition + 50 ms window
+                + 20 ms debounce + 5 ms task latency           =  80 ms
+Fault reaction  transition to limp-home                        = 150 ms   (fault reaction time)
+                                                         Total = 230 ms
+FTTI                                                           = 300 ms
+Margin                                                         =  70 ms   (23 %)
 ```
+
+> Updated with the phase 3 refinement of `SYS-REQ-014` (detection 70 ms -> 80 ms). The PWM-
+> synchronous measurement adds synchronisation, acquisition and task latency. See
+> [`../../05_hardware/analysis_current_sensing.md`](../../05_hardware/analysis_current_sensing.md).
 
 The budget closes against the values held in `SG-01` and `SM-01`. The 2 s driver warning from
 `CR-007` / `FSR-004` lies **outside** this budget: it is an information requirement, not a fault

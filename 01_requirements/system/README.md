@@ -4,15 +4,20 @@
 
 Derived from CR and FSR, ASPICE SYS.2.
 
-**1 records.** Click an ID to open the record.
+**6 records.** Click an ID to open the record.
 
 | ID | Text | Type | ASIL | Status | Source / trace | Verified by |
 |---|---|---|---|---|---|---|
-| [SYS-REQ-014](SYS-REQ-014.md) | When the load current of a low-beam channel falls below 150 mA for more than 50 ms, the lighting ECU shall classify the channel a… | functional | B | reviewed | CR-007, FSR-001 | TC-021 |
+| [SYS-REQ-014](SYS-REQ-014.md) | When the load current of a low-beam channel, measured during the PWM on-phase, remains below 150 mA for more than 50 ms, the ligh… | functional | B | draft | CR-007, FSR-001 | TC-021 |
+| [SYS-REQ-015](SYS-REQ-015.md) | When a low-beam channel is classified as "open load", the lighting ECU shall increment the fault counter of that channel. | diagnostics | B | draft | SYS-REQ-014 | — |
+| [SYS-REQ-016](SYS-REQ-016.md) | The lighting ECU shall measure the load current of a low-beam channel with a total uncertainty of not more than +/-20 mA at the 1… | electrical | B | draft | SYS-REQ-014, FSR-001 | — |
+| [SYS-REQ-017](SYS-REQ-017.md) | While the PWM on-time of a low-beam channel is shorter than 150 us, the lighting ECU shall report the open-load diagnosis of that… | diagnostics | B | draft | SYS-REQ-014 | — |
+| [SYS-REQ-018](SYS-REQ-018.md) | When an open load occurs in a low-beam channel, the lighting ECU shall report the fault to the fault reaction within 100 ms of fa… | safety | B | draft | SYS-REQ-014, FSR-001 | — |
+| [SYS-REQ-019](SYS-REQ-019.md) | When the measured load current of a low-beam channel falls below 150 mA, the lighting ECU shall classify the cause as exactly one… | diagnostics | B | draft | SYS-REQ-014 | — |
 
-**Status:** reviewed: 1
+**Status:** draft: 6
 
-**ASIL:** B: 1
+**ASIL:** B: 6
 
 ---
 

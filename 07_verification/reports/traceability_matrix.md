@@ -42,10 +42,25 @@
 | H-05 | hazard | A | draft | - | - | - | `02_safety/02_hara/H-05.md` |
 | H-06 | hazard | QM | draft | - | - | - | `02_safety/02_hara/H-06.md` |
 | H-07 | hazard | A | draft | - | - | - | `02_safety/02_hara/H-07.md` |
+| HW-REQ-001 | electrical | B | draft | SYS-REQ-016, FSR-001 | LED_Driver_Stage_1, Current_Sense_Chain, SM-01 | - | `05_hardware/HW-REQ-001.md` |
+| HW-REQ-002 | electrical | B | draft | SYS-REQ-016, HW-REQ-001 | LED_Driver_Stage_1, Current_Sense_Chain, SM-01 | - | `05_hardware/HW-REQ-002.md` |
+| HW-REQ-003 | electrical | B | draft | SYS-REQ-014 | ECU_LightingCtrl, LED_Driver_Stage_1, SM-01 | - | `05_hardware/HW-REQ-003.md` |
+| HW-REQ-004 | electrical | B | draft | SYS-REQ-017 | LED_Driver_Stage_1, SM-01 | - | `05_hardware/HW-REQ-004.md` |
+| HW-REQ-005 | diagnostics | B | draft | FSR-001, SYS-REQ-014 | ECU_LightingCtrl, Current_Sense_Chain, SM-01 | - | `05_hardware/HW-REQ-005.md` |
+| HW-REQ-006 | electrical | B | draft | SYS-REQ-019 | LED_Driver_Stage_1, SM-01 | - | `05_hardware/HW-REQ-006.md` |
+| HW-REQ-007 | interface | B | draft | SYS-REQ-019 | LED_Driver_Stage_1, ECU_LightingCtrl, SM-01 | - | `05_hardware/HW-REQ-007.md` |
+| HW-REQ-008 | electrical | B | draft | SYS-REQ-014, HW-REQ-002 | LED_Driver_Stage_1, SM-01 | - | `05_hardware/HW-REQ-008.md` |
+| HW-REQ-009 | safety | B | draft | SYS-REQ-018, FSR-001 | ECU_LightingCtrl, SM-01 | - | `05_hardware/HW-REQ-009.md` |
+| HW-REQ-010 | diagnostics | B | draft | FSR-001, HW-REQ-001 | ECU_LightingCtrl, SM-01 | - | `05_hardware/HW-REQ-010.md` |
 | RISK-01 | risk | - | draft | - | - | - | `02_safety/05_analyses/RISK-01.md` |
 | RISK-02 | risk | - | draft | - | - | - | `02_safety/05_analyses/RISK-02.md` |
 | SG-01 | safety-goal | B | reviewed | H-01, H-04 | Item_LightingSystem | TC-021 | `02_safety/03_fsc/SG-01.md` |
 | SG-02 | safety-goal | A | draft | H-02, H-03, H-05, H-07 | Item_LightingSystem | - | `02_safety/03_fsc/SG-02.md` |
-| SM-01 | safety-mechanism | B | reviewed | FSR-001 | ECU_LightingCtrl, LED_Driver_Stage_1 | TC-021 | `05_hardware/SM-01.md` |
-| SYS-REQ-014 | functional | B | reviewed | CR-007, FSR-001 | ECU_LightingCtrl, SWC_LightManager, SM-01 | TC-021 | `01_requirements/system/SYS-REQ-014.md` |
-| TC-021 | fault-injection | B | reviewed | SYS-REQ-014, FSR-001, SG-01 | HiL | - | `07_verification/testcases/TC-021.md` |
+| SM-01 | safety-mechanism | B | draft | FSR-001 | ECU_LightingCtrl, LED_Driver_Stage_1, Current_Sense_Chain | TC-021 | `05_hardware/SM-01.md` |
+| SYS-REQ-014 | functional | B | draft | CR-007, FSR-001 | ECU_LightingCtrl, SWC_LightManager, SM-01 | TC-021 | `01_requirements/system/SYS-REQ-014.md` |
+| SYS-REQ-015 | diagnostics | B | draft | SYS-REQ-014 | ECU_LightingCtrl, SWC_LightManager | - | `01_requirements/system/SYS-REQ-015.md` |
+| SYS-REQ-016 | electrical | B | draft | SYS-REQ-014, FSR-001 | ECU_LightingCtrl, LED_Driver_Stage_1 | - | `01_requirements/system/SYS-REQ-016.md` |
+| SYS-REQ-017 | diagnostics | B | draft | SYS-REQ-014 | ECU_LightingCtrl, SWC_LightManager | - | `01_requirements/system/SYS-REQ-017.md` |
+| SYS-REQ-018 | safety | B | draft | SYS-REQ-014, FSR-001 | ECU_LightingCtrl, SM-01 | - | `01_requirements/system/SYS-REQ-018.md` |
+| SYS-REQ-019 | diagnostics | B | draft | SYS-REQ-014 | ECU_LightingCtrl, SWC_LightManager | - | `01_requirements/system/SYS-REQ-019.md` |
+| TC-021 | fault-injection | B | draft | SYS-REQ-014, SYS-REQ-018, FSR-001, SG-01 | HiL | - | `07_verification/testcases/TC-021.md` |

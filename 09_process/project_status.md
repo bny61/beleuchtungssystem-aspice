@@ -35,7 +35,11 @@ tailoring decisions are missing but will be required at the latest for phase 9.
 - **Timing budget SG-01** closes: 70 ms detection + 150 ms reaction = 220 ms < FTTI 300 ms.
 - **Documented phase 2 work products:** `02_safety/01_item_definition/item_definition.md`,
   `02_safety/02_hara/hara.md`, `operational_situations.md`, `sec_classification.md`.
-- Traceability check green, 45 records.
+- **Phase 3 refinement of `SYS-REQ-014`** (hardware-engineer): tolerance analysis of the current
+  sensing closed. `SYS-REQ-014` split, `SYS-REQ-015` … `SYS-REQ-019` and `HW-REQ-001` … `HW-REQ-010`
+  created, `SM-01` detection time 70 → 80 ms, diagnostic coverage 90 % made conditional.
+  Analysis: `05_hardware/analysis_current_sensing.md`.
+- Traceability check green, 60 records.
 
 ## Open points
 
@@ -44,6 +48,12 @@ tailoring decisions are missing but will be required at the latest for phase 9.
 | OP-1 | Carry the ASIL of the `tbd` customer requirements over from the HARA | systems-engineer | Phase 3 |
 | OP-2 | Behaviour outside the normal supply range (under/overvoltage, load dump) is missing | systems-engineer | Phase 3 |
 | OP-3 | `CR-007` is not atomic (detection + indication); change only via a requirement-change issue | systems-engineer | before baseline |
+| OP-15 | Confirm the 90 % diagnostic coverage of `SM-01` against the FMEDA — blocks `SM-01` returning to `reviewed` | safety-analyst | Phase 5 |
+| OP-16 | Feasibility of the 400 mA derating floor (`HW-REQ-008`, `A-12`) against the LED module thermal design | hardware-engineer | Phase 6 |
+| OP-17 | Decide the gating scheme below the minimum PWM on-time: forced window (`HW-REQ-004`) vs. "diagnosis not available" (`SYS-REQ-017`) — changes diagnosis availability, not just implementation | systems-engineer | Phase 3 |
+| OP-18 | Decide whether per-string current sensing is added — the only way to see parallel-string loss in the current domain | systems-engineer | Phase 3 |
+| OP-19 | New test cases for `HW-REQ-001` … `HW-REQ-010` | verification-engineer | Phase 8 |
+| OP-20 | Re-review `SYS-REQ-014`, `SM-01` and `TC-021` — dropped to `draft` by the refinement | safety-manager | Phase 3 |
 | OP-4 | Define the required function class per ISO 7637-2 pulse in `CR-017` | hardware-engineer | Phase 6 |
 | OP-5 | Replace the weak requirements `CR-002`, `CR-005`, `CR-016` before a real baseline | quality-manager | before baseline |
 | OP-6 | ~~Normalise the ASCII transliteration in the records to proper umlauts~~ | config-manager | **obsolete** — resolved by the translation to English |
@@ -65,7 +75,7 @@ architecture with interface table and allocation matrix. Points to observe:
 - The ASIL of the customer requirements from OP-1 are set here.
 - Element names from phase 2 are binding: `ECU_LightingCtrl`, `LED_Driver_Stage_1`,
   `SWC_LightManager`, `SWC_HighBeamControl`, `SWC_HighBeamMonitor`, `SWC_WorkLampControl`,
-  `Vehicle_Gateway`, `Item_LightingSystem`.
+  `Vehicle_Gateway`, `Item_LightingSystem`, `Current_Sense_Chain`.
 
 > **Language:** the project is English throughout since the translation. German remains only in
 > `09_process/prompts/` — that is the original commissioning document and is deliberately unchanged.

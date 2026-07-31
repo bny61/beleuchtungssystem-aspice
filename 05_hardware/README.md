@@ -4,15 +4,25 @@
 
 HWE.1-HWE.4, ISO 26262-5.
 
-**1 records.** Click an ID to open the record.
+**11 records.** Click an ID to open the record.
 
 | ID | Text | Type | ASIL | Status | Source / trace | Verified by |
 |---|---|---|---|---|---|---|
-| [SM-01](SM-01.md) | Open-load detection in the low-beam channel via shunt current measurement with threshold comparison and debouncing; reported to S… | safety-mechanism | B | reviewed | FSR-001 | TC-021 |
+| [HW-REQ-001](HW-REQ-001.md) | The current sensing of a low-beam channel shall measure the channel load current with a total uncertainty of not more than +/-20… | electrical | B | draft | SYS-REQ-016, FSR-001 | — |
+| [HW-REQ-002](HW-REQ-002.md) | The current sensing of a low-beam channel shall guarantee that a true channel current below 130 mA is always evaluated as below t… | electrical | B | draft | SYS-REQ-016, HW-REQ-001 | — |
+| [HW-REQ-003](HW-REQ-003.md) | The analogue-to-digital conversion of the low-beam channel current shall be triggered by the PWM timer unit of the LED driver sta… | electrical | B | draft | SYS-REQ-014 | — |
+| [HW-REQ-004](HW-REQ-004.md) | Where the commanded PWM on-time of a low-beam channel is shorter than 150 us, the LED driver stage shall insert a diagnostic meas… | electrical | B | draft | SYS-REQ-017 | — |
+| [HW-REQ-005](HW-REQ-005.md) | The current sensing of a low-beam channel shall evaluate the measured current during the PWM off-phase and shall signal a current… | diagnostics | B | draft | FSR-001, SYS-REQ-014 | — |
+| [HW-REQ-006](HW-REQ-006.md) | The LED driver stage shall provide the channel output voltage to the microcontroller as a measured value in both the PWM on-phase… | electrical | B | draft | SYS-REQ-019 | — |
+| [HW-REQ-007](HW-REQ-007.md) | The LED driver stage shall provide its over-voltage, over-current and over-temperature status to the microcontroller as a readabl… | interface | B | draft | SYS-REQ-019 | — |
+| [HW-REQ-008](HW-REQ-008.md) | The thermal derating function of a low-beam channel shall not command a channel set point below 400 mA while the channel is comma… | electrical | B | draft | SYS-REQ-014, HW-REQ-002 | — |
+| [HW-REQ-009](HW-REQ-009.md) | The hardware detection path of the low-beam open-load mechanism shall report a detected open load to the software fault reaction… | safety | B | draft | SYS-REQ-018, FSR-001 | — |
+| [HW-REQ-010](HW-REQ-010.md) | The microcontroller shall verify the plausibility of the analogue-to-digital converter reference used for the low-beam current me… | diagnostics | B | draft | FSR-001, HW-REQ-001 | — |
+| [SM-01](SM-01.md) | Open-load detection in the low-beam channel via PWM-synchronous shunt current measurement with threshold comparison, debouncing,… | safety-mechanism | B | draft | FSR-001 | TC-021 |
 
-**Status:** reviewed: 1
+**Status:** draft: 11
 
-**ASIL:** B: 1
+**ASIL:** B: 11
 
 ---
 

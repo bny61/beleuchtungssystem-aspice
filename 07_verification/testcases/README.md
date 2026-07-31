@@ -8,9 +8,9 @@ ASPICE SYS.4/SYS.5. Every test case references at least one requirement.
 
 | ID | Text | Type | ASIL | Status | Source / trace | Verified by |
 |---|---|---|---|---|---|---|
-| [TC-021](TC-021.md) | Fault injection of an open load on low-beam channel 1: evidence of detection, fault reaction within the fault reaction time, driv… | fault-injection | B | reviewed | SYS-REQ-014, FSR-001, SG-01 | — |
+| [TC-021](TC-021.md) | Fault injection of an open load on low-beam channel 1: evidence of detection, fault reaction within the fault reaction time, driv… | fault-injection | B | draft | SYS-REQ-014, SYS-REQ-018, FSR-001, SG-01 | — |
 
-**Status:** reviewed: 1
+**Status:** draft: 1
 
 **ASIL:** B: 1
 
