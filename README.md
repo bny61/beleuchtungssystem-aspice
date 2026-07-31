@@ -19,12 +19,13 @@ The block diagram is the graphical form of
 [`02_safety/01_item_definition/item_definition.md`](02_safety/01_item_definition/item_definition.md)
 and defines the item boundary per ISO 26262-3.
 
-![Block diagram of the project scope: the item boundary in green with ECU logic, LED drivers and
-current/temperature sensing; external systems in blue — environment sensor, vehicle gateway
-(CAN FD / SAE J1939), 24 V vehicle supply, instrument cluster, diagnostic tester, headlamp modules
-and work-lamp output stages; a grey panel lists what is excluded from the project scope: rear
-lighting, interior lighting, indicators and hazard warning, fog lamps and body-builder
-lighting.](project-scope.png)
+![Block diagram of the project scope: the item boundary in green contains ECU_LightingCtrl with
+MCU_Lockstep and ASIC_Watchdog, the LED driver stages, current and temperature sensing, the headlamp
+modules and the work-lamp output stages. External systems in blue — environment sensing (A-05),
+Vehicle_Gateway on CAN FD / SAE J1939 (A-02, A-06), 24 V vehicle supply KL30/KL15 (A-01), instrument
+cluster (A-04) and diagnostic tester with UDS per ISO 14229. A grey panel lists what is excluded:
+rear lighting, interior lighting, indicators and hazard warning, fog lamps and body-builder
+lighting.](project-scope.svg)
 
 **How to read it:** the green block is the item boundary — ECU logic, LED drivers and the
 current/temperature sensing are specified, designed and verified in this project. Blue blocks are
@@ -32,12 +33,11 @@ external systems; only the interface to them is in scope, and each carries the a
 (`A-01` … `A-06`) under which it is treated as given. The grey panel lists what is explicitly
 excluded — naming exclusions rather than leaving them tacit is what makes the boundary auditable.
 
-> **Note on this graphic:** it is an AI-generated illustration and several labels are garbled or
-> wrong — among them `KL30 / KL5` (correct: KL30 / KL15) and `UDS per ISD 1/229` (correct:
-> ISO 14229). The authoritative boundary definition is
-> [`02_safety/01_item_definition/item_definition.md`](02_safety/01_item_definition/item_definition.md)
-> and the PlantUML source [`03_model/plantuml/ctx_item.puml`](03_model/plantuml/ctx_item.puml),
-> not this image.
+> The graphic is derived from
+> [`02_safety/01_item_definition/item_definition.md`](02_safety/01_item_definition/item_definition.md),
+> which stays the authoritative boundary definition together with the PlantUML source
+> [`03_model/plantuml/ctx_item.puml`](03_model/plantuml/ctx_item.puml). It is hand-authored SVG, so
+> a label can be corrected in the file rather than by regenerating an image.
 
 | Aspect | In scope | Interface only | Out of scope |
 |---|---|---|---|

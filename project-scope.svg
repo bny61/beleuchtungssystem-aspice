@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1010" width="1920" height="1010" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <title>Project scope — item boundary of the adaptive front-lighting system</title>
+  <desc>The item boundary in green contains the lighting ECU with lockstep microcontroller and
+  watchdog, the LED driver stages, current and temperature sensing, the headlamp modules and the
+  work-lamp output stages. External systems in blue: environment sensing, vehicle gateway, 24 V
+  vehicle supply, instrument cluster and diagnostic tester, each with the assumption under which it
+  is treated as given. A grey panel lists what is excluded from the project scope.</desc>
+
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#31536F"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1920" height="1010" rx="14" fill="#FFFFFF"/>
+
+  <text x="960" y="52" text-anchor="middle" font-size="34" font-weight="700" fill="#0F3A6B">Project scope — item boundary</text>
+  <text x="960" y="82" text-anchor="middle" font-size="17" fill="#6B7A8D">Adaptive front-lighting system incl. work-lamp control · N3 tractor unit · ISO 26262-3 item definition</text>
+
+  <!-- ============ ITEM BOUNDARY ============ -->
+  <rect x="600" y="150" width="660" height="700" rx="16" fill="#EDF7EE" stroke="#2E7D52" stroke-width="3"/>
+  <text x="930" y="188" text-anchor="middle" font-size="23" font-weight="700" fill="#1E6B45">Item_LightingSystem</text>
+  <text x="930" y="212" text-anchor="middle" font-size="15" fill="#4B7F63">ITEM BOUNDARY — specified, designed and verified in this project</text>
+
+  <rect x="628" y="234" width="604" height="228" rx="10" fill="#FFFFFF" stroke="#8FC3A3" stroke-width="2"/>
+  <text x="646" y="262" font-size="18" font-weight="700" fill="#1E6B45">ECU_LightingCtrl</text>
+
+  <rect x="646" y="276" width="182" height="170" rx="8" fill="#F3FAF5" stroke="#B7D9C4" stroke-width="1.5"/>
+  <text x="737" y="302" text-anchor="middle" font-size="15" font-weight="700" fill="#14513A">MCU_Lockstep</text>
+  <text x="737" y="324" text-anchor="middle" font-size="13" fill="#3C5A4B">control · monitoring</text>
+  <text x="737" y="343" text-anchor="middle" font-size="13" fill="#3C5A4B">DTC management</text>
+  <text x="737" y="376" text-anchor="middle" font-size="15" font-weight="700" fill="#14513A">ASIC_Watchdog</text>
+  <text x="737" y="398" text-anchor="middle" font-size="13" fill="#3C5A4B">independent time base</text>
+  <text x="737" y="417" text-anchor="middle" font-size="13" fill="#3C5A4B">disable path · TSR-001</text>
+
+  <rect x="840" y="276" width="182" height="170" rx="8" fill="#F3FAF5" stroke="#B7D9C4" stroke-width="1.5"/>
+  <text x="931" y="302" text-anchor="middle" font-size="15" font-weight="700" fill="#14513A">LED_Driver_Stage_1..n</text>
+  <text x="931" y="326" text-anchor="middle" font-size="13" fill="#3C5A4B">constant current per channel</text>
+  <text x="931" y="345" text-anchor="middle" font-size="13" fill="#3C5A4B">PWM 400 Hz dimming</text>
+  <text x="931" y="364" text-anchor="middle" font-size="13" fill="#3C5A4B">OVP / OCP / thermal status</text>
+  <text x="931" y="396" text-anchor="middle" font-size="13" fill="#3C5A4B">nominal 1.20 A per channel</text>
+  <text x="931" y="415" text-anchor="middle" font-size="13" fill="#3C5A4B">derating floor 400 mA</text>
+
+  <rect x="1034" y="276" width="182" height="170" rx="8" fill="#F3FAF5" stroke="#B7D9C4" stroke-width="1.5"/>
+  <text x="1125" y="302" text-anchor="middle" font-size="15" font-weight="700" fill="#14513A">Current_Sense_Chain</text>
+  <text x="1125" y="324" text-anchor="middle" font-size="13" fill="#3C5A4B">shunt · amplifier · ADC</text>
+  <text x="1125" y="343" text-anchor="middle" font-size="13" fill="#3C5A4B">PWM-synchronous sampling</text>
+  <text x="1125" y="362" text-anchor="middle" font-size="13" fill="#3C5A4B">feeds SM-01 open-load det.</text>
+  <text x="1125" y="394" text-anchor="middle" font-size="15" font-weight="700" fill="#14513A">Temp_Sense_Chain</text>
+  <text x="1125" y="416" text-anchor="middle" font-size="13" fill="#3C5A4B">LED NTC · board sensor</text>
+
+  <rect x="628" y="486" width="292" height="120" rx="10" fill="#FFFFFF" stroke="#8FC3A3" stroke-width="2"/>
+  <text x="774" y="514" text-anchor="middle" font-size="17" font-weight="700" fill="#1E6B45">Headlamp modules</text>
+  <text x="774" y="538" text-anchor="middle" font-size="13" fill="#3C5A4B">low beam · high beam · cornering</text>
+  <text x="774" y="558" text-anchor="middle" font-size="13" fill="#3C5A4B">ECE R112 / R123</text>
+  <text x="774" y="583" text-anchor="middle" font-size="13" fill="#3C5A4B">headlamp power &amp; control</text>
+
+  <rect x="940" y="486" width="292" height="120" rx="10" fill="#FFFFFF" stroke="#8FC3A3" stroke-width="2"/>
+  <text x="1086" y="514" text-anchor="middle" font-size="17" font-weight="700" fill="#1E6B45">Work-lamp output stages</text>
+  <text x="1086" y="538" text-anchor="middle" font-size="13" fill="#3C5A4B">inhibited above 10 km/h</text>
+  <text x="1086" y="558" text-anchor="middle" font-size="13" fill="#3C5A4B">FSR-008 · TSR-008</text>
+  <text x="1086" y="583" text-anchor="middle" font-size="13" fill="#3C5A4B">also on invalid speed signal</text>
+
+  <rect x="628" y="630" width="604" height="94" rx="10" fill="#F7FBF8" stroke="#C4DFCE" stroke-width="1.5"/>
+  <text x="646" y="656" font-size="14" font-weight="700" fill="#1E6B45">Golden Thread inside the boundary</text>
+  <text x="646" y="679" font-size="13" fill="#3C5A4B">SG-01 “No undetected failure of the low beam while driving”, ASIL B — detection ≤ 80 ms,</text>
+  <text x="646" y="698" font-size="13" fill="#3C5A4B">fault reaction ≤ 150 ms, total 230 ms against an FTTI of 300 ms.</text>
+  <text x="646" y="717" font-size="13" fill="#3C5A4B">Safe state: remaining channel active at reduced power, driver warning, DTC set.</text>
+
+  <text x="930" y="762" text-anchor="middle" font-size="14" font-style="italic" fill="#6B7A8D">Values are plausible example values of a teaching project — not validated data.</text>
+  <text x="930" y="800" text-anchor="middle" font-size="13" fill="#6B7A8D">Authoritative definition: 02_safety/01_item_definition/item_definition.md · 03_model/plantuml/ctx_item.puml</text>
+
+  <!-- ============ EXTERNAL, LEFT ============ -->
+  <rect x="40" y="250" width="250" height="150" rx="10" fill="#E7F0FB" stroke="#3B6EA5" stroke-width="2"/>
+  <text x="165" y="282" text-anchor="middle" font-size="17" font-weight="700" fill="#123A63">Environment sensing</text>
+  <text x="165" y="306" text-anchor="middle" font-size="13" fill="#2E4A66">object detection for the</text>
+  <text x="165" y="325" text-anchor="middle" font-size="13" fill="#2E4A66">glare-free high beam</text>
+  <text x="165" y="358" text-anchor="middle" font-size="13" font-weight="700" fill="#3B6EA5">A-05</text>
+  <text x="165" y="381" text-anchor="middle" font-size="12" fill="#6B7A8D">interface agreement open (OP-10)</text>
+
+  <rect x="330" y="250" width="230" height="150" rx="10" fill="#E7F0FB" stroke="#3B6EA5" stroke-width="2"/>
+  <text x="445" y="282" text-anchor="middle" font-size="17" font-weight="700" fill="#123A63">Vehicle_Gateway</text>
+  <text x="445" y="306" text-anchor="middle" font-size="13" fill="#2E4A66">CAN FD / SAE J1939</text>
+  <text x="445" y="325" text-anchor="middle" font-size="13" fill="#2E4A66">light request · speed</text>
+  <text x="445" y="344" text-anchor="middle" font-size="13" fill="#2E4A66">steering angle · ambient light</text>
+  <text x="445" y="375" text-anchor="middle" font-size="13" font-weight="700" fill="#3B6EA5">A-02 · A-06</text>
+
+  <rect x="330" y="86" width="230" height="106" rx="10" fill="#E7F0FB" stroke="#3B6EA5" stroke-width="2"/>
+  <text x="445" y="118" text-anchor="middle" font-size="17" font-weight="700" fill="#123A63">Vehicle supply 24 V</text>
+  <text x="445" y="142" text-anchor="middle" font-size="14" fill="#2E4A66">KL30 / KL15 · 16–32 V</text>
+  <text x="445" y="168" text-anchor="middle" font-size="13" font-weight="700" fill="#3B6EA5">A-01</text>
+
+  <!-- ============ EXTERNAL, RIGHT ============ -->
+  <rect x="1310" y="230" width="270" height="150" rx="10" fill="#E7F0FB" stroke="#3B6EA5" stroke-width="2"/>
+  <text x="1445" y="262" text-anchor="middle" font-size="17" font-weight="700" fill="#123A63">Instrument cluster</text>
+  <text x="1445" y="286" text-anchor="middle" font-size="13" fill="#2E4A66">driver status and warnings</text>
+  <text x="1445" y="305" text-anchor="middle" font-size="13" fill="#2E4A66">carries FSR-004</text>
+  <text x="1445" y="338" text-anchor="middle" font-size="13" font-weight="700" fill="#3B6EA5">A-04</text>
+  <text x="1445" y="361" text-anchor="middle" font-size="12" fill="#6B7A8D">underpins the C rating of H-01</text>
+
+  <rect x="1310" y="420" width="270" height="140" rx="10" fill="#E7F0FB" stroke="#3B6EA5" stroke-width="2"/>
+  <text x="1445" y="452" text-anchor="middle" font-size="17" font-weight="700" fill="#123A63">Diagnostic tester</text>
+  <text x="1445" y="476" text-anchor="middle" font-size="13" fill="#2E4A66">workshop access</text>
+  <text x="1445" y="500" text-anchor="middle" font-size="14" font-weight="700" fill="#2E4A66">UDS per ISO 14229</text>
+  <text x="1445" y="530" text-anchor="middle" font-size="13" fill="#2E4A66">DTC read within 100 ms</text>
+
+  <!-- ============ EXCLUDED ============ -->
+  <rect x="1620" y="230" width="270" height="330" rx="10" fill="#F2F2F4" stroke="#9A9AA5" stroke-width="2"/>
+  <text x="1755" y="266" text-anchor="middle" font-size="17" font-weight="700" fill="#3A3A44">Excluded from</text>
+  <text x="1755" y="289" text-anchor="middle" font-size="17" font-weight="700" fill="#3A3A44">the project scope</text>
+  <line x1="1650" y1="306" x2="1860" y2="306" stroke="#C9C9D2" stroke-width="2"/>
+  <text x="1755" y="336" text-anchor="middle" font-size="15" fill="#4A4A55">Rear lighting</text>
+  <text x="1755" y="364" text-anchor="middle" font-size="15" fill="#4A4A55">Interior lighting</text>
+  <text x="1755" y="392" text-anchor="middle" font-size="15" fill="#4A4A55">Indicators / hazard warning</text>
+  <text x="1755" y="420" text-anchor="middle" font-size="15" fill="#4A4A55">Fog lamps</text>
+  <text x="1755" y="448" text-anchor="middle" font-size="15" fill="#4A4A55">Body-builder lighting</text>
+  <text x="1755" y="476" text-anchor="middle" font-size="15" fill="#4A4A55">behind the body interface</text>
+  <line x1="1650" y1="498" x2="1860" y2="498" stroke="#C9C9D2" stroke-width="2"/>
+  <text x="1755" y="524" text-anchor="middle" font-size="12" fill="#6B7A8D">Exclusions are stated explicitly —</text>
+  <text x="1755" y="542" text-anchor="middle" font-size="12" fill="#6B7A8D">a tacit boundary is an assessment finding.</text>
+
+  <!-- ============ EDGES ============ -->
+  <line x1="290" y1="325" x2="322" y2="325" stroke="#31536F" stroke-width="2.5" marker-end="url(#a)"/>
+  <text x="306" y="312" text-anchor="middle" font-size="12" fill="#31536F">object list</text>
+
+  <line x1="560" y1="325" x2="592" y2="325" stroke="#31536F" stroke-width="2.5" marker-end="url(#a)"/>
+  <text x="576" y="300" text-anchor="middle" font-size="12" fill="#31536F">bus</text>
+  <text x="576" y="316" text-anchor="middle" font-size="12" fill="#31536F">signals</text>
+
+  <path d="M 560 139 H 578 V 226 H 590" fill="none" stroke="#31536F" stroke-width="2.5" marker-end="url(#a)"/>
+  <text x="572" y="212" text-anchor="end" font-size="12" fill="#31536F">KL30 / KL15</text>
+
+  <line x1="1260" y1="290" x2="1302" y2="290" stroke="#31536F" stroke-width="2.5" marker-end="url(#a)"/>
+  <text x="1281" y="277" text-anchor="middle" font-size="12" fill="#31536F">warning</text>
+
+  <line x1="1260" y1="480" x2="1302" y2="480" stroke="#31536F" stroke-width="2.5" marker-start="url(#a)" marker-end="url(#a)"/>
+  <text x="1281" y="467" text-anchor="middle" font-size="12" fill="#31536F">UDS</text>
+</svg>
