@@ -178,7 +178,7 @@ supply the procedures, and two gates secure the result.
 analysis, hardware and software design, implementation, unit testing, system and integration test,
 to validation and release. Each stage lists its assigned agents. config-manager and quality-assessor
 run continuously as supporting processes. A quick-start panel shows /phase-run followed by "next",
-and direct invocation such as "use the safety-analyst agent to..." or /hara.](v-model.png)
+and direct invocation such as "use the safety-analyst agent to..." or /hara.](v-model.svg)
 
 **How to read it:** the left branch descends from requirements to design, the right branch ascends
 from unit test to release, and the dashed arrows are the bi-directional traceability between the two
