@@ -12,11 +12,14 @@ if ! git diff --cached --name-only | grep -qE '\.md$'; then
 fi
 
 python3 tools/gen_index.py >/dev/null
+python3 tools/gen_trace_graph.py >/dev/null
 
 # Nur generierte Uebersichten nachlegen.
 # --modified UND --others, sonst werden neu entstandene (noch untracked)
 # Uebersichten uebersehen.
-CHANGED=$(git ls-files --modified --others --exclude-standard -- '*/README.md')
+CHANGED=$(git ls-files --modified --others --exclude-standard -- '*/README.md' \
+         '07_verification/reports/traceability_views.md' \
+         '07_verification/reports/trace_explorer.html')
 if [ -n "$CHANGED" ]; then
     echo "pre-commit: Anforderungs-Uebersichten aktualisiert:"
     echo "$CHANGED" | sed 's/^/  - /'

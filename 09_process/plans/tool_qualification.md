@@ -8,6 +8,7 @@
 |---|---|---|---|
 | `tools/trace_check.py` | Checks traceability consistency, produces the traceability matrix and coverage KPIs | **yes** | Qualification candidate — see below |
 | `tools/gen_index.py` | Produces the folder overviews of the requirements | indirectly | Derived artefact: the record remains the source. An error would be visible in review since overview and record sit side by side. Lower confidence need than `trace_check.py`. |
+| `tools/gen_trace_graph.py` | Produces the Mermaid traceability views and the HTML explorer | indirectly | Derived artefacts: the records remain the source, and every view carries a link table that a reviewer can check against the record. The **HTML explorer additionally places JavaScript between the record and its presentation** - a rendering fault there is not visible in the file itself. For that reason the Mermaid views, not the explorer, are the artefact to cite in a review; the explorer is a convenience. |
 | GitHub Actions runner | Executes the checks, archives artefacts | indirectly | Infrastructure; the evidence lies in the archived artefacts |
 | PlantUML | Renders model views from text sources | no (presentation) | The source is the text, not the image — a rendering error is detectable in review |
 | Compiler / static analysis / coverage tool | Software verification | yes | Separate consideration required in the SW plan (phase 7) |
@@ -39,3 +40,7 @@ would have to be. This file names the gap; it does not close it.
 
 As long as tool qualification is open, a green CI run may be argued in the safety case only as
 *supporting* evidence (Sn-07), not as sole evidence of requirements completeness.
+
+The same applies, more strongly, to the visual views: a diagram that omits links for readability -
+as the large safety goal views deliberately do - must never be cited as evidence of completeness.
+Completeness is argued from `traceability_matrix.md` and from `trace_check.py`, not from a picture.

@@ -6,35 +6,39 @@ Derived from CR and FSR, ASPICE SYS.2.
 
 **21 records.** Click an ID to open the record.
 
-| ID | Text | Type | ASIL | Status | Source / trace | Verified by |
+| ID | Text | Type | ASIL | Status | Upstream | Downstream |
 |---|---|---|---|---|---|---|
-| [SYS-REQ-001](SYS-REQ-001.md) | When the driver requests low beam via the light switch signal, the lighting ECU shall energise both low-beam channels within 300… | functional | B | draft | CR-001, FSR-002 | — |
-| [SYS-REQ-002](SYS-REQ-002.md) | When the ambient brightness signal remains below 1000 lx for more than 3 s, the lighting ECU shall switch from daytime running li… | functional | B | draft | CR-002, FSR-002 | — |
-| [SYS-REQ-003](SYS-REQ-003.md) | When the ambient brightness signal remains above 2000 lx for more than 30 s, the lighting ECU shall switch from low beam to dayti… | functional | B | draft | CR-002 | — |
-| [SYS-REQ-004](SYS-REQ-004.md) | When the vehicle gateway reports an oncoming or preceding vehicle, the lighting ECU shall mask the affected high-beam segment wit… | functional | A | draft | CR-003, FSR-005 | — |
-| [SYS-REQ-005](SYS-REQ-005.md) | While the vehicle speed signal exceeds 10 km/h, the lighting ECU shall inhibit energising of the work-lamp output stages. | functional | A | draft | CR-004, FSR-008 | — |
-| [SYS-REQ-006](SYS-REQ-006.md) | When the steering angle signal exceeds 15 degrees, the lighting ECU shall activate the cornering light of the corresponding side… | functional | A | draft | CR-005 | — |
-| [SYS-REQ-007](SYS-REQ-007.md) | When the steering angle signal falls below 5 degrees, the lighting ECU shall deactivate the cornering light within 200 ms. | functional | A | draft | CR-005 | — |
-| [SYS-REQ-008](SYS-REQ-008.md) | When the cornering light does not reach its commanded state, the lighting ECU shall store a diagnostic trouble code. | diagnostics | A | draft | CR-005 | — |
-| [SYS-REQ-009](SYS-REQ-009.md) | When the ignition signal changes to on, the lighting ECU shall energise the daytime running lights within 2 s. | functional | QM | draft | CR-006 | — |
-| [SYS-REQ-010](SYS-REQ-010.md) | When the lighting ECU has classified a low-beam channel as failed, it shall request the driver warning via the vehicle gateway wi… | functional | B | draft | CR-007, FSR-004 | — |
-| [SYS-REQ-011](SYS-REQ-011.md) | While exactly one low-beam channel is classified as failed, the lighting ECU shall continue to operate the remaining channel at i… | functional | B | draft | CR-008, FSR-003 | — |
-| [SYS-REQ-012](SYS-REQ-012.md) | While the vehicle supply voltage is within 16 V to 32 V, the lighting ECU shall provide all lighting functions without restrictio… | electrical | B | draft | CR-016, FSR-002 | — |
-| [SYS-REQ-013](SYS-REQ-013.md) | While the vehicle supply voltage is between 9 V and 16 V, the lighting ECU shall keep the low beam energised at a reduced set poi… | electrical | B | draft | CR-016, FSR-003 | — |
-| [SYS-REQ-014](SYS-REQ-014.md) | When the load current of a low-beam channel, measured during the PWM on-phase, remains below 150 mA for more than 50 ms, the ligh… | functional | B | draft | CR-007, FSR-001 | TC-021 |
-| [SYS-REQ-015](SYS-REQ-015.md) | When a low-beam channel is classified as "open load", the lighting ECU shall increment the fault counter of that channel. | diagnostics | B | draft | SYS-REQ-014 | — |
-| [SYS-REQ-016](SYS-REQ-016.md) | The lighting ECU shall measure the load current of a low-beam channel with a total uncertainty of not more than +/-20 mA at the 1… | electrical | B | draft | SYS-REQ-014, FSR-001 | — |
-| [SYS-REQ-017](SYS-REQ-017.md) | While the PWM on-time of a low-beam channel is shorter than 150 us, the lighting ECU shall report the open-load diagnosis of that… | diagnostics | B | draft | SYS-REQ-014 | — |
-| [SYS-REQ-018](SYS-REQ-018.md) | When an open load occurs in a low-beam channel, the lighting ECU shall report the fault to the fault reaction within 100 ms of fa… | safety | B | draft | SYS-REQ-014, FSR-001 | — |
-| [SYS-REQ-019](SYS-REQ-019.md) | When the measured load current of a low-beam channel falls below 150 mA, the lighting ECU shall classify the cause as exactly one… | diagnostics | B | draft | SYS-REQ-014 | — |
-| [SYS-REQ-020](SYS-REQ-020.md) | The lighting ECU shall exchange light request, vehicle speed, steering angle, ambient brightness, object data and lighting status… | communication | B | draft | CR-020 | — |
-| [SYS-REQ-021](SYS-REQ-021.md) | When a diagnostic tester sends a UDS request according to ISO 14229, the lighting ECU shall provide the stored diagnostic trouble… | diagnostics | QM | draft | CR-019 | — |
+| [SYS-REQ-001](SYS-REQ-001.md) | When the driver requests low beam via the light switch signal, the lighting ECU shall ene… | functional | B | draft | CR-001, FSR-002 | — |
+| [SYS-REQ-002](SYS-REQ-002.md) | When the ambient brightness signal remains below 1000 lx for more than 3 s, the lighting… | functional | B | draft | CR-002, FSR-002 | — |
+| [SYS-REQ-003](SYS-REQ-003.md) | When the ambient brightness signal remains above 2000 lx for more than 30 s, the lighting… | functional | B | draft | CR-002 | — |
+| [SYS-REQ-004](SYS-REQ-004.md) | When the vehicle gateway reports an oncoming or preceding vehicle, the lighting ECU shall… | functional | A | draft | CR-003, FSR-005 | — |
+| [SYS-REQ-005](SYS-REQ-005.md) | While the vehicle speed signal exceeds 10 km/h, the lighting ECU shall inhibit energising… | functional | A | draft | CR-004, FSR-008 | — |
+| [SYS-REQ-006](SYS-REQ-006.md) | When the steering angle signal exceeds 15 degrees, the lighting ECU shall activate the co… | functional | A | draft | CR-005 | — |
+| [SYS-REQ-007](SYS-REQ-007.md) | When the steering angle signal falls below 5 degrees, the lighting ECU shall deactivate t… | functional | A | draft | CR-005 | — |
+| [SYS-REQ-008](SYS-REQ-008.md) | When the cornering light does not reach its commanded state, the lighting ECU shall store… | diagnostics | A | draft | CR-005 | — |
+| [SYS-REQ-009](SYS-REQ-009.md) | When the ignition signal changes to on, the lighting ECU shall energise the daytime runni… | functional | QM | draft | CR-006 | — |
+| [SYS-REQ-010](SYS-REQ-010.md) | When the lighting ECU has classified a low-beam channel as failed, it shall request the d… | functional | B | draft | CR-007, FSR-004 | — |
+| [SYS-REQ-011](SYS-REQ-011.md) | While exactly one low-beam channel is classified as failed, the lighting ECU shall contin… | functional | B | draft | CR-008, FSR-003 | — |
+| [SYS-REQ-012](SYS-REQ-012.md) | While the vehicle supply voltage is within 16 V to 32 V, the lighting ECU shall provide a… | electrical | B | draft | CR-016, FSR-002 | — |
+| [SYS-REQ-013](SYS-REQ-013.md) | While the vehicle supply voltage is between 9 V and 16 V, the lighting ECU shall keep the… | electrical | B | draft | CR-016, FSR-003 | — |
+| [SYS-REQ-014](SYS-REQ-014.md) | When the load current of a low-beam channel, measured during the PWM on-phase, remains be… | functional | B | draft | CR-007, FSR-001 | HW-REQ-003, HW-REQ-005, HW-REQ-008, SM-01, S… |
+| [SYS-REQ-015](SYS-REQ-015.md) | When a low-beam channel is classified as "open load", the lighting ECU shall increment th… | diagnostics | B | draft | SYS-REQ-014 | — |
+| [SYS-REQ-016](SYS-REQ-016.md) | The lighting ECU shall measure the load current of a low-beam channel with a total uncert… | electrical | B | draft | FSR-001, SYS-REQ-014 | HW-REQ-001, HW-REQ-002 |
+| [SYS-REQ-017](SYS-REQ-017.md) | While the PWM on-time of a low-beam channel is shorter than 150 us, the lighting ECU shal… | diagnostics | B | draft | SYS-REQ-014 | HW-REQ-004 |
+| [SYS-REQ-018](SYS-REQ-018.md) | When an open load occurs in a low-beam channel, the lighting ECU shall report the fault t… | safety | B | draft | FSR-001, SYS-REQ-014 | HW-REQ-009, SM-01, TC-021 |
+| [SYS-REQ-019](SYS-REQ-019.md) | When the measured load current of a low-beam channel falls below 150 mA, the lighting ECU… | diagnostics | B | draft | SYS-REQ-014 | HW-REQ-006, HW-REQ-007 |
+| [SYS-REQ-020](SYS-REQ-020.md) | The lighting ECU shall exchange light request, vehicle speed, steering angle, ambient bri… | communication | B | draft | CR-020 | — |
+| [SYS-REQ-021](SYS-REQ-021.md) | When a diagnostic tester sends a UDS request according to ISO 14229, the lighting ECU sha… | diagnostics | QM | draft | CR-019 | — |
 
 **Status:** draft: 21
 
 **ASIL:** A: 5 · B: 14 · QM: 2
 
 ---
+
+**Upstream** is what a record derives from, **downstream** what derives from it, allocates
+to it or verifies it. Graphical views of the same links:
+[`traceability_views.md`](../../07_verification/reports/traceability_views.md).
 
 This overview is generated by `tools/gen_index.py` and checked for freshness in CI.
 Make changes to the record, not to this file.

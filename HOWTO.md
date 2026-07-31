@@ -16,6 +16,7 @@ CLAUDE.md                     Binding project context: variables, ID scheme, Gol
 HOWTO.md                      This file
 tools/trace_check.py          Traceability consistency checker (stdlib only, CI gate)
 tools/gen_index.py            Generates a clickable README.md index per requirement folder
+tools/gen_trace_graph.py      Generates the Mermaid traceability views and the HTML explorer
 tools/hooks/pre-commit        Keeps those indexes up to date on every commit
 .claude/agents/               9 role agents
 .claude/skills/               7 method skills
@@ -116,6 +117,27 @@ Claude picks them up automatically.
 goal) · `id-scheme`.
 
 Exit code 1 on findings — that is what makes it usable as a required check.
+
+### Following traceability visually
+
+Three complementary views, all generated from the same records:
+
+| View | Where | Good for |
+|---|---|---|
+| **Mermaid graphs** | `07_verification/reports/traceability_views.md` | Following a thread end to end. Rendered by GitHub. One view per safety goal plus the Golden Thread. |
+| **Upstream / downstream columns** | every folder `README.md` | "What hangs off this record?" — scales to any repo size, no diagram needed. |
+| **Interactive explorer** | `07_verification/reports/trace_explorer.html` | Searching and filtering all records, hopping along links. Open it **locally** in a browser — GitHub does not render HTML stored in a repo. |
+
+```bash
+python3 tools/gen_trace_graph.py           # regenerate views and explorer
+python3 tools/gen_trace_graph.py --check   # verify only
+open 07_verification/reports/trace_explorer.html   # macOS
+```
+
+Large safety goal views deliberately show the derivation skeleton only — allocation and
+verification links converge on a few nodes and would obscure the structure. They stay complete in
+the link table under each view. **A diagram is never the completeness evidence**; that is
+`traceability_matrix.md` plus `trace_check.py`.
 
 ### Folder overviews — kept up to date automatically
 

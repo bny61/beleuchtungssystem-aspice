@@ -1,6 +1,7 @@
-name: Requirement overviews
+name: Requirement overviews and traceability views
 
-# Keeps the generated folder overviews (README.md per requirement folder) up to date.
+# Keeps the generated folder overviews (README.md per requirement folder) and the
+# traceability views (Mermaid + HTML explorer) up to date.
 # ASPICE: SUP.8 (configuration management), SUP.1 (QA)
 # ISO 26262: Part 8 (requirements management) -- the overviews are derived
 # artefacts; the source remains the respective record.
@@ -26,8 +27,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Check freshness
+      - name: Check freshness of the folder overviews
         run: python3 tools/gen_index.py --check
+
+      - name: Check freshness of the traceability views
+        run: python3 tools/gen_trace_graph.py --check
 
   update:
     name: Update overviews
@@ -48,6 +52,9 @@ jobs:
       - name: Generate overviews
         run: python3 tools/gen_index.py
 
+      - name: Generate traceability views
+        run: python3 tools/gen_trace_graph.py
+
       - name: Commit changes back
         run: |
           if git diff --quiet; then
@@ -56,8 +63,9 @@ jobs:
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "*/README.md"
-          git commit -m "chore(index): update requirement overviews
+          git add "*/README.md" 07_verification/reports/traceability_views.md \
+                  07_verification/reports/trace_explorer.html
+          git commit -m "chore(index): update requirement overviews and traceability views
 
           Generated automatically by tools/gen_index.py.
           [skip ci]"
