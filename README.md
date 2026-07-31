@@ -12,6 +12,72 @@ management and evidence layer.
   FTA path → FMEDA row → safety case argument
 - **Second, shallower thread:** `SG-02` (glare from high beam / work lamps)
 
+## Project scope
+
+What is developed in this project, what is only an interface, and what is deliberately excluded.
+The block diagram is the graphical form of
+[`02_safety/01_item_definition/item_definition.md`](02_safety/01_item_definition/item_definition.md)
+and defines the item boundary per ISO 26262-3.
+
+```mermaid
+flowchart LR
+    subgraph EXT["External interfaces — outside the item boundary"]
+        direction TB
+        PWR["<b>Vehicle supply 24 V</b><br/>KL30 / KL15 · 16–32 V<br/><small>A-01</small>"]
+        GW["<b>Vehicle gateway</b><br/>CAN FD / SAE J1939<br/><small>light request · speed · steering angle · A-06</small>"]
+        CAM["<b>Environment sensing</b><br/>object detection<br/><small>glare-free high beam · A-05</small>"]
+        HMI["<b>Instrument cluster</b><br/>driver warning<br/><small>carries FSR-004 · A-04</small>"]
+        TEST["<b>Diagnostic tester</b><br/>UDS per ISO 14229"]
+    end
+
+    subgraph ITEM["ITEM BOUNDARY — developed in this project"]
+        direction TB
+        ECU["<b>ECU_LightingCtrl</b><br/>Lighting ECU<br/><small>control · monitoring · DTC management</small>"]
+        DRV["<b>LED_Driver_Stage_1..n</b><br/>LED driver stages<br/><small>one per lighting channel</small>"]
+        SENS["<b>Current / temperature sensing</b><br/><small>feeds SM-01 open-load detection · derating</small>"]
+        LAMP["<b>Headlamp modules</b><br/>low beam · high beam · cornering<br/><small>ECE R112 / R123</small>"]
+        WORK["<b>Work-lamp output stages</b><br/><small>inhibited above 10 km/h · FSR-008</small>"]
+    end
+
+    OOS["<b>Out of scope</b><br/>rear lighting · interior lighting<br/>indicators / hazard warning · fog lamps<br/>body-builder lighting behind the body interface"]
+
+    PWR -->|"KL30 / KL15"| ECU
+    GW <-->|"light request · status"| ECU
+    CAM -->|"object list"| GW
+    ECU -->|"driver warning"| HMI
+    TEST -->|"UDS requests"| ECU
+
+    ECU -->|"PWM · enable"| DRV
+    DRV --> LAMP
+    DRV --> WORK
+    DRV --> SENS
+    SENS -->|"I_load · T_j"| ECU
+
+    ITEM -.->|"explicitly excluded"| OOS
+
+    classDef inside fill:#eaf4ea,stroke:#4a8a4a,color:#102a10
+    classDef outside fill:#e7f0fb,stroke:#3b6ea5,color:#10233a
+    classDef excluded fill:#f2f2f4,stroke:#9a9aa5,color:#3a3a44
+    class ECU,DRV,SENS,LAMP,WORK inside
+    class PWR,GW,CAM,HMI,TEST outside
+    class OOS excluded
+
+    style ITEM fill:#fafcfa,stroke:#4a8a4a,stroke-width:2px,color:#37503a
+    style EXT fill:#fafbfd,stroke:#b9c6d6,color:#37475c
+```
+
+**How to read it:** green is inside the item boundary — those elements are specified, designed and
+verified here. Blue elements are external systems; only the interface to them is in scope, and each
+one carries the assumption (`A-01` … `A-06`) under which it is treated as given. Grey is explicitly
+out of scope: naming exclusions rather than leaving them tacit is what makes the boundary auditable.
+
+| Aspect | In scope | Interface only | Out of scope |
+|---|---|---|---|
+| **Lighting functions** | Low beam, high beam, daytime running lights, cornering light, headlamp levelling, work lamps | — | Rear, interior, indicators, hazard warning, fog lamps |
+| **Electronics** | Lighting ECU, LED driver stages, current and temperature sensing | 24 V supply, CAN FD / LIN transceivers | Body-builder lighting behind the body interface |
+| **Functional safety** | `SG-01`, `SG-02` and everything derived from them | Object detection (`A-05`), instrument cluster (`A-04`) | Vehicle-level safety concept |
+| **Cybersecurity** | — | ISO 21434 interface requirements (`CR-023`) | Detailed cybersecurity concept |
+
 ## Getting started
 
 Working guide: **[HOWTO.md](HOWTO.md)** · Binding project context: **[CLAUDE.md](CLAUDE.md)** ·
