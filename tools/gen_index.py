@@ -372,7 +372,11 @@ def main() -> int:
             continue
         others = sorted(
             f for f in folder.iterdir()
-            if f.is_file() and f.name not in ("README.md", ".gitkeep")
+            # Hidden files are editor and OS artefacts (.DS_Store and friends). They are
+            # gitignored, so listing them produced an overview referring to files that do
+            # not exist in the repository -- and one that differed per machine.
+            if f.is_file() and not f.name.startswith(".")
+            and f.name != "README.md"
             and f.name not in record_files.get(folder, set())
         )
         subs = sorted(
