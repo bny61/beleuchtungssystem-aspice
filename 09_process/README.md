@@ -15,6 +15,7 @@ Plans, assumptions, project status, templates and the original commissioning pro
 
 | File | Purpose |
 |---|---|
+| [aspice_mapping.md](aspice_mapping.md) | ASPICE and ISO 26262 mapping — process area to work product |
 | [assumptions.md](assumptions.md) | Assumptions (`A-xx`) |
 | [project_status.md](project_status.md) | Project status — current state and open points |
 

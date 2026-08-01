@@ -249,6 +249,84 @@ def md_to_html(md: str) -> str:
     return "".join(out)
 
 
+# -------------------------------------------------------------------- mapping
+
+MAPPING_REL = "09_process/aspice_mapping.md"
+
+LEVEL_ORDER = ["concept", "system", "hardware", "software", "supporting"]
+LEVEL_TITLE = {
+    "concept": "Concept phase",
+    "system": "System level",
+    "hardware": "Hardware level",
+    "software": "Software level",
+    "supporting": "Supporting and management processes",
+}
+
+
+def parse_mapping(root: Path) -> list[dict]:
+    """Read the process-area table from 09_process/aspice_mapping.md.
+
+    The mapping is committed data on purpose: which process area a work product belongs to
+    is a reviewable statement, not something this script should decide.
+    """
+    path = root / MAPPING_REL
+    if not path.is_file():
+        print(f"  ! {MAPPING_REL} not found - process views will be empty", file=sys.stderr)
+        return []
+
+    areas: list[dict] = []
+    in_table = False
+    for line in path.read_text(encoding="utf-8").split("\n"):
+        line = line.strip()
+        if not line.startswith("|"):
+            in_table = False
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if len(cells) != 7:
+            continue
+        if cells[0] == "Area":
+            in_table = True
+            continue
+        if re.match(r"^[\s:\-]+$", cells[0]):
+            continue
+        if not in_table:
+            continue
+
+        def split(v: str) -> list[str]:
+            return [] if v == "-" else [x.strip() for x in v.split(",") if x.strip()]
+
+        areas.append({
+            "id": cells[0],
+            "framework": cells[1],
+            "name": cells[2],
+            "level": cells[3],
+            "side": cells[4],
+            "rec_src": split(cells[5]),
+            "doc_src": split(cells[6]),
+        })
+    return areas
+
+
+def resolve_areas(areas: list[dict], items: dict, root: Path) -> list[dict]:
+    """Attach the concrete records and documents each area owns."""
+    for area in areas:
+        ids: list[str] = []
+        for src in area["rec_src"]:
+            if src.startswith("path:"):
+                folder = src[5:]
+                ids += [i for i, r in items.items() if r["file"].startswith(folder + "/")]
+            elif src.startswith("id:"):
+                ids += [i for i in items if i.startswith(src[3:])]
+        area["ids"] = sorted(set(ids), key=sort_key)
+
+        docs = []
+        for d in area["doc_src"]:
+            docs.append({"path": d, "exists": (root / d).exists()})
+        area["docs"] = docs
+        area["empty"] = not area["ids"] and not docs
+    return areas
+
+
 # ------------------------------------------------------------------- diagrams
 
 
@@ -355,6 +433,8 @@ def build_model(root: Path) -> dict:
             "body": md_to_html(body_of(root / rel)),
         }
 
+    areas = resolve_areas(parse_mapping(root), items, root)
+
     diagrams, plantuml_ok = render_diagrams(root)
 
     documents = [
@@ -369,6 +449,8 @@ def build_model(root: Path) -> dict:
 
     return {
         "modules": [modules[k] for k in sorted(modules)],
+        "areas": areas,
+        "levels": [{"id": l, "title": LEVEL_TITLE[l]} for l in LEVEL_ORDER],
         "items": items,
         "diagrams": diagrams,
         "documents": documents,
@@ -476,6 +558,24 @@ PAGE = r"""<!DOCTYPE html>
                 padding:0; text-decoration:underline; }
   .foot { color:var(--muted); font-size:11px; margin-top:26px; border-top:1px solid var(--line);
           padding-top:10px; }
+  select#grouping { width:calc(100% - 32px); margin:2px 16px 6px; }
+  .vlevel { margin-bottom:22px; }
+  .vlevel > h3 { margin:0 0 10px; font-size:12px; text-transform:uppercase; letter-spacing:.7px;
+                 color:var(--muted); border-bottom:1px solid var(--line); padding-bottom:6px; }
+  .vcols { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .vcols > div > h4 { margin:0 0 8px; font-size:11px; text-transform:uppercase;
+                      letter-spacing:.6px; color:var(--muted); font-weight:600; }
+  .acard { display:block; border:1px solid var(--line); border-radius:9px; padding:10px 12px;
+           margin-bottom:8px; text-decoration:none; color:inherit; background:var(--panel); }
+  .acard:hover { border-color:var(--accent); }
+  .acard .aid { font-weight:700; }
+  .acard .an { color:var(--muted); font-size:12px; display:block; margin-top:2px; }
+  .acard .ac { float:right; font-size:11px; color:var(--muted); }
+  .acard.empty { background:none; border-style:dashed; }
+  .acard.empty .aid, .acard.empty .an { color:var(--muted); }
+  .doclist a { display:block; padding:4px 0; }
+  .missing { color:var(--warn); }
+  @media (max-width:1100px) { .vcols { grid-template-columns:1fr; } }
   @media (max-width:820px) { nav { display:none; } }
 </style>
 </head>
@@ -546,14 +646,44 @@ function renderNav() {
     const r = items[decodeURIComponent(cur.slice(3))];
     if (r) openMod = (mods.find(m => m.ids.includes(r.id)) || {}).id;
   }
-  let h = '<h2>Modules</h2>';
-  for (const m of mods) {
-    const n = m.ids.filter(id => matches(items[id])).length;
-    const sel = (cur === '#m/' + encodeURIComponent(m.id) || m.id === openMod) ? ' sel' : '';
-    h += `<a class="mod${sel}" href="#m/${encodeURIComponent(m.id)}">
-            <span class="n">${n}/${m.ids.length}</span>${esc(m.title)}
-            <span class="sub">${esc(m.path)}${m.process ? ' &middot; ' + esc(m.process) : ''}</span>
-          </a>`;
+  let h = `<h2>Grouping</h2>
+    <select id="grouping">
+      <option value="aspice">ASPICE process areas</option>
+      <option value="iso">ISO 26262 parts</option>
+      <option value="folder">Repository folders</option>
+    </select>
+    <a class="mod${cur.startsWith('#v') || cur === '' ? ' sel' : ''}" href="#v/${grouping === 'folder' ? 'aspice' : grouping}">
+       V-model overview<span class="sub">all process areas, populated or not</span></a>`;
+
+  if (grouping === 'folder') {
+    h += '<h2>Modules</h2>';
+    for (const m of mods) {
+      const n = m.ids.filter(id => matches(items[id])).length;
+      const sel = (cur === '#m/' + encodeURIComponent(m.id) || m.id === openMod) ? ' sel' : '';
+      h += `<a class="mod${sel}" href="#m/${encodeURIComponent(m.id)}">
+              <span class="n">${n}/${m.ids.length}</span>${esc(m.title)}
+              <span class="sub">${esc(m.path)}${m.process ? ' &middot; ' + esc(m.process) : ''}</span>
+            </a>`;
+    }
+  } else {
+    const fw = grouping === 'iso' ? 'ISO' : 'ASPICE';
+    for (const lvl of D.levels) {
+      const inLevel = D.areas.filter(a => a.framework === fw && a.level === lvl.id);
+      if (!inLevel.length) continue;
+      h += `<h2>${esc(lvl.title)}</h2>`;
+      for (const a of inLevel) {
+        const n = a.ids.filter(id => matches(items[id])).length;
+        const sel = cur === '#a/' + encodeURIComponent(a.id) ? ' sel' : '';
+        // Records and documents are different things; mixing them into one ratio made
+        // an area with three documents and no records read as "0/3", i.e. as nothing done.
+        const count = a.empty ? 'empty'
+          : a.ids.length ? `${n}/${a.ids.length}`
+          : `${a.docs.length} doc${a.docs.length > 1 ? 's' : ''}`;
+        h += `<a class="mod${sel}" href="#a/${encodeURIComponent(a.id)}">
+                <span class="n">${count}</span>${esc(a.id)}
+                <span class="sub">${esc(a.name)}</span></a>`;
+      }
+    }
   }
   h += '<h2>Model views</h2>';
   for (const d of D.diagrams) {
@@ -568,9 +698,19 @@ function renderNav() {
   }
   nav.innerHTML = h;
   nav.scrollTop = keepScroll;
+  const g = document.getElementById('grouping');
+  g.value = grouping;
+  // The grouping goes into the URL like everything else, so a reload keeps it and a
+  // link can point at "the ISO view" rather than at whatever the recipient last chose.
+  g.onchange = e => {
+    grouping = e.target.value;
+    location.hash = grouping === 'folder' ? '#m/' + encodeURIComponent(mods[0].id)
+                                          : '#v/' + grouping;
+  };
 }
 
 /* ---- views ---- */
+let grouping = 'aspice';
 let sortCol = 'id', sortAsc = true;
 const COLS = [['id','ID'],['text','Text'],['type','Type'],['asil','ASIL'],
               ['status','Status'],['up','Derived from'],['down','Refined by'],['vby','Verified by']];
@@ -650,6 +790,76 @@ function viewDiagram(name) {
     <pre class="code" id="src" style="display:none">${esc(d.src)}</pre>`;
 }
 
+function areaCard(a) {
+  const n = a.ids.filter(id => matches(items[id])).length;
+  const bits = [];
+  if (a.ids.length) bits.push(`${n}/${a.ids.length} records`);
+  if (a.docs.length) bits.push(`${a.docs.length} document${a.docs.length > 1 ? 's' : ''}`);
+  return `<a class="acard${a.empty ? ' empty' : ''}" href="#a/${encodeURIComponent(a.id)}">
+            <span class="ac">${bits.length ? bits.join(' &middot; ') : 'not started'}</span>
+            <span class="aid">${esc(a.id)}</span>
+            <span class="an">${esc(a.name)}</span></a>`;
+}
+
+function viewVModel() {
+  const fw = grouping === 'iso' ? 'ISO' : 'ASPICE';
+  const label = fw === 'ISO' ? 'ISO 26262 parts' : 'ASPICE process areas';
+  let h = `<h2 class="title">V-model overview</h2>
+    <p class="sub">${esc(label)} &middot; allocation from
+       <a href="../../09_process/aspice_mapping.md">09_process/aspice_mapping.md</a>.
+       An area with a dashed border has no work product yet -- that is the project's state,
+       not a rendering gap.</p>`;
+
+  for (const lvl of D.levels) {
+    const inLevel = D.areas.filter(a => a.framework === fw && a.level === lvl.id);
+    if (!inLevel.length) continue;
+    const left = inLevel.filter(a => a.side === 'left');
+    const right = inLevel.filter(a => a.side === 'right');
+    const sup = inLevel.filter(a => a.side === 'supporting');
+    h += `<div class="vlevel"><h3>${esc(lvl.title)}</h3>`;
+    // Two columns only where both arms exist. The ISO 26262 parts are not split into a
+    // specification and a verification arm, so forcing the layout would print an empty
+    // "Verification" column at every level and imply a gap that is not there.
+    if (left.length && right.length) {
+      h += `<div class="vcols">
+              <div><h4>Specification</h4>${left.map(areaCard).join('')}</div>
+              <div><h4>Verification</h4>${right.map(areaCard).join('')}</div>
+            </div>`;
+    } else if (left.length || right.length) {
+      h += left.concat(right).map(areaCard).join('');
+    }
+    if (sup.length) h += sup.map(areaCard).join('');
+    h += '</div>';
+  }
+  return h;
+}
+
+function viewArea(id) {
+  const a = D.areas.find(x => x.id === id);
+  if (!a) return `<p class="none">Unknown process area ${esc(id)}.</p>`;
+  const side = a.side === 'left' ? 'specification' : a.side === 'right' ? 'verification' : 'supporting';
+  let h = `<h2 class="title">${esc(a.id)} &mdash; ${esc(a.name)}</h2>
+    <p class="sub">${esc(a.framework === 'ISO' ? 'ISO 26262' : 'ASPICE')} &middot;
+       ${esc(a.level)} level &middot; ${esc(side)}</p>`;
+
+  if (a.empty) {
+    h += `<div class="banner">No work product is allocated to this area yet.
+            The allocation itself is stated in
+            <a href="../../09_process/aspice_mapping.md">aspice_mapping.md</a>;
+            an empty area means the phase that would produce it has not been run.</div>`;
+  }
+  if (a.docs.length) {
+    h += `<div class="card"><h3>Documents</h3><div class="doclist">` +
+      a.docs.map(d => d.exists
+        ? `<a href="../../${d.path}">${esc(d.path)}</a>`
+        : `<span class="missing">${esc(d.path)} &mdash; allocated but not present</span>`).join('') +
+      `</div></div>`;
+  }
+  if (a.ids.length) h += `<h3 style="font-size:13px;text-transform:uppercase;letter-spacing:.6px;
+                            color:var(--muted);margin:18px 0 8px">Records</h3>` + table(a.ids);
+  return h;
+}
+
 function viewSearch() {
   const total = Object.keys(items).length;
   const n = Object.keys(items).filter(id => matches(items[id])).length;
@@ -673,14 +883,25 @@ let showSearch = false;
 function render() {
   const h = location.hash;
   let out;
+  if (h.startsWith('#v/')) {
+    const g = h.slice(3);
+    if (g === 'aspice' || g === 'iso') grouping = g;
+  } else if (h.startsWith('#m/')) {
+    grouping = 'folder';
+  } else if (h.startsWith('#a/')) {
+    // Keep the sidebar on the framework the opened area belongs to.
+    const a = D.areas.find(x => x.id === decodeURIComponent(h.slice(3)));
+    if (a) grouping = a.framework === 'ISO' ? 'iso' : 'aspice';
+  }
   if (F.q && showSearch) out = viewSearch();
+  else if (h.startsWith('#a/')) out = viewArea(decodeURIComponent(h.slice(3)));
   else if (h.startsWith('#r/')) out = viewRecord(decodeURIComponent(h.slice(3)));
   else if (h.startsWith('#d/')) out = viewDiagram(decodeURIComponent(h.slice(3)));
   else if (h.startsWith('#m/')) out = viewModule(decodeURIComponent(h.slice(3)));
   else if (h === '#all') out = `<h2 class="title">All records</h2>
       <p class="sub">${Object.keys(items).length} records across ${mods.length} modules</p>` +
       table(Object.keys(items));
-  else out = viewModule(mods[0].id);
+  else out = viewVModel();
   document.getElementById('content').innerHTML = out;
   document.getElementById('content').scrollTop = 0;
   document.querySelectorAll('th[data-c]').forEach(th => th.onclick = () => {
@@ -693,7 +914,8 @@ function render() {
 
 document.getElementById('stats').innerHTML =
   Object.entries(D.stats).map(([k, v]) => `${esc(k)}: <strong>${esc(v)}</strong>`).join(' &middot; ') +
-  ` &middot; ${D.ndiagrams} model views &middot; <a href="#all">all records</a>`;
+  ` &middot; ${D.ndiagrams} model views &middot; <a href="#v/aspice">V-model</a>
+    &middot; <a href="#all">all records</a>`;
 
 document.getElementById('q').oninput = e => {
   F.q = e.target.value.toLowerCase();
