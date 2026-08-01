@@ -185,11 +185,24 @@ and need re-review.
 
 ## 12 Open points
 
-1. Confirmation of the 90 % DC against the FMEDA — `safety-analyst` (blocks SM-01 returning to `reviewed`)
-2. Feasibility of the 400 mA derating floor against the LED module thermal design — `hardware-engineer` with the supplier
+1. Confirmation of the 90 % DC against the FMEDA — `safety-analyst` (blocks SM-01 returning to
+   `reviewed`). The hardware side is now decomposed into six failure-mode groups with a per-measure
+   sensitivity in `analysis_sm01_coverage.md`, so the claim is checkable rather than assertive.
+2. ~~Feasibility of the 400 mA derating floor against the LED module thermal design~~ — **closed in
+   phase 6**: floor confirmed, unchanged, see `analysis_thermal_derating.md` and the confirmation
+   note in `HW-REQ-008`. The condition is now `HW-REQ-024`.
 3. Gating scheme below the minimum on-time: forced window vs. "diagnosis not available" — a system-level
    decision, `systems-engineer`, because it changes the availability of the diagnosis
 4. Whether per-string current sensing is added — the only way to see parallel-string loss in the
    current domain; cost/benefit, `systems-engineer` with `hardware-engineer`
 5. New test cases for HW-REQ-001 … 010 — `verification-engineer`
 6. SYS-REQ ID range 015–019 to be confirmed as free against the later-phase requirement plan
+
+---
+
+## 13 Phase 6 addendum (hardware-engineer)
+
+Section 6 of this analysis is extended by [`analysis_sm01_coverage.md`](analysis_sm01_coverage.md),
+which turns the 60 % / 90 % statement into a failure-mode partition the FMEDA can confirm or reject.
+Section 12 point 2 is closed by [`analysis_thermal_derating.md`](analysis_thermal_derating.md).
+Nothing in sections 1–11 changed.

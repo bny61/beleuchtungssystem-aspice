@@ -4,7 +4,7 @@
 
 Derived from CR and FSR, ASPICE SYS.2.
 
-**21 records.** Click an ID to open the record.
+**28 records.** Click an ID to open the record.
 
 | ID | Text | Type | ASIL | Status | Upstream | Downstream |
 |---|---|---|---|---|---|---|
@@ -17,43 +17,54 @@ Derived from CR and FSR, ASPICE SYS.2.
 | [SYS-REQ-007](SYS-REQ-007.md) | When the steering angle signal falls below 5 degrees, the lighting ECU shall deactivate t… | functional | A | draft | CR-005 | — |
 | [SYS-REQ-008](SYS-REQ-008.md) | When the cornering light does not reach its commanded state, the lighting ECU shall store… | diagnostics | A | draft | CR-005 | — |
 | [SYS-REQ-009](SYS-REQ-009.md) | When the ignition signal changes to on, the lighting ECU shall energise the daytime runni… | functional | QM | draft | CR-006 | — |
-| [SYS-REQ-010](SYS-REQ-010.md) | When the lighting ECU has classified a low-beam channel as failed, it shall request the d… | functional | B | draft | CR-007, FSR-004 | — |
+| [SYS-REQ-010](SYS-REQ-010.md) | When the lighting ECU has classified a low-beam channel as failed, it shall request the d… | functional | B | draft | CR-007, FSR-004 | SYS-REQ-026 |
 | [SYS-REQ-011](SYS-REQ-011.md) | While exactly one low-beam channel is classified as failed, the lighting ECU shall contin… | functional | B | draft | CR-008, FSR-003 | — |
-| [SYS-REQ-012](SYS-REQ-012.md) | While the vehicle supply voltage is within 16 V to 32 V, the lighting ECU shall provide a… | electrical | B | draft | CR-016, FSR-002 | — |
-| [SYS-REQ-013](SYS-REQ-013.md) | While the vehicle supply voltage is between 9 V and 16 V, the lighting ECU shall keep the… | electrical | B | draft | CR-016, FSR-003 | — |
+| [SYS-REQ-012](SYS-REQ-012.md) | While the vehicle supply voltage is within 16 V to 32 V, the lighting ECU shall provide a… | electrical | B | draft | CR-016, FSR-002 | HW-REQ-011, HW-REQ-012, HW-REQ-013, HW-REQ-0… |
+| [SYS-REQ-013](SYS-REQ-013.md) | While the vehicle supply voltage is between 9 V and 16 V, the lighting ECU shall keep the… | electrical | B | draft | CR-016, FSR-003 | HW-REQ-011, HW-REQ-012 |
 | [SYS-REQ-014](SYS-REQ-014.md) | When the load current of a low-beam channel, measured during the PWM on-phase, remains be… | functional | B | draft | CR-007, FSR-001 | HW-REQ-003, HW-REQ-005, HW-REQ-008, SM-01, S… |
 | [SYS-REQ-015](SYS-REQ-015.md) | When a low-beam channel is classified as "open load", the lighting ECU shall increment th… | diagnostics | B | draft | SYS-REQ-014 | — |
 | [SYS-REQ-016](SYS-REQ-016.md) | The lighting ECU shall measure the load current of a low-beam channel with a total uncert… | electrical | B | draft | FSR-001, SYS-REQ-014 | HW-REQ-001, HW-REQ-002 |
 | [SYS-REQ-017](SYS-REQ-017.md) | While the PWM on-time of a low-beam channel is shorter than 150 us, the lighting ECU shal… | diagnostics | B | draft | SYS-REQ-014 | HW-REQ-004 |
 | [SYS-REQ-018](SYS-REQ-018.md) | When an open load occurs in a low-beam channel, the lighting ECU shall report the fault t… | safety | B | draft | FSR-001, SYS-REQ-014 | HW-REQ-009, SM-01, TC-021 |
-| [SYS-REQ-019](SYS-REQ-019.md) | When the measured load current of a low-beam channel falls below 150 mA, the lighting ECU… | diagnostics | B | draft | SYS-REQ-014 | HW-REQ-006, HW-REQ-007 |
-| [SYS-REQ-020](SYS-REQ-020.md) | The lighting ECU shall exchange light request, vehicle speed, steering angle, ambient bri… | communication | B | draft | CR-020 | — |
+| [SYS-REQ-019](SYS-REQ-019.md) | When the measured load current of a low-beam channel falls below 150 mA, the lighting ECU… | diagnostics | B | draft | SYS-REQ-014 | HW-REQ-006, HW-REQ-007, HW-REQ-020, SM-03 |
+| [SYS-REQ-020](SYS-REQ-020.md) | The lighting ECU shall exchange light request, vehicle speed, steering angle, ambient bri… | communication | B | draft | CR-020 | HW-REQ-025, SYS-REQ-022, SYS-REQ-028 |
 | [SYS-REQ-021](SYS-REQ-021.md) | When a diagnostic tester sends a UDS request according to ISO 14229, the lighting ECU sha… | diagnostics | QM | draft | CR-019 | — |
+| [SYS-REQ-022](SYS-REQ-022.md) | The lighting ECU shall protect every safety-relevant signal group exchanged with the vehi… | communication | B | draft | CR-020, SYS-REQ-020 | SYS-REQ-023, SYS-REQ-024, SYS-REQ-027 |
+| [SYS-REQ-023](SYS-REQ-023.md) | If the alive counter of a received safety-relevant signal group does not increase by one… | communication | B | draft | SYS-REQ-022 | — |
+| [SYS-REQ-024](SYS-REQ-024.md) | If a safety-relevant signal group is not received within the timeout defined for that sig… | communication | B | draft | SYS-REQ-022 | SYS-REQ-025 |
+| [SYS-REQ-025](SYS-REQ-025.md) | While the light request signal group is marked as invalid and the low beam was energised… | safety | B | draft | FSR-002, SYS-REQ-024 | — |
+| [SYS-REQ-026](SYS-REQ-026.md) | When the lighting ECU has classified a low-beam channel as failed, it shall transmit the… | communication | B | draft | SYS-REQ-010, TSR-005 | — |
+| [SYS-REQ-027](SYS-REQ-027.md) | The lighting ECU shall include a signal-group-specific data identifier in the checksum co… | communication | B | draft | SYS-REQ-022 | — |
+| [SYS-REQ-028](SYS-REQ-028.md) | The lighting ECU shall occupy not more than 1.0 % of the nominal capacity of the CAN FD s… | communication | B | draft | SYS-REQ-020 | — |
 
 ## By allocated element
 
 A record appears under every element it is allocated to — allocation is
 many-to-many, which is why this is a grouping and not a folder split.
 
-**ECU_LightingCtrl** (21)
+**ECU_LightingCtrl** (28)
 
-[SYS-REQ-001](SYS-REQ-001.md), [SYS-REQ-002](SYS-REQ-002.md), [SYS-REQ-003](SYS-REQ-003.md), [SYS-REQ-004](SYS-REQ-004.md), [SYS-REQ-005](SYS-REQ-005.md), [SYS-REQ-006](SYS-REQ-006.md), [SYS-REQ-007](SYS-REQ-007.md), [SYS-REQ-008](SYS-REQ-008.md), [SYS-REQ-009](SYS-REQ-009.md), [SYS-REQ-010](SYS-REQ-010.md), [SYS-REQ-011](SYS-REQ-011.md), [SYS-REQ-012](SYS-REQ-012.md), [SYS-REQ-013](SYS-REQ-013.md), [SYS-REQ-014](SYS-REQ-014.md), [SYS-REQ-015](SYS-REQ-015.md), [SYS-REQ-016](SYS-REQ-016.md), [SYS-REQ-017](SYS-REQ-017.md), [SYS-REQ-018](SYS-REQ-018.md), [SYS-REQ-019](SYS-REQ-019.md), [SYS-REQ-020](SYS-REQ-020.md), [SYS-REQ-021](SYS-REQ-021.md)
+[SYS-REQ-001](SYS-REQ-001.md), [SYS-REQ-002](SYS-REQ-002.md), [SYS-REQ-003](SYS-REQ-003.md), [SYS-REQ-004](SYS-REQ-004.md), [SYS-REQ-005](SYS-REQ-005.md), [SYS-REQ-006](SYS-REQ-006.md), [SYS-REQ-007](SYS-REQ-007.md), [SYS-REQ-008](SYS-REQ-008.md), [SYS-REQ-009](SYS-REQ-009.md), [SYS-REQ-010](SYS-REQ-010.md), [SYS-REQ-011](SYS-REQ-011.md), [SYS-REQ-012](SYS-REQ-012.md), [SYS-REQ-013](SYS-REQ-013.md), [SYS-REQ-014](SYS-REQ-014.md), [SYS-REQ-015](SYS-REQ-015.md), [SYS-REQ-016](SYS-REQ-016.md), [SYS-REQ-017](SYS-REQ-017.md), [SYS-REQ-018](SYS-REQ-018.md), [SYS-REQ-019](SYS-REQ-019.md), [SYS-REQ-020](SYS-REQ-020.md), [SYS-REQ-021](SYS-REQ-021.md), [SYS-REQ-022](SYS-REQ-022.md), [SYS-REQ-023](SYS-REQ-023.md), [SYS-REQ-024](SYS-REQ-024.md), [SYS-REQ-025](SYS-REQ-025.md), [SYS-REQ-026](SYS-REQ-026.md), [SYS-REQ-027](SYS-REQ-027.md), [SYS-REQ-028](SYS-REQ-028.md)
 
-**SWC_LightManager** (8)
+**SWC_LightManager** (14)
 
-[SYS-REQ-001](SYS-REQ-001.md), [SYS-REQ-002](SYS-REQ-002.md), [SYS-REQ-003](SYS-REQ-003.md), [SYS-REQ-008](SYS-REQ-008.md), [SYS-REQ-014](SYS-REQ-014.md), [SYS-REQ-015](SYS-REQ-015.md), [SYS-REQ-017](SYS-REQ-017.md), [SYS-REQ-019](SYS-REQ-019.md)
+[SYS-REQ-001](SYS-REQ-001.md), [SYS-REQ-002](SYS-REQ-002.md), [SYS-REQ-003](SYS-REQ-003.md), [SYS-REQ-008](SYS-REQ-008.md), [SYS-REQ-014](SYS-REQ-014.md), [SYS-REQ-015](SYS-REQ-015.md), [SYS-REQ-017](SYS-REQ-017.md), [SYS-REQ-019](SYS-REQ-019.md), [SYS-REQ-022](SYS-REQ-022.md), [SYS-REQ-023](SYS-REQ-023.md), [SYS-REQ-024](SYS-REQ-024.md), [SYS-REQ-025](SYS-REQ-025.md), [SYS-REQ-026](SYS-REQ-026.md), [SYS-REQ-027](SYS-REQ-027.md)
 
-**LED_Driver_Stage_1** (7)
+**LED_Driver_Stage_1** (8)
 
-[SYS-REQ-001](SYS-REQ-001.md), [SYS-REQ-006](SYS-REQ-006.md), [SYS-REQ-007](SYS-REQ-007.md), [SYS-REQ-009](SYS-REQ-009.md), [SYS-REQ-011](SYS-REQ-011.md), [SYS-REQ-013](SYS-REQ-013.md), [SYS-REQ-016](SYS-REQ-016.md)
+[SYS-REQ-001](SYS-REQ-001.md), [SYS-REQ-006](SYS-REQ-006.md), [SYS-REQ-007](SYS-REQ-007.md), [SYS-REQ-009](SYS-REQ-009.md), [SYS-REQ-011](SYS-REQ-011.md), [SYS-REQ-013](SYS-REQ-013.md), [SYS-REQ-016](SYS-REQ-016.md), [SYS-REQ-025](SYS-REQ-025.md)
+
+**CAN_FD_Transceiver** (3)
+
+[SYS-REQ-022](SYS-REQ-022.md), [SYS-REQ-026](SYS-REQ-026.md), [SYS-REQ-028](SYS-REQ-028.md)
+
+**Vehicle_Gateway** (3)
+
+[SYS-REQ-010](SYS-REQ-010.md), [SYS-REQ-020](SYS-REQ-020.md), [SYS-REQ-022](SYS-REQ-022.md)
 
 **SM-01** (2)
 
 [SYS-REQ-014](SYS-REQ-014.md), [SYS-REQ-018](SYS-REQ-018.md)
-
-**Vehicle_Gateway** (2)
-
-[SYS-REQ-010](SYS-REQ-010.md), [SYS-REQ-020](SYS-REQ-020.md)
 
 **SWC_HighBeamControl** (1)
 
@@ -64,9 +75,9 @@ many-to-many, which is why this is a grouping and not a folder split.
 [SYS-REQ-005](SYS-REQ-005.md)
 
 
-**Status:** draft: 21
+**Status:** draft: 28
 
-**ASIL:** A: 5 · B: 14 · QM: 2
+**ASIL:** A: 5 · B: 21 · QM: 2
 
 ---
 

@@ -9,9 +9,9 @@ ISO 26262-3. Safety goals with safe state and FTTI, and the FSR derived from the
 | ID | Text | Type | ASIL | Status | Upstream | Downstream |
 |---|---|---|---|---|---|---|
 | [FSR-001](FSR-001.md) | When a low-beam channel fails, the lighting system shall detect the failure within the fa… | safety | B | reviewed | SG-01 | HW-REQ-001, HW-REQ-005, HW-REQ-009, HW-REQ-0… |
-| [FSR-002](FSR-002.md) | The lighting system shall prevent any deactivation of the low beam that was not requested… | safety | B | draft | SG-01 | SYS-REQ-001, SYS-REQ-002, SYS-REQ-012, TSR-0… |
+| [FSR-002](FSR-002.md) | The lighting system shall prevent any deactivation of the low beam that was not requested… | safety | B | draft | SG-01 | HW-REQ-012, HW-REQ-013, HW-REQ-016, HW-REQ-0… |
 | [FSR-003](FSR-003.md) | While only one low-beam channel has failed, the lighting system shall continue to operate… | safety | B | draft | SG-01 | SYS-REQ-011, SYS-REQ-013, TSR-004 |
-| [FSR-004](FSR-004.md) | When the lighting system has detected the failure of a low-beam channel, it shall warn th… | safety | B | draft | CR-007, SG-01 | SYS-REQ-010, TSR-005 |
+| [FSR-004](FSR-004.md) | When the lighting system has detected the failure of a low-beam channel, it shall warn th… | safety | B | draft | CR-007, SG-01 | HW-REQ-025, SYS-REQ-010, TSR-005 |
 | [FSR-005](FSR-005.md) | When an oncoming or preceding vehicle is reported, the lighting system shall switch off t… | safety | A | draft | SG-02 | FSR-006, FSR-007, SYS-REQ-004 |
 | [FSR-006](FSR-006.md) | The lighting system shall determine the high-beam segment to be deactivated from the repo… | safety | QM(A) | draft | FSR-005 | TSR-006 |
 | [FSR-007](FSR-007.md) | When the high-beam state contradicts the reported traffic situation, a monitor independen… | safety | A(A) | draft | FSR-005 | TSR-007 |

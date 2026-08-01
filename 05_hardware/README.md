@@ -4,7 +4,7 @@
 
 HWE.1-HWE.4, ISO 26262-5.
 
-**11 records.** Click an ID to open the record.
+**31 records.** Click an ID to open the record.
 
 | ID | Text | Type | ASIL | Status | Upstream | Downstream |
 |---|---|---|---|---|---|---|
@@ -13,33 +13,93 @@ HWE.1-HWE.4, ISO 26262-5.
 | [HW-REQ-003](HW-REQ-003.md) | The analogue-to-digital conversion of the low-beam channel current shall be triggered by… | electrical | B | draft | SYS-REQ-014 | SM-01 |
 | [HW-REQ-004](HW-REQ-004.md) | Where the commanded PWM on-time of a low-beam channel is shorter than 150 us, the LED dri… | electrical | B | draft | SYS-REQ-017 | SM-01 |
 | [HW-REQ-005](HW-REQ-005.md) | The current sensing of a low-beam channel shall evaluate the measured current during the… | diagnostics | B | draft | FSR-001, SYS-REQ-014 | SM-01 |
-| [HW-REQ-006](HW-REQ-006.md) | The LED driver stage shall provide the channel output voltage to the microcontroller as a… | electrical | B | draft | SYS-REQ-019 | SM-01 |
-| [HW-REQ-007](HW-REQ-007.md) | The LED driver stage shall provide its over-voltage, over-current and over-temperature st… | interface | B | draft | SYS-REQ-019 | SM-01 |
-| [HW-REQ-008](HW-REQ-008.md) | The thermal derating function of a low-beam channel shall not command a channel set point… | electrical | B | draft | HW-REQ-002, SYS-REQ-014 | SM-01 |
+| [HW-REQ-006](HW-REQ-006.md) | The LED driver stage shall provide the channel output voltage to the microcontroller as a… | electrical | B | draft | SYS-REQ-019 | HW-REQ-020, SM-01 |
+| [HW-REQ-007](HW-REQ-007.md) | The LED driver stage shall provide its over-voltage, over-current and over-temperature st… | interface | B | draft | SYS-REQ-019 | HW-REQ-021, SM-01 |
+| [HW-REQ-008](HW-REQ-008.md) | The thermal derating function of a low-beam channel shall not command a channel set point… | electrical | B | draft | HW-REQ-002, SYS-REQ-014 | HW-REQ-023, SM-01 |
 | [HW-REQ-009](HW-REQ-009.md) | The hardware detection path of the low-beam open-load mechanism shall report a detected o… | safety | B | draft | FSR-001, SYS-REQ-018 | SM-01 |
 | [HW-REQ-010](HW-REQ-010.md) | The microcontroller shall verify the plausibility of the analogue-to-digital converter re… | diagnostics | B | draft | FSR-001, HW-REQ-001 | SM-01 |
+| [HW-REQ-011](HW-REQ-011.md) | While the protected supply voltage is between 9 V and 36 V, the Power_Supply_Unit shall k… | electrical | B | draft | SYS-REQ-012, SYS-REQ-013 | SM-06 |
+| [HW-REQ-012](HW-REQ-012.md) | The lighting ECU shall meet the functional status class assigned to each supply voltage r… | electrical | B | draft | FSR-002, SYS-REQ-012, SYS-REQ-013 | — |
+| [HW-REQ-013](HW-REQ-013.md) | While a clamped load dump with a peak of 58 V and a decay time constant of 400 ms is appl… | electrical | B | draft | CR-017, FSR-002, SYS-REQ-012 | — |
+| [HW-REQ-014](HW-REQ-014.md) | While transient pulses per ISO 7637-2 are applied at the supply input, the lighting ECU s… | electrical | B | draft | CR-017 | — |
+| [HW-REQ-015](HW-REQ-015.md) | The supply input of the lighting ECU shall withstand a continuous reverse voltage of -32… | electrical | B | draft | CR-017, SYS-REQ-012 | — |
+| [HW-REQ-016](HW-REQ-016.md) | When the protected supply voltage leaves the range 9 V to 36 V, the supply monitor of the… | safety | B | draft | FSR-002, SYS-REQ-012, TSR-001 | SM-06 |
+| [HW-REQ-017](HW-REQ-017.md) | When an internal supply rail leaves its specified tolerance band, the ASIC_Watchdog shall… | safety | B | draft | FSR-002, TSR-001 | SM-06 |
+| [HW-REQ-018](HW-REQ-018.md) | The ASIC_Watchdog shall run a question/answer protocol on a time base independent of the… | safety | B | draft | TSR-001 | SM-02 |
+| [HW-REQ-019](HW-REQ-019.md) | The enable input of each LED driver stage shall be driven by the logical conjunction of t… | electrical | B | draft | TSR-001, TSR-004 | SM-02 |
+| [HW-REQ-020](HW-REQ-020.md) | When the channel output voltage of a low-beam channel measured during the PWM off-phase e… | diagnostics | B | draft | HW-REQ-006, SYS-REQ-019, TSR-003 | SM-03 |
+| [HW-REQ-021](HW-REQ-021.md) | The LED driver stage shall limit the channel output current to 1.8 A, shall latch the cha… | electrical | B | draft | FSR-002, HW-REQ-007, TSR-002 | SM-04 |
+| [HW-REQ-022](HW-REQ-022.md) | The Temp_Sense_Chain shall measure the LED module temperature over the range -40 C to +15… | electrical | B | draft | CR-014, FSR-002 | HW-REQ-023, SM-05 |
+| [HW-REQ-023](HW-REQ-023.md) | While the measured LED module temperature is above 105 C, the lighting ECU shall reduce t… | electrical | B | draft | CR-014, HW-REQ-008, HW-REQ-022 | HW-REQ-024, SM-05 |
+| [HW-REQ-024](HW-REQ-024.md) | The thermal design of a low-beam channel shall keep the LED junction temperature at or be… | electrical | B | draft | CR-014, HW-REQ-023 | — |
+| [HW-REQ-025](HW-REQ-025.md) | The CAN_FD_Transceiver shall withstand a permanent short of either bus line to the supply… | interface | B | draft | FSR-004, SYS-REQ-020 | — |
 | [SM-01](SM-01.md) | Open-load detection in the low-beam channel via PWM-synchronous shunt current measurement… | safety-mechanism | B | draft | FSR-001, HW-REQ-001, HW-REQ-002, HW-REQ-003,… | TC-021 |
+| [SM-02](SM-02.md) | Program-execution monitoring by the ASIC_Watchdog with an independent time base and a que… | safety-mechanism | B | draft | FSR-002, HW-REQ-018, HW-REQ-019, TSR-001 | — |
+| [SM-03](SM-03.md) | Short-to-battery detection on a low-beam channel by evaluating the channel output voltage… | safety-mechanism | B | draft | HW-REQ-020, SYS-REQ-019, TSR-003 | — |
+| [SM-04](SM-04.md) | Overcurrent protection in the LED driver stage: hardware current limit at the output stag… | safety-mechanism | B | draft | FSR-002, HW-REQ-021, TSR-002 | — |
+| [SM-05](SM-05.md) | Overtemperature protection of the LED modules by NTC measurement with plausibility band a… | safety-mechanism | B | draft | CR-014, FSR-002, HW-REQ-022, HW-REQ-023 | — |
+| [SM-06](SM-06.md) | Supply voltage monitoring: window comparators on the protected battery voltage in the Pow… | safety-mechanism | B | draft | FSR-002, HW-REQ-011, HW-REQ-016, HW-REQ-017,… | — |
 
 ## By allocated element
 
 A record appears under every element it is allocated to — allocation is
 many-to-many, which is why this is a grouping and not a folder split.
 
+**LED_Driver_Stage_1** (21)
+
+[HW-REQ-001](HW-REQ-001.md), [HW-REQ-002](HW-REQ-002.md), [HW-REQ-003](HW-REQ-003.md), [HW-REQ-004](HW-REQ-004.md), [HW-REQ-006](HW-REQ-006.md), [HW-REQ-007](HW-REQ-007.md), [HW-REQ-008](HW-REQ-008.md), [HW-REQ-012](HW-REQ-012.md), [HW-REQ-013](HW-REQ-013.md), [HW-REQ-016](HW-REQ-016.md), [HW-REQ-019](HW-REQ-019.md), [HW-REQ-020](HW-REQ-020.md), [HW-REQ-021](HW-REQ-021.md), [HW-REQ-023](HW-REQ-023.md), [HW-REQ-024](HW-REQ-024.md), [SM-01](SM-01.md), [SM-02](SM-02.md), [SM-03](SM-03.md), [SM-04](SM-04.md), [SM-05](SM-05.md), [SM-06](SM-06.md)
+
+**ECU_LightingCtrl** (10)
+
+[HW-REQ-003](HW-REQ-003.md), [HW-REQ-005](HW-REQ-005.md), [HW-REQ-007](HW-REQ-007.md), [HW-REQ-009](HW-REQ-009.md), [HW-REQ-010](HW-REQ-010.md), [HW-REQ-012](HW-REQ-012.md), [HW-REQ-014](HW-REQ-014.md), [HW-REQ-020](HW-REQ-020.md), [SM-01](SM-01.md), [SM-03](SM-03.md)
+
 **SM-01** (10)
 
 [HW-REQ-001](HW-REQ-001.md), [HW-REQ-002](HW-REQ-002.md), [HW-REQ-003](HW-REQ-003.md), [HW-REQ-004](HW-REQ-004.md), [HW-REQ-005](HW-REQ-005.md), [HW-REQ-006](HW-REQ-006.md), [HW-REQ-007](HW-REQ-007.md), [HW-REQ-008](HW-REQ-008.md), [HW-REQ-009](HW-REQ-009.md), [HW-REQ-010](HW-REQ-010.md)
 
-**LED_Driver_Stage_1** (8)
+**Power_Supply_Unit** (8)
 
-[HW-REQ-001](HW-REQ-001.md), [HW-REQ-002](HW-REQ-002.md), [HW-REQ-003](HW-REQ-003.md), [HW-REQ-004](HW-REQ-004.md), [HW-REQ-006](HW-REQ-006.md), [HW-REQ-007](HW-REQ-007.md), [HW-REQ-008](HW-REQ-008.md), [SM-01](SM-01.md)
+[HW-REQ-011](HW-REQ-011.md), [HW-REQ-012](HW-REQ-012.md), [HW-REQ-013](HW-REQ-013.md), [HW-REQ-014](HW-REQ-014.md), [HW-REQ-015](HW-REQ-015.md), [HW-REQ-016](HW-REQ-016.md), [HW-REQ-017](HW-REQ-017.md), [SM-06](SM-06.md)
 
-**ECU_LightingCtrl** (6)
+**ASIC_Watchdog** (5)
 
-[HW-REQ-003](HW-REQ-003.md), [HW-REQ-005](HW-REQ-005.md), [HW-REQ-007](HW-REQ-007.md), [HW-REQ-009](HW-REQ-009.md), [HW-REQ-010](HW-REQ-010.md), [SM-01](SM-01.md)
+[HW-REQ-017](HW-REQ-017.md), [HW-REQ-018](HW-REQ-018.md), [HW-REQ-019](HW-REQ-019.md), [SM-02](SM-02.md), [SM-06](SM-06.md)
 
 **Current_Sense_Chain** (4)
 
 [HW-REQ-001](HW-REQ-001.md), [HW-REQ-002](HW-REQ-002.md), [HW-REQ-005](HW-REQ-005.md), [SM-01](SM-01.md)
+
+**Temp_Sense_Chain** (4)
+
+[HW-REQ-022](HW-REQ-022.md), [HW-REQ-023](HW-REQ-023.md), [HW-REQ-024](HW-REQ-024.md), [SM-05](SM-05.md)
+
+**SM-06** (3)
+
+[HW-REQ-011](HW-REQ-011.md), [HW-REQ-016](HW-REQ-016.md), [HW-REQ-017](HW-REQ-017.md)
+
+**MCU_Lockstep** (2)
+
+[HW-REQ-018](HW-REQ-018.md), [SM-02](SM-02.md)
+
+**SM-02** (2)
+
+[HW-REQ-018](HW-REQ-018.md), [HW-REQ-019](HW-REQ-019.md)
+
+**SM-05** (2)
+
+[HW-REQ-022](HW-REQ-022.md), [HW-REQ-023](HW-REQ-023.md)
+
+**CAN_FD_Transceiver** (1)
+
+[HW-REQ-025](HW-REQ-025.md)
+
+**SM-03** (1)
+
+[HW-REQ-020](HW-REQ-020.md)
+
+**SM-04** (1)
+
+[HW-REQ-021](HW-REQ-021.md)
 
 
 ## Other documents in this folder
@@ -47,10 +107,15 @@ many-to-many, which is why this is a grouping and not a folder split.
 | File | Purpose |
 |---|---|
 | [analysis_current_sensing.md](analysis_current_sensing.md) | Analysis — low-beam current sensing and open-load detection (SM-01 / SYS-REQ-014) |
+| [analysis_sm01_coverage.md](analysis_sm01_coverage.md) | Analysis — hardware side of the SM-01 diagnostic coverage claim (preparation for OP-15) |
+| [analysis_supply_and_transients.md](analysis_supply_and_transients.md) | Analysis — supply range, overvoltage, load dump and transients (OP-24, OP-4) |
+| [analysis_thermal_derating.md](analysis_thermal_derating.md) | Analysis — thermal derating and feasibility of the 400 mA floor (OP-16) |
+| [hw_architecture.md](hw_architecture.md) | Hardware architecture — Lighting ECU |
+| [hw_verification_plan.md](hw_verification_plan.md) | Hardware verification plan — Lighting ECU |
 
-**Status:** draft: 11
+**Status:** draft: 31
 
-**ASIL:** B: 11
+**ASIL:** B: 31
 
 ---
 

@@ -1,0 +1,58 @@
+@startuml ibd_current_sense_chain
+title Internal block diagram - Current_Sense_Chain, DEEP DIVE (Golden Thread, SM-01)
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam nodesep 12
+skinparam ranksep 24
+
+component "LED_Driver_Stage_1..n" as DRV {
+  component "Constant-current buck\nI_nom 1.20 A, PWM 400 Hz\nA-08, A-09" as BUCK
+  component "Channel voltage divider\n0-40 V -> 0-3.0 V, >= 100 mV res.\nHW-REQ-006" as UDIV
+}
+
+component "Current_Sense_Chain" as CS {
+  component "R_shunt 50 mOhm\n1.0 % initial, 50 ppm/K TCR\nhigh-side, Kelvin sense" as SHUNT
+  component "Sense amplifier\ngain 50 V/V, Vos <= 150 uV RTI,\ngain error 1.0 %\nHW-REQ-001" as AMP
+  component "Anti-alias RC\nf_c 40 kHz, group delay 8 us\nHW-REQ-003 blanking budget" as RC
+  component "Clamp + series R\nto the ADC input" as CLAMP
+}
+
+component "MCU_Lockstep" as MCU {
+  component "ADC 12 bit\nVREF 3.3 V, 1 LSB = 0.32 mA\nHW-REQ-001" as ADC
+  component "PWM timer unit\ntrigger: t_on + 50 us,\nlatest t_off - 20 us\nHW-REQ-003" as TMR
+  component "Second reference\nplausibility check <= 100 ms\nSM-01 leg / HW-REQ-010" as REF2
+  component "Threshold + debounce\n< 150 mA, 50 ms window,\n8-sample debounce\nHW-REQ-002, HW-REQ-009" as EVAL
+}
+
+component "Power_Supply_Unit" as PSU {
+  component "VREF 3.3 V +/- 0.5 %" as VREF
+}
+
+BUCK --> SHUNT : load current 0 .. 1.5 A
+SHUNT --> AMP : 0 .. 75 mV differential
+AMP --> RC : 0 .. 3.0 V
+RC --> CLAMP
+CLAMP --> ADC : V_sense
+TMR --> ADC : hardware conversion trigger
+TMR --> BUCK : PWM_Ch1..n
+VREF --> ADC : VREF
+VREF --> REF2 : monitored
+REF2 --> EVAL : reference valid / invalid
+ADC --> EVAL : I_Load_Ch (12 bit)
+UDIV --> ADC : U_Channel_Ch
+BUCK --> EVAL : DriverStatus_Ch (OVP/OCP/OT)\nHW-REQ-007
+EVAL --> BUCK : fault reaction (limp-home)
+
+note right of EVAL
+  Off-phase branch (HW-REQ-005):
+  the same chain is sampled in the PWM
+  off-phase, where the true current is
+  known to be ~0 mA. > 30 mA for > 20 ms
+  = sense-chain fault, not an open load.
+end note
+
+note bottom of CS
+  Tolerance chain and the +/-20 mA budget at the
+  150 mA threshold: 05_hardware/analysis_current_sensing.md
+end note
+@enduml
