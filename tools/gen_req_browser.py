@@ -42,6 +42,7 @@ import argparse
 import base64
 import html
 import json
+import posixpath
 import re
 import shutil
 import subprocess
@@ -153,19 +154,52 @@ _LINK = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 _STRIKE = re.compile(r"~~([^~]+)~~")
 
 
-def inline_md(text: str) -> str:
+_EXTERNAL = re.compile(r"^(https?:|mailto:|#)")
+
+
+def rewrite_link(href: str, base_dir: str, embedded: set[str]) -> str:
+    """Resolve a Markdown link against the file it appears in.
+
+    Record and document links are written relative to their own folder
+    (`[SM-01.md](SM-01.md)`), but they are displayed from a page that lives in
+    07_verification/reports/. Left alone they would all be broken. Links that point at a
+    document this page embeds become in-page navigation; everything else becomes a path
+    back into the repository.
+    """
+    if not href or _EXTERNAL.match(href):
+        return href
+    path, _, _frag = href.partition("#")
+    if not path:
+        return href
+    target = posixpath.normpath(posixpath.join(base_dir, path)) if base_dir else path
+    if target in embedded:
+        return "#doc/" + target
+    return "../../" + target
+
+
+def inline_md(text: str, base_dir: str = "", embedded: set[str] | None = None) -> str:
     """Escape, then apply the inline Markdown the records actually use."""
+    emb = embedded or set()
     out = html.escape(text)
     out = _INLINE_CODE.sub(lambda m: f"<code>{m.group(1)}</code>", out)
     out = _BOLD.sub(lambda m: f"<strong>{m.group(1)}</strong>", out)
     out = _STRIKE.sub(lambda m: f"<del>{m.group(1)}</del>", out)
     out = _ITALIC.sub(lambda m: f"<em>{m.group(1)}</em>", out)
-    out = _LINK.sub(lambda m: f'<a href="{m.group(2)}">{m.group(1)}</a>', out)
+    out = _LINK.sub(
+        lambda m: f'<a href="{html.escape(rewrite_link(m.group(2), base_dir, emb))}">{m.group(1)}</a>',
+        out,
+    )
     return out
 
 
-def md_to_html(md: str) -> str:
-    """A deliberately small Markdown subset: what the record bodies use, nothing more."""
+def md_to_html(md: str, base_dir: str = "", embedded: set[str] | None = None,
+               render_puml_blocks: bool = False) -> str:
+    """A deliberately small Markdown subset: what the records and documents use."""
+    emb = embedded or set()
+
+    def inl(t: str) -> str:
+        return inline_md(t, base_dir, emb)
+
     lines = md.split("\n")
     out: list[str] = []
     i = 0
@@ -187,14 +221,31 @@ def md_to_html(md: str) -> str:
                 buf.append(lines[i])
                 i += 1
             i += 1
-            out.append("<pre class='code'>" + html.escape("\n".join(buf)) + "</pre>")
+            block = "\n".join(buf)
+            # A ```plantuml block in a work product is a diagram, not sample code. It is
+            # rendered here for the same reason the model views are: the reader came to
+            # look at the architecture, not at its source.
+            lang = stripped[3:].strip().lower()
+            if render_puml_blocks and lang == "plantuml" and block.strip():
+                svg = render_puml(block, "embedded block")
+                if svg:
+                    out.append('<div class="diagram"><img alt="diagram" '
+                               f'src="data:image/svg+xml;base64,{svg}"></div>')
+                    continue
+            out.append("<pre class='code'>" + html.escape(block) + "</pre>")
+            continue
+
+        # thematic break
+        if re.match(r"^(-{3,}|\*{3,}|_{3,})$", stripped):
+            out.append("<hr>")
+            i += 1
             continue
 
         # heading
         m = re.match(r"^(#{1,6})\s+(.*)$", stripped)
         if m:
             lvl = min(len(m.group(1)) + 2, 6)
-            out.append(f"<h{lvl}>{inline_md(m.group(2))}</h{lvl}>")
+            out.append(f"<h{lvl}>{inl(m.group(2))}</h{lvl}>")
             i += 1
             continue
 
@@ -206,9 +257,9 @@ def md_to_html(md: str) -> str:
             while i < n and lines[i].strip().startswith("|"):
                 rows.append([c.strip() for c in lines[i].strip().strip("|").split("|")])
                 i += 1
-            thead = "".join(f"<th>{inline_md(c)}</th>" for c in header)
+            thead = "".join(f"<th>{inl(c)}</th>" for c in header)
             tbody = "".join(
-                "<tr>" + "".join(f"<td>{inline_md(c)}</td>" for c in r) + "</tr>" for r in rows
+                "<tr>" + "".join(f"<td>{inl(c)}</td>" for c in r) + "</tr>" for r in rows
             )
             out.append(f"<div class='tw'><table><thead><tr>{thead}</tr></thead><tbody>{tbody}</tbody></table></div>")
             continue
@@ -219,7 +270,7 @@ def md_to_html(md: str) -> str:
             while i < n and lines[i].strip().startswith(">"):
                 buf.append(lines[i].strip().lstrip(">").strip())
                 i += 1
-            out.append("<blockquote>" + inline_md(" ".join(buf)) + "</blockquote>")
+            out.append("<blockquote>" + inl(" ".join(buf)) + "</blockquote>")
             continue
 
         # list
@@ -235,7 +286,7 @@ def md_to_html(md: str) -> str:
                     items[-1] += " " + lines[i].strip()
                     i += 1
             tag = "ol" if ordered else "ul"
-            out.append(f"<{tag}>" + "".join(f"<li>{inline_md(it)}</li>" for it in items) + f"</{tag}>")
+            out.append(f"<{tag}>" + "".join(f"<li>{inl(it)}</li>" for it in items) + f"</{tag}>")
             continue
 
         # paragraph
@@ -244,7 +295,14 @@ def md_to_html(md: str) -> str:
                 and not re.match(r"^([-*]|\d+\.)\s+", lines[i].strip()):
             buf.append(lines[i].strip())
             i += 1
-        out.append("<p>" + inline_md(" ".join(buf)) + "</p>")
+        # GitHub renders a single newline inside a paragraph as a line break, and the
+        # documents rely on it: the header blocks put "Phase", "Status" and "Owner" on
+        # their own lines. Joining with a space ran them together into one sentence.
+        #
+        # The break is marked with a sentinel rather than formatting each line on its own,
+        # because emphasis wraps across lines in hard-wrapped prose -- a **bold span**
+        # opened on one line and closed on the next came out with its asterisks showing.
+        out.append("<p>" + inl("\x00".join(buf)).replace("\x00", "<br>") + "</p>")
 
     return "".join(out)
 
@@ -330,6 +388,26 @@ def resolve_areas(areas: list[dict], items: dict, root: Path) -> list[dict]:
 # ------------------------------------------------------------------- diagrams
 
 
+def render_puml(src: str, label: str) -> str:
+    """Render one PlantUML source to base64 SVG; empty string when it cannot be rendered."""
+    if not shutil.which("plantuml"):
+        return ""
+    try:
+        res = subprocess.run(
+            ["plantuml", "-tsvg", "-pipe"],
+            input=src.encode("utf-8"),
+            capture_output=True,
+            timeout=120,
+        )
+        if res.returncode == 0 and res.stdout.lstrip()[:4] in (b"<svg", b"<?xm"):
+            return base64.b64encode(res.stdout).decode("ascii")
+        err = res.stderr.decode("utf-8", "replace").strip()
+        print(f"  ! {label}: PlantUML returned {res.returncode} {err[:200]}", file=sys.stderr)
+    except (OSError, subprocess.SubprocessError) as exc:
+        print(f"  ! {label}: {exc}", file=sys.stderr)
+    return ""
+
+
 def render_diagrams(root: Path) -> tuple[list[dict], bool]:
     """Render every PlantUML source to SVG. Returns (diagrams, plantuml_available)."""
     puml_dir = root / PUML_DIR
@@ -347,23 +425,7 @@ def render_diagrams(root: Path) -> tuple[list[dict], bool]:
                 title = line.strip()[6:].strip()
                 break
 
-        svg = ""
-        if available:
-            try:
-                res = subprocess.run(
-                    ["plantuml", "-tsvg", "-pipe"],
-                    input=src.encode("utf-8"),
-                    capture_output=True,
-                    timeout=120,
-                )
-                if res.returncode == 0 and res.stdout.lstrip()[:4] in (b"<svg", b"<?xm"):
-                    svg = base64.b64encode(res.stdout).decode("ascii")
-                else:
-                    err = res.stderr.decode("utf-8", "replace").strip()
-                    print(f"  ! {path.name}: PlantUML returned {res.returncode} {err[:200]}",
-                          file=sys.stderr)
-            except (OSError, subprocess.SubprocessError) as exc:
-                print(f"  ! {path.name}: {exc}", file=sys.stderr)
+        svg = render_puml(src, path.name) if available else ""
 
         diagrams.append(
             {
@@ -376,6 +438,56 @@ def render_diagrams(root: Path) -> tuple[list[dict], bool]:
         )
 
     return diagrams, available
+
+
+# ------------------------------------------------------------------- documents
+
+
+def doc_title(root: Path, rel: str, fallback: str) -> str:
+    """Prefer the document's own H1 over a title supplied by the mapping."""
+    path = root / rel
+    if path.suffix == ".md" and path.is_file():
+        for line in path.read_text(encoding="utf-8").split("\n")[:40]:
+            if line.startswith("# "):
+                return line[2:].strip()
+    return fallback
+
+
+def collect_documents(root: Path, areas: list[dict]) -> list[dict]:
+    """Every narrative work product reachable from the mapping or the fixed list."""
+    wanted: dict[str, str] = {}
+    for rel, title in DOCUMENTS:
+        wanted.setdefault(rel, title)
+    for area in areas:
+        for rel in area["doc_src"]:
+            wanted.setdefault(rel, Path(rel).stem.replace("_", " ").capitalize())
+
+    embedded = {rel for rel in wanted if rel.endswith(".md") and (root / rel).is_file()}
+
+    docs: list[dict] = []
+    for rel in sorted(wanted):
+        path = root / rel
+        exists = path.is_file()
+        entry = {
+            "path": rel,
+            "title": doc_title(root, rel, wanted[rel]) if exists else wanted[rel],
+            "folder": str(Path(rel).parent),
+            "exists": exists,
+            "html": "",
+        }
+        if exists and rel in embedded:
+            text = path.read_text(encoding="utf-8")
+            # The view prints the title from the H1, so keeping it in the body too
+            # would show it twice.
+            text = re.sub(r"\A\s*#\s+[^\n]*\n", "", text)
+            entry["html"] = md_to_html(
+                text,
+                base_dir=str(Path(rel).parent),
+                embedded=embedded,
+                render_puml_blocks=True,
+            )
+        docs.append(entry)
+    return docs
 
 
 # ---------------------------------------------------------------------- model
@@ -434,12 +546,19 @@ def build_model(root: Path) -> dict:
         }
 
     areas = resolve_areas(parse_mapping(root), items, root)
+    documents = collect_documents(root, areas)
+    embedded = {d["path"] for d in documents if d["html"]}
+
+    # Re-render the record bodies now that the embedded set is known, so a record
+    # pointing at an analysis document opens it in the page instead of as raw Markdown.
+    for rid, it in items.items():
+        it["body"] = md_to_html(
+            body_of(root / it["file"]),
+            base_dir=str(Path(it["file"]).parent),
+            embedded=embedded,
+        )
 
     diagrams, plantuml_ok = render_diagrams(root)
-
-    documents = [
-        {"path": p, "title": t} for p, t in DOCUMENTS if (root / p).exists()
-    ]
 
     # KPIs come from trace_check.kpis() verbatim rather than being recomputed here.
     # Two implementations of "coverage" would drift, and the gate is the authority --
@@ -573,7 +692,14 @@ PAGE = r"""<!DOCTYPE html>
   .acard .ac { float:right; font-size:11px; color:var(--muted); }
   .acard.empty { background:none; border-style:dashed; }
   .acard.empty .aid, .acard.empty .an { color:var(--muted); }
-  .doclist a { display:block; padding:4px 0; }
+  .doclist a, .doclist span { display:block; padding:4px 0; }
+  .body.doc { max-width:70em; }
+  .body.doc h3 { font-size:19px; margin:26px 0 8px; }
+  .body.doc h4 { font-size:16px; margin:22px 0 6px; }
+  .body.doc h5 { font-size:14px; margin:18px 0 6px; }
+  .body.doc .diagram { margin:14px 0; }
+  .body.doc table { font-size:12.5px; }
+  .body.doc td, .body.doc th { padding:6px 8px; }
   .missing { color:var(--warn); }
   @media (max-width:1100px) { .vcols { grid-template-columns:1fr; } }
   @media (max-width:820px) { nav { display:none; } }
@@ -693,8 +819,13 @@ function renderNav() {
   }
   h += '<h2>Documents</h2>';
   for (const doc of D.documents) {
-    h += `<a class="mod" href="../../${doc.path}">${esc(doc.title)}
-            <span class="sub">${esc(doc.path)}</span></a>`;
+    if (!doc.exists) continue;
+    const sel = cur === '#doc/' + doc.path ? ' sel' : '';
+    h += doc.html
+      ? `<a class="mod${sel}" href="#doc/${doc.path}">${esc(doc.title)}
+           <span class="sub">${esc(doc.path)}</span></a>`
+      : `<a class="mod" href="../../${doc.path}">${esc(doc.title)}
+           <span class="sub">${esc(doc.path)} &middot; opens outside</span></a>`;
   }
   nav.innerHTML = h;
   nav.scrollTop = keepScroll;
@@ -850,13 +981,46 @@ function viewArea(id) {
   }
   if (a.docs.length) {
     h += `<div class="card"><h3>Documents</h3><div class="doclist">` +
-      a.docs.map(d => d.exists
-        ? `<a href="../../${d.path}">${esc(d.path)}</a>`
-        : `<span class="missing">${esc(d.path)} &mdash; allocated but not present</span>`).join('') +
+      a.docs.map(d => docLink(d.path, d.path)).join('') +
       `</div></div>`;
   }
   if (a.ids.length) h += `<h3 style="font-size:13px;text-transform:uppercase;letter-spacing:.6px;
                             color:var(--muted);margin:18px 0 8px">Records</h3>` + table(a.ids);
+  return h;
+}
+
+function docLink(path, label) {
+  const d = D.documents.find(x => x.path === path);
+  const text = esc(label || (d ? d.title : path));
+  if (d && d.html) return `<a href="#doc/${path}">${text}</a>`;
+  if (d && !d.exists) return `<span class="missing">${text} &mdash; allocated but not present</span>`;
+  return `<a href="../../${path}">${text}</a>`;
+}
+
+function viewDocument(path) {
+  const d = D.documents.find(x => x.path === path);
+  if (!d) return `<p class="none">Unknown document ${esc(path)}.</p>`;
+  if (!d.html) return `<p class="none">${esc(d.path)} is not rendered in this page.
+    <a href="../../${d.path}">Open it directly</a>.</p>`;
+  const areas = D.areas.filter(a => a.doc_src.includes(d.path));
+  return `<h2 class="title">${esc(d.title)}</h2>
+    <p class="sub">${esc(d.path)}${areas.length ? ' &middot; ' +
+       areas.map(a => `<a href="#a/${encodeURIComponent(a.id)}">${esc(a.id)}</a>`).join(', ') : ''}</p>
+    <div class="body doc">${d.html}</div>
+    <p class="foot">Rendered from the Markdown source; the file is what counts:
+       <a href="../../${d.path}">${esc(d.path)}</a></p>`;
+}
+
+function viewDocs() {
+  const byFolder = {};
+  for (const d of D.documents) (byFolder[d.folder] = byFolder[d.folder] || []).push(d);
+  let h = `<h2 class="title">Documents</h2>
+    <p class="sub">${D.documents.filter(d => d.html).length} narrative work products rendered in
+       this page; the rest open in the repository.</p>`;
+  for (const folder of Object.keys(byFolder).sort()) {
+    h += `<div class="card"><h3>${esc(folder)}</h3><div class="doclist">` +
+      byFolder[folder].map(d => docLink(d.path)).join('') + `</div></div>`;
+  }
   return h;
 }
 
@@ -894,6 +1058,8 @@ function render() {
     if (a) grouping = a.framework === 'ISO' ? 'iso' : 'aspice';
   }
   if (F.q && showSearch) out = viewSearch();
+  else if (h.startsWith('#doc/')) out = viewDocument(decodeURIComponent(h.slice(5)));
+  else if (h === '#docs') out = viewDocs();
   else if (h.startsWith('#a/')) out = viewArea(decodeURIComponent(h.slice(3)));
   else if (h.startsWith('#r/')) out = viewRecord(decodeURIComponent(h.slice(3)));
   else if (h.startsWith('#d/')) out = viewDiagram(decodeURIComponent(h.slice(3)));
@@ -915,7 +1081,7 @@ function render() {
 document.getElementById('stats').innerHTML =
   Object.entries(D.stats).map(([k, v]) => `${esc(k)}: <strong>${esc(v)}</strong>`).join(' &middot; ') +
   ` &middot; ${D.ndiagrams} model views &middot; <a href="#v/aspice">V-model</a>
-    &middot; <a href="#all">all records</a>`;
+    &middot; <a href="#docs">documents</a> &middot; <a href="#all">all records</a>`;
 
 document.getElementById('q').oninput = e => {
   F.q = e.target.value.toLowerCase();
@@ -936,7 +1102,9 @@ render();
 """
 
 
-_SVG_PAYLOAD = re.compile(r'"svg":"[A-Za-z0-9+/=]*"')
+_SVG_PAYLOAD = re.compile(
+    r'"svg":"[A-Za-z0-9+/=]*"|data:image/svg\+xml;base64,[A-Za-z0-9+/=]*'
+)
 
 
 def normalise(page: str) -> str:
@@ -949,7 +1117,7 @@ def normalise(page: str) -> str:
     to a diagram still shows up, because the PlantUML source is embedded next to the SVG
     and is compared normally.
     """
-    return _SVG_PAYLOAD.sub('"svg":""', page)
+    return _SVG_PAYLOAD.sub("<svg payload>", page)
 
 
 def build_page(root: Path) -> str:
