@@ -54,9 +54,19 @@ recorded SHA-256, and Graphviz availability is asserted with `-testdot` before a
 checked. Raising the version is a reviewable change with an impact on every model view, not a
 silent drift.
 
+**Pinning the version is not the same as reproducible output.** PlantUML lays text out with the
+fonts of the machine it runs on, so the same source at the same version renders to different SVG
+bytes on macOS and on the CI runner — every one of the eleven model views differed. For the
+requirements browser, which embeds the rendered SVG, that meant the page appeared to change on every
+platform switch: one commit back from CI per push, and a false "stale" verdict for anyone
+regenerating on a different operating system. `gen_req_browser.py` therefore compares pages with the
+SVG payloads blanked. A real change to a diagram is still caught, because the PlantUML source is
+embedded next to the rendering and compared normally; only the pixels move.
+
 **Residual point:** the locally installed PlantUML is not pinned by anything, so a diagram authored
-with a newer local version can still fail the gate. The gate is the authority; local rendering is
-convenience. Worth revisiting if the model views ever become cited evidence rather than illustration.
+with a newer local version can still fail the syntax gate. The gate is the authority; local
+rendering is convenience. Worth revisiting if the model views ever become cited evidence rather than
+illustration.
 
 ## Honest limitation
 

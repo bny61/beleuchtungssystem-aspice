@@ -936,6 +936,22 @@ render();
 """
 
 
+_SVG_PAYLOAD = re.compile(r'"svg":"[A-Za-z0-9+/=]*"')
+
+
+def normalise(page: str) -> str:
+    """Blank the embedded SVG payloads before comparing two versions of the page.
+
+    PlantUML lays text out with the fonts of the machine it runs on, so the same source
+    renders to different SVG bytes on macOS and on a CI runner. Those bytes are not
+    content: treating them as a change made the page regenerate on every platform switch,
+    which produced a commit per push and a false "stale" verdict in --check. A real change
+    to a diagram still shows up, because the PlantUML source is embedded next to the SVG
+    and is compared normally.
+    """
+    return _SVG_PAYLOAD.sub('"svg":""', page)
+
+
 def build_page(root: Path) -> str:
     model = build_model(root)
     data = json.dumps(model, ensure_ascii=False, separators=(",", ":"))
@@ -959,15 +975,20 @@ def main() -> int:
         print(f"gen_req_browser: {exc}", file=sys.stderr)
         return 2
 
+    current = out.read_text(encoding="utf-8") if out.exists() else None
+    unchanged = current is not None and normalise(current) == normalise(page)
+
     if args.check:
-        if not out.exists() or out.read_text(encoding="utf-8") != page:
+        if not unchanged:
             print(f"Stale: {OUT_REL} - run python3 tools/gen_req_browser.py", file=sys.stderr)
             return 1
         print(f"Up to date: {OUT_REL}")
         return 0
 
     out.parent.mkdir(parents=True, exist_ok=True)
-    if out.exists() and out.read_text(encoding="utf-8") == page:
+    if unchanged:
+        # Keep the committed rendering rather than rewriting the file with an identical
+        # page in a different machine's fonts.
         print(f"Up to date: {OUT_REL}")
         return 0
     out.write_text(page, encoding="utf-8")
