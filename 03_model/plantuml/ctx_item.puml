@@ -26,17 +26,19 @@ rectangle "Environment sensing\n(object detection)" as CAM #LightGray
 rectangle "Instrument cluster\n(driver warning)" as HMI #LightGray
 
 DRIVER --> GW : light switch, ignition
-GW --> ECU : light request, v_veh, steering angle
-CAM --> GW : object list (A-05)
-ECU --> GW : status, fault reaction
-ECU --> HMI : warning (FSR-004)
+GW --> ECU : light request, ignition, v_veh,\nsteering angle, ambient light\n(E2E protected, SYS-REQ-022)
+CAM --> GW : object list (A-05, no E2E)
+ECU --> GW : LGT_Status_1, LGT_Warning_1\n(E2E protected)
+ECU --> HMI : warning (FSR-004), via GW <= 100 ms (A-17)
 SERVICE --> ECU : UDS diagnostics (ISO 14229)
 PWR --> ECU : KL30 / KL15, 16-32 V
 LAMP --> DRIVER : forward light distribution
 
 note bottom of ITEM
   Grey = outside the item boundary.
-  Assumptions A-05 (object data) and A-06 (switch / ignition signals)
-  apply to the external interfaces.
+  Assumptions A-05 (object data), A-06 (switch / ignition signals),
+  A-14 (bus segment), A-15 (E2E counterpart in the gateway) and
+  A-17 (gateway forwarding time) apply to the external interfaces.
+  The SG-01 fault reaction needs none of them: it is ECU-internal.
 end note
 @enduml

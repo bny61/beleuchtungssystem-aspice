@@ -6,7 +6,7 @@ skinparam rectangle {
 }
 
 rectangle "Vehicle" as VEH #LightGray {
-  rectangle "Vehicle_Gateway\nCAN FD / J1939" as GW
+  rectangle "Vehicle_Gateway\nCAN FD / J1939, SA 0x27\nE2E counterpart (A-15)" as GW
   rectangle "Vehicle supply 24 V" as PWR
 }
 
@@ -14,10 +14,10 @@ rectangle "ECU_LightingCtrl" as ECU #LightYellow {
   rectangle "MCU_Lockstep\n«block» ASIL B" as MCU
   rectangle "ASIC_Watchdog\n«block» ASIL B\nTSR-001" as WD
   rectangle "Power_Supply_Unit\n16-32 V" as PSU
-  rectangle "CAN_FD_Transceiver" as CAN
+  rectangle "CAN_FD_Transceiver\n500 kbit/s arb. / 2 Mbit/s data\nSA 0x21, E2E SYS-REQ-022" as CAN
   rectangle "LIN_Transceiver" as LIN
-  rectangle "LED_Driver_Stage_1..n\n«block» ASIL B" as DRV
-  rectangle "Current_Sense_Chain\nSM-01 / HW-REQ-001" as CS
+  rectangle "LED_Driver_Stage_1..n\n«block» ASIL B\nbase variant w/o HW-REQ-004" as DRV
+  rectangle "Current_Sense_Chain\nSM-01 / HW-REQ-001\ndetection <= 80 ms" as CS
   rectangle "Temp_Sense_Chain" as TS
 }
 
@@ -25,8 +25,9 @@ rectangle "Headlamp modules\nlow / high / cornering" as LAMP
 rectangle "Work-lamp output stages" as WORK
 
 PWR --> PSU : KL30 / KL15
-GW <--> CAN : light request, v_veh,\nsteering angle, object data, status
-CAN <--> MCU
+GW --> CAN : LGT_Request_1 100 ms\nVEH_Dynamics_1 20 ms\nVEH_Environment_1 100 ms\nOBJ_List_1 50 ms (no E2E)
+CAN --> GW : LGT_Status_1 100 ms\nLGT_Warning_1 event + 500 ms
+CAN <--> MCU : E2E counter / CRC / data ID
 MCU --> DRV : PWM, enable
 MCU <--> WD : question / answer
 WD --> DRV : disable (TSR-001)
@@ -37,4 +38,16 @@ CS --> MCU : I_load (PWM-synchronous)
 TS --> MCU : T_LED, T_board
 DRV --> MCU : OVP / OCP / thermal status
 MCU --> LIN : actuator command
+
+note bottom of CS
+  SG-01 chain A runs DRV -> CS -> MCU -> DRV and never
+  leaves the ECU: 80 ms detection + 150 ms reaction
+  < 300 ms FTTI, with no share for the bus.
+end note
+
+note bottom of CAN
+  Lighting signal set approx. 1.9 % bus load, of which
+  0.20 % transmitted by this ECU (SYS-REQ-028).
+  Plausible example values.
+end note
 @enduml

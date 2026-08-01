@@ -12,7 +12,7 @@
 | Automatic light control | `SYS-REQ-002`, `SYS-REQ-003` | `SWC_LightManager` | `MCU_Lockstep` (ambient light via `Vehicle_Gateway`) | B |
 | Detect channel failure | `SYS-REQ-014` … `019`, `TSR-003` | `SWC_LightManager`, `SM-01` | `Current_Sense_Chain`, `LED_Driver_Stage_1` | B |
 | Fault reaction, limp-home | `SYS-REQ-011`, `TSR-004` | `SWC_LightManager` | `MCU_Lockstep`, `LED_Driver_Stage_1` | B |
-| Driver warning | `SYS-REQ-010`, `TSR-005` | `SWC_LightManager` | `CAN_FD_Transceiver` → instrument cluster (external) | B |
+| Driver warning | `SYS-REQ-010`, `SYS-REQ-026`, `TSR-005` | `SWC_LightManager` | `CAN_FD_Transceiver` → instrument cluster (external) | B |
 | Program flow monitoring | `TSR-001` | — (hardware function) | `ASIC_Watchdog` incl. disable path | B |
 | Glare-free high beam | `SYS-REQ-004`, `TSR-006` | `SWC_HighBeamControl` | `MCU_Lockstep`, `LED_Driver_Stage_1` | QM(A) |
 | High-beam plausibility monitor | `TSR-007` | `SWC_HighBeamMonitor` | `MCU_Lockstep` (separate partition), separate enable path | A(A) |
@@ -22,8 +22,13 @@
 | Thermal derating | `HW-REQ-008` | `SWC_LightManager` | `Temp_Sense_Chain`, `LED_Driver_Stage_1` | B |
 | Diagnostics, DTC, UDS | `SYS-REQ-021` | `SWC_DiagnosticManager` | `MCU_Lockstep`, `CAN_FD_Transceiver` | QM |
 | Supply and monitoring | `SYS-REQ-012`, `SYS-REQ-013` | — (hardware function) | `Power_Supply_Unit` | B |
+| Bus communication | `SYS-REQ-020` | `SWC_LightManager` | `CAN_FD_Transceiver`, `Vehicle_Gateway` (external) | B |
+| End-to-end protection of the signal groups | `SYS-REQ-022`, `SYS-REQ-023`, `SYS-REQ-027` | `SWC_LightManager` | `MCU_Lockstep`, `CAN_FD_Transceiver` | B |
+| Signal timeout and invalidation | `SYS-REQ-024`, `TSR-008` | `SWC_LightManager`, `SWC_WorkLampControl` | `MCU_Lockstep` | B |
+| Hold last valid low beam on invalid request | `SYS-REQ-025` | `SWC_LightManager` | `MCU_Lockstep`, `LED_Driver_Stage_1` | B |
+| Transmit scheduling and bus budget | `SYS-REQ-026`, `SYS-REQ-028` | `SWC_LightManager` | `CAN_FD_Transceiver` | B |
 
-## Two observations from the allocation
+## Three observations from the allocation
 
 **`MCU_Lockstep` carries functions from QM to ASIL B side by side.** `SWC_HighBeamControl` (QM(A))
 and `SWC_HighBeamMonitor` (A(A)) run on the same physical element. Freedom from interference —
@@ -33,3 +38,16 @@ decomposition to hold. Owed by phase 7, tracked with `RISK-02`.
 **Two functions have no logical element.** Program flow monitoring and supply monitoring are pure
 hardware functions. That is correct, not a gap — but it means their verification cannot be a
 software test, which the test strategy in phase 8 has to reflect.
+
+**`SWC_LightManager` now carries four communication functions on top of the lighting logic.** The
+E2E protection, the invalidation rule, the hold-last-valid behaviour and the transmit scheduling
+were all allocated to it because they are ASIL B and `SWC_DiagnosticManager` is QM, so the QM
+component must not sit in the data path. The consequence is that `SWC_LightManager` is now the
+single largest ASIL B software element in the item, and the software architecture in phase 7 has to
+decide whether the E2E handling becomes a component of its own. Recorded here rather than silently
+carried into phase 7.
+
+> **Change note (phase 3 communication refinement).** Five rows added (`Bus communication`,
+> `End-to-end protection`, `Signal timeout and invalidation`, `Hold last valid low beam`,
+> `Transmit scheduling`); the `Driver warning` row gained `SYS-REQ-026`. No existing allocation was
+> changed. Derivation: [`ee_architecture.md`](ee_architecture.md), sections 3 to 5.
