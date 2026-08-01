@@ -8,6 +8,7 @@ Traceability matrix and views. All files here are generated — edit the records
 
 | File | Purpose |
 |---|---|
+| [requirements_browser.html](requirements_browser.html) | Requirements browser - Adaptive front lighting system |
 | [trace_explorer.html](trace_explorer.html) | Traceability explorer — lighting system |
 | [traceability_matrix.md](traceability_matrix.md) | Traceability matrix (generated) |
 | [traceability_views.md](traceability_views.md) | Traceability views |

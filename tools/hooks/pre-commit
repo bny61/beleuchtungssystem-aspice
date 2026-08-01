@@ -13,13 +13,21 @@ fi
 
 python3 tools/gen_index.py >/dev/null
 python3 tools/gen_trace_graph.py >/dev/null
+# Needs PlantUML for the embedded model views; without it the diagrams would be
+# stripped from the page, so skip rather than commit a degraded browser.
+if command -v plantuml >/dev/null 2>&1; then
+    python3 tools/gen_req_browser.py >/dev/null
+else
+    echo "pre-commit: plantuml not found - requirements_browser.html not regenerated."
+fi
 
 # Nur generierte Uebersichten nachlegen.
 # --modified UND --others, sonst werden neu entstandene (noch untracked)
 # Uebersichten uebersehen.
 CHANGED=$(git ls-files --modified --others --exclude-standard -- '*/README.md' \
          '07_verification/reports/traceability_views.md' \
-         '07_verification/reports/trace_explorer.html')
+         '07_verification/reports/trace_explorer.html' \
+         '07_verification/reports/requirements_browser.html')
 if [ -n "$CHANGED" ]; then
     echo "pre-commit: Anforderungs-Uebersichten aktualisiert:"
     echo "$CHANGED" | sed 's/^/  - /'

@@ -15,6 +15,7 @@ Traceability check and generators. Standard library only — see the tool qualif
 | File | Purpose |
 |---|---|
 | [gen_index.py](gen_index.py) | Generates a README.md overview for every folder holding Requirements-as-Code records. |
+| [gen_req_browser.py](gen_req_browser.py) | Generates a DOORS-like browser for the Requirements-as-Code records and the model views. |
 | [gen_trace_graph.py](gen_trace_graph.py) | Generates visual traceability views from the Requirements-as-Code records. |
 | [trace_check.py](trace_check.py) | Traceability consistency check for the lighting-system ASPICE / ISO 26262 project. |
 

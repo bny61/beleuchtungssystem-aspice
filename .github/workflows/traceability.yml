@@ -79,43 +79,12 @@ jobs:
   plantuml:
     name: Model syntax check
     runs-on: ubuntu-latest
-
-    # The PlantUML version is pinned deliberately. Previously the job installed
-    # whatever `apt-get install plantuml` happened to ship, which is several years
-    # behind the current release: diagrams that pass locally then fail the gate on
-    # syntax the runner's version does not know yet (this hit the portin/portout
-    # ports in ibd_ecu.puml). A pinned, checksummed jar makes the check reproducible
-    # and turns a version bump into a reviewable change instead of a surprise.
-    #
-    # When raising the version, update BOTH values below (get the checksum from the
-    # release asset) and re-run the check against the whole model, not just the
-    # diagram in hand.
-    env:
-      PLANTUML_VERSION: '1.2026.6'
-      PLANTUML_SHA256: '89948f14c93756c7a3fb7b69078ff37e8489fd79dd430c582b931e2f65358690'
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-
-      - name: Install Graphviz
-        run: sudo apt-get update && sudo apt-get install -y graphviz
-
-      - name: Install pinned PlantUML
-        run: |
-          set -euo pipefail
-          curl -fsSL --retry 3 -o plantuml.jar \
-            "https://github.com/plantuml/plantuml/releases/download/v${PLANTUML_VERSION}/plantuml-${PLANTUML_VERSION}.jar"
-          echo "${PLANTUML_SHA256}  plantuml.jar" | sha256sum -c -
-          java -jar plantuml.jar -version | head -n 3
-          # Fails loudly if Graphviz is missing or unusable, rather than letting
-          # every later diagram fail with an obscure error.
-          java -jar plantuml.jar -testdot
+      # Pinned and checksum-verified; the version lives in the composite action so that
+      # every workflow touching model views agrees on it.
+      - uses: ./.github/actions/setup-plantuml
 
       - name: Check PlantUML sources
         run: |
@@ -125,7 +94,7 @@ jobs:
             echo "No PlantUML sources yet - check skipped."
             exit 0
           fi
-          java -jar plantuml.jar -checkonly "${files[@]}"
+          plantuml -checkonly "${files[@]}"
 
       - name: Render model views
         if: success()
@@ -134,7 +103,7 @@ jobs:
           files=(03_model/plantuml/*.puml)
           [ ${#files[@]} -eq 0 ] && exit 0
           mkdir -p 03_model/exports
-          java -jar plantuml.jar -tsvg -o "$(pwd)/03_model/exports" "${files[@]}"
+          plantuml -tsvg -o "$(pwd)/03_model/exports" "${files[@]}"
 
       - name: Retain rendered views
         if: always()
