@@ -1,0 +1,49 @@
+name: Set up PlantUML
+description: >
+  Installs a pinned, checksum-verified PlantUML plus Java and Graphviz, and puts a
+  `plantuml` wrapper on the PATH. The version lives here so that every workflow that
+  renders or checks model views uses the same one -- an unpinned tool would make the
+  syntax gate answer a different question on every run.
+
+inputs:
+  version:
+    description: PlantUML release version
+    required: false
+    default: '1.2026.6'
+  sha256:
+    description: SHA-256 of the release jar; update together with the version
+    required: false
+    default: '89948f14c93756c7a3fb7b69078ff37e8489fd79dd430c582b931e2f65358690'
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '21'
+
+    - name: Install Graphviz
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install -y graphviz
+
+    - name: Install pinned PlantUML
+      shell: bash
+      run: |
+        set -euo pipefail
+        jar="${RUNNER_TEMP}/plantuml.jar"
+        curl -fsSL --retry 3 -o "$jar" \
+          "https://github.com/plantuml/plantuml/releases/download/v${{ inputs.version }}/plantuml-${{ inputs.version }}.jar"
+        echo "${{ inputs.sha256 }}  $jar" | sha256sum -c -
+
+        # Wrapper so callers just run `plantuml ...` regardless of where the jar lives.
+        sudo tee /usr/local/bin/plantuml >/dev/null <<WRAPPER
+        #!/bin/sh
+        exec java -jar "$jar" "\$@"
+        WRAPPER
+        sudo chmod +x /usr/local/bin/plantuml
+
+        plantuml -version | head -n 3
+        # Fails loudly if Graphviz is missing or unusable, rather than letting every
+        # later diagram fail with an obscure error.
+        plantuml -testdot
