@@ -7,7 +7,11 @@
 
 set -e
 
-if ! git diff --cached --name-only | grep -qE '\.md$'; then
+# .puml counts as well as .md: the requirements browser embeds the rendered model
+# views, so a commit that changes only a diagram still changes the generated page.
+# Without this the hook skipped, CI found the page stale, and a commit that looked
+# complete failed the gate for no visible reason.
+if ! git diff --cached --name-only | grep -qE '\.(md|puml)$'; then
     exit 0
 fi
 
