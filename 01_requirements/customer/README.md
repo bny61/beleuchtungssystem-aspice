@@ -21,13 +21,13 @@ Extract of the customer specification, ASPICE SYS.1. The ASIL is determined by t
 | [CR-011](CR-011.md) | Where a rotating beacon is fitted, its control shall meet the requirements of ECE Regulat… | legal | QM | draft | — | — |
 | [CR-012](CR-012.md) | The lighting system shall comply with the EMC requirements of ECE Regulation R10. | legal | QM | draft | — | — |
 | [CR-013](CR-013.md) | The lighting system shall withstand the mechanical loads per ISO 16750-3 for the front-mo… | environmental-mechanical | QM | draft | — | — |
-| [CR-014](CR-014.md) | The lighting system shall remain functional across an ambient temperature range from -40… | environmental-mechanical | QM | draft | — | — |
+| [CR-014](CR-014.md) | The lighting system shall remain functional across an ambient temperature range from -40… | environmental-mechanical | QM | draft | — | HW-REQ-022, HW-REQ-023, HW-REQ-024, SM-05 |
 | [CR-015](CR-015.md) | The ECU housing shall meet protection class IP6K9K per ISO 20653. | environmental-mechanical | QM | draft | — | — |
 | [CR-016](CR-016.md) | The lighting system shall be supplied via a buck converter with a downstream 5 V linear r… | electrical | B | draft | — | SYS-REQ-012, SYS-REQ-013 |
-| [CR-017](CR-017.md) | While transients per ISO 7637-2 are present at the vehicle supply connection, the lightin… | electrical | B | draft | — | — |
+| [CR-017](CR-017.md) | While transients per ISO 7637-2 are present at the vehicle supply connection, the lightin… | electrical | B | draft | — | HW-REQ-013, HW-REQ-014, HW-REQ-015 |
 | [CR-018](CR-018.md) | While the vehicle is in the ignition-off state, the lighting system shall not exceed a qu… | electrical | QM | draft | — | — |
 | [CR-019](CR-019.md) | When a diagnostic tester sends a UDS request per ISO 14229, the lighting system shall pro… | diagnostics | QM | draft | — | SYS-REQ-021 |
-| [CR-020](CR-020.md) | The lighting system shall exchange control and status information with the vehicle via CA… | communication | B | draft | — | SYS-REQ-020 |
+| [CR-020](CR-020.md) | The lighting system shall exchange control and status information with the vehicle via CA… | communication | B | draft | — | SYS-REQ-020, SYS-REQ-022 |
 | [CR-021](CR-021.md) | The lighting system shall connect actuator-side components via LIN per ISO 17987. | communication | QM | draft | — | — |
 | [CR-022](CR-022.md) | The lighting system shall achieve an operating life of 30,000 h or a mileage of 1,500,000… | durability | QM | draft | — | — |
 | [CR-023](CR-023.md) | The lighting system shall meet the interface requirements of the vehicle-level cybersecur… | interface | QM | draft | — | — |

@@ -1,36 +1,89 @@
 @startuml ibd_ecu
-title Internal block diagram - ECU_LightingCtrl, ports and signal flows (MagicGrid, Structure)
+title Internal block diagram - ECU_LightingCtrl, hardware view (MagicGrid, Structure)
 skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam nodesep 14
+skinparam ranksep 30
 
-component "ECU_LightingCtrl" {
-  component "MCU_Lockstep" as MCU
-  component "ASIC_Watchdog" as WD
-  component "Power_Supply_Unit" as PSU
-  component "LED_Driver_Stage_1..n" as DRV
-  component "Current_Sense_Chain" as CS
-  component "Temp_Sense_Chain" as TS
-  portin " " as pKL30
-  portin " " as pCANin
-  portout " " as pCANout
-  portout " " as pCH
+rectangle "Vehicle supply\nKL30 / KL15" as KL30 #LightGray
+rectangle "Vehicle_Gateway\nCAN FD / J1939" as GW #LightGray
+rectangle "LIN actuator\n(levelling / bend)" as ACT #LightGray
+rectangle "Headlamp modules\nlow / high / cornering" as LAMP #LightGray
+rectangle "LED module NTC" as NTC #LightGray
+
+component "ECU_LightingCtrl" as ECU {
+
+  component "Power_Supply_Unit" as PSU {
+    component "Input protection\nreverse-polarity FET, TVS clamp,\nCM choke + pi filter\nHW-REQ-014" as PROT
+    component "Pre-regulator + rails\nbuck 24 V -> 5 V, LDO 3.3 V,\nbuffered VBAT_PROT, VREF 3.3 V\nHW-REQ-011, HW-REQ-012" as RAILS
+    component "Supply monitor\nUV / OV window comparators,\nload-dump flag\nSM-06 / HW-REQ-015" as SUPMON
+  }
+
+  component "ASIC_Watchdog" as WD {
+    component "Independent time base, question/answer,\nrail monitor, reset + SAFE_OFF driver\nSM-02 / HW-REQ-016, HW-REQ-017" as WDCORE
+  }
+
+  component "MCU_Lockstep" as MCU {
+    component "Dual-core lockstep, ADC,\nPWM timer unit (HW-REQ-003)" as ADC
+  }
+
+  component "LED_Driver_Stage_1..n" as DRV {
+    component "Enable gate Ch1..n\nEN_MCU AND not(SAFE_OFF)\nHW-REQ-018" as GATE
+    component "Constant-current buck, PWM 400 Hz,\nOCP / OVP / OT\nSM-03, SM-04 / HW-REQ-019, HW-REQ-020" as DRVCORE
+  }
+
+  component "Current_Sense_Chain" as CS {
+    component "Shunt 50 mOhm -> amplifier x50 -> RC -> ADC\nSM-01 - detail: ibd_current_sense_chain" as CSCORE
+  }
+
+  component "Temp_Sense_Chain" as TS {
+    component "NTC divider + RC + clamp, board sensor,\nopen/short plausibility band\nSM-05 / HW-REQ-021, HW-REQ-022" as TSCORE
+  }
+
+  component "CAN_FD_Transceiver\nHW-REQ-025" as CAN
+  component "LIN_Transceiver" as LIN
 }
 
-pKL30 --> PSU : KL30 / KL15, 16-32 V
-pCANin --> MCU : LightRequest, VehicleSpeed,\nSteeringAngle, AmbientLight, ObjectList
-MCU --> pCANout : LightingStatus, DriverWarningReq
-MCU --> DRV : PWM_Ch1..n (400 Hz), Enable_Ch1..n
-WD --> DRV : WD_Disable (TSR-001)
-MCU <--> WD : question / answer
-DRV --> CS : shunt voltage
-CS --> MCU : I_Load_Ch1..n (12 bit, PWM-synchronous)
-DRV --> MCU : U_Channel_Ch1..n, DriverStatus_Ch1..n
-TS --> MCU : T_LED, T_Board
-DRV --> pCH : channel current to the headlamp modules
-PSU --> MCU : 5 V / 3.3 V
-PSU --> DRV : supply
+KL30 --> PROT : 16-32 V nominal,\ntransients per ISO 7637-2
+PROT --> RAILS : VBAT_PROT
+RAILS --> SUPMON : V5, V3V3, VREF
+RAILS --> ADC : V5 / V3V3 / VREF
+RAILS --> WDCORE : V5
+RAILS --> DRVCORE : VBAT_PROT (power path)
+RAILS --> CAN : V5
+RAILS --> LIN : V5
 
-note bottom
-  Signals, ranges, cycle times and ASIL per signal:
-  04_architecture/ee_architecture.md, interface table.
+SUPMON --> ADC : U_Batt, RailStatus (10 ms)
+SUPMON --> WDCORE : rail fault
+SUPMON --> GATE : OV_SHUTDOWN
+WDCORE --> ADC : reset
+ADC <--> WDCORE : question / answer (<= 50 ms)
+WDCORE --> GATE : SAFE_OFF (TSR-001)
+
+ADC --> GATE : Enable_Ch1..n
+ADC --> DRVCORE : PWM_Ch1..n, I_set_Ch1..n
+GATE --> DRVCORE : EN_eff_Ch1..n
+DRVCORE --> LAMP : channel current
+DRVCORE --> CSCORE : shunt voltage
+CSCORE --> ADC : I_Load_Ch1..n\n(PWM-synchronous)
+DRVCORE --> ADC : U_Channel_Ch1..n,\nDriverStatus_Ch1..n
+NTC --> TSCORE : R_NTC
+TSCORE --> ADC : T_LED, T_Board (100 ms)
+
+GW <--> CAN
+CAN <--> ADC
+ADC <--> LIN
+LIN <--> ACT
+
+note right of PSU
+  Voltage ranges, functional status classes and
+  load-dump behaviour: HW-REQ-011 .. HW-REQ-013,
+  05_hardware/analysis_supply_and_transients.md
+end note
+
+note right of DRV
+  The enable gate is the only path that de-energises
+  a channel without the MCU: SAFE_OFF and
+  OV_SHUTDOWN are dominant over EN_MCU.
 end note
 @enduml

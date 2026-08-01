@@ -12,6 +12,8 @@ rectangle "<<block>>\nPower_Supply_Unit" as PSU
 rectangle "<<block>>\nLED_Driver_Stage_1..n" as DRV
 rectangle "<<block>>\nCurrent_Sense_Chain" as CS
 rectangle "<<block>>\nTemp_Sense_Chain" as TS
+rectangle "<<block>>\nCAN_FD_Transceiver" as CANT
+rectangle "<<block>>\nLIN_Transceiver" as LINT
 rectangle "<<block>>\nHeadlamp modules" as LAMP
 rectangle "<<block>>\nWork-lamp output stages" as WORK
 
@@ -30,6 +32,8 @@ ECU *-- PSU
 ECU *-- DRV
 ECU *-- CS
 ECU *-- TS
+ECU *-- CANT
+ECU *-- LINT
 MCU *-- SWLM
 MCU *-- SWHC
 MCU *-- SWHM
@@ -39,5 +43,12 @@ MCU *-- SWDM
 note bottom of SWLM
   Software components are shown as named blocks only.
   Their internal design is phase 7 (SWE.2/SWE.3).
+  SWC_LightManager also carries the E2E protection of
+  the safety-relevant signal groups (SYS-REQ-022).
+end note
+
+note bottom of CANT
+  Transceivers added in the phase 3 communication
+  refinement; ibd_ecu still has to follow (OP-32).
 end note
 @enduml

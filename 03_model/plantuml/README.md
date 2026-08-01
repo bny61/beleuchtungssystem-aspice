@@ -26,7 +26,8 @@ One file per view. The file name prefix encodes the view type.
 | [bdd_ee_architecture.puml](bdd_ee_architecture.puml) | E/E architecture - Lighting ECU (SYS.3) |
 | [bdd_system.puml](bdd_system.puml) | Block definition diagram - System decomposition (MagicGrid, Structure) |
 | [ctx_item.puml](ctx_item.puml) | Context diagram - Item "Adaptive front-lighting system" (ISO 26262-3, Item Definition) |
-| [ibd_ecu.puml](ibd_ecu.puml) | Internal block diagram - ECU_LightingCtrl, ports and signal flows (MagicGrid, Structure) |
+| [ibd_current_sense_chain.puml](ibd_current_sense_chain.puml) | Internal block diagram - Current_Sense_Chain, DEEP DIVE (Golden Thread, SM-01) |
+| [ibd_ecu.puml](ibd_ecu.puml) | Internal block diagram - ECU_LightingCtrl, hardware view (MagicGrid, Structure) |
 | [par_luminous_flux.puml](par_luminous_flux.puml) | Parametric diagram - Luminous flux vs. junction temperature vs. channel current |
 | [req_golden_thread.puml](req_golden_thread.puml) | Requirements diagram - Golden Thread SG-01 (MagicGrid, Requirements) |
 | [seq_open_load.puml](seq_open_load.puml) | Sequence - Open load detection, fault reaction, diagnostic DTC (Golden Thread) |
