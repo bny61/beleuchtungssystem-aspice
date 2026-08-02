@@ -51,6 +51,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from trace_check import ASIL_ORDER, kpis, load_records, parse_front_matter  # noqa: E402
+from jobs import DEFAULT_PORT as JOBS_PORT  # noqa: E402
 
 OUT_REL = "07_verification/reports/requirements_browser.html"
 PUML_DIR = "03_model/plantuml"
@@ -691,6 +692,7 @@ def build_model(root: Path) -> dict:
         "openPoints": open_points,
         "agents": collect_agents(root),
         "jobsPath": JOBS_REL,
+        "jobsPort": JOBS_PORT,
         "levels": [{"id": l, "title": LEVEL_TITLE[l]} for l in LEVEL_ORDER],
         "items": items,
         "diagrams": diagrams,
@@ -1342,23 +1344,43 @@ function said(kind, msg) {
   el.textContent = msg;
 }
 
+// Same-origin first, then the loopback server by absolute address. The second candidate
+// is what makes Save work when the page was opened from disk: the server allows the
+// "null" origin of a file:// page, and the request is deliberately a simple one
+// (text/plain, no preflight) so the browser does not block it.
+function apiCandidates() {
+  const abs = 'http://127.0.0.1:' + D.jobsPort + '/api/jobs';
+  return location.protocol.startsWith('http') ? ['/api/jobs', abs] : [abs];
+}
+
 async function submitJob() {
   const j = jobPayload();
   if (!j.prompt) { said('bad', 'Write the task first.'); return; }
-  try {
-    const res = await fetch('/api/jobs', {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },   // simple request: no preflight
-      body: JSON.stringify(j)
-    });
-    const out = await res.json();
-    if (!res.ok) { said('bad', out.error || 'The server rejected the job.'); return; }
-    said('ok', `Saved as ${out.id}. Run it with: python3 tools/jobs.py run ${out.id}`);
-    document.getElementById('pPrompt').value = '';
-  } catch (e) {
-    said('bad', 'No companion server. Use Copy or Download, and put the file in ' +
-                D.jobsPath + '/.');
+  for (const url of apiCandidates()) {
+    let res;
+    try {
+      res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },   // simple request: no preflight
+        body: JSON.stringify(j)
+      });
+    } catch (e) {
+      continue;   // not reachable at this address; try the next one
+    }
+    let out = null;
+    try { out = await res.json(); } catch (e) { /* not our server */ }
+    // Only a reply that is recognisably ours ends the search. A plain file server
+    // answering 501 to a POST is not a rejection of the job, it is the wrong address --
+    // treating its status as final stopped the fallback before it ever ran.
+    if (out && out.id) {
+      said('ok', `Saved as ${out.id}. Run it with: python3 tools/jobs.py run ${out.id}`);
+      document.getElementById('pPrompt').value = '';
+      return;
+    }
+    if (out && out.error) { said('bad', out.error); return; }
   }
+  said('bad', 'No companion server reachable. Start it with:  python3 tools/jobs.py serve  '
+            + '- or use Copy / Download and put the file in ' + D.jobsPath + '/.');
 }
 
 function viewSearch() {
@@ -1434,8 +1456,9 @@ document.getElementById('pAgent').innerHTML =
   '<option value="">default agent</option>' +
   D.agents.map(a => `<option value="${esc(a.name)}" title="${esc(a.description)}">${esc(a.name)}</option>`).join('');
 document.getElementById('pHint').textContent =
-  'With python3 tools/jobs.py serve running, Save writes the job straight into ' +
-  D.jobsPath + '/. Without it, use Copy or Download.';
+  'Save needs "python3 tools/jobs.py serve" running on port ' + D.jobsPort +
+  '; it then writes the job into ' + D.jobsPath + '/ even if you opened this file ' +
+  'directly. Without the server, use Copy or Download.';
 document.getElementById('newTask').onclick = () => openTaskPanel('');
 document.getElementById('pClose').onclick = closeTaskPanel;
 document.getElementById('pSave').onclick = submitJob;
