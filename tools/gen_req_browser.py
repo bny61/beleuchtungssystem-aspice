@@ -533,7 +533,8 @@ def collect_jobs(root: Path) -> list[dict]:
         if "id" not in fm:
             continue
         body = text.split("\n---", 1)[-1].split("---", 1)[-1] if text.startswith("---") else text
-        task = body.split("## Context", 1)[0].replace("## Task", "", 1).strip()
+        rest, plan = (body.split("## Plan", 1) + [""])[:2]
+        task = rest.split("## Context", 1)[0].replace("## Task", "", 1).strip()
         jobs.append({
             "id": str(fm["id"]),
             "status": str(fm.get("status", "open")),
@@ -544,6 +545,9 @@ def collect_jobs(root: Path) -> list[dict]:
             "branch": str(fm.get("branch", "")),
             "result": str(fm.get("result", "")),
             "task": task,
+            "plan": plan.strip(),
+            "planned_at": str(fm.get("planned_at", "")),
+            "approved_at": str(fm.get("approved_at", "")),
             "file": str(path.relative_to(root)),
         })
     return jobs
@@ -908,6 +912,18 @@ PAGE = r"""<!DOCTYPE html>
 <script>
 const D = JSON.parse(document.getElementById('data').textContent);
 const items = D.items, mods = D.modules;
+// The plan is Markdown the agent wrote; render the little of it that matters.
+function md(t) {
+  return esc(t)
+    .replace(/^### (.*)$/gm, '<h4>$1</h4>')
+    .replace(/^## (.*)$/gm, '<h3>$1</h3>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/^[-*] (.*)$/gm, '<li>$1</li>')
+    .replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>')
+    .replace(/\n{2,}/g, '</p><p>')
+    .replace(/^/, '<p>').replace(/$/, '</p>');
+}
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
@@ -1237,6 +1253,17 @@ function flagsFor(target) {
   return h + '</div>';
 }
 
+// Nothing here writes: the plan is reviewed in an editor and approved in the CLI.
+function nextStep(j) {
+  const cmd = c => `<code>python3 tools/jobs.py ${c} ${esc(j.id)}</code>`;
+  if (j.status === 'open') return 'No plan yet &mdash; ' + cmd('plan');
+  if (j.status === 'planned') return 'Read and edit the plan in ' +
+    `<a href="../../${j.file}">${esc(j.file)}</a>, then ` + cmd('approve');
+  if (j.status === 'approved') return 'Approved &mdash; ' + cmd('run');
+  if (j.status === 'failed') return 'Failed &mdash; inspect, then ' + cmd('run');
+  return j.branch ? `Ran on branch <code>${esc(j.branch)}</code>` : '';
+}
+
 function viewJobs() {
   let h = `<h2 class="title">Jobs</h2>
     <p class="sub">Tasks you wrote for an agent. Run them with
@@ -1254,6 +1281,10 @@ function viewJobs() {
           j.relates_to.map(r => esc(r)).join(', ') : ''}
         ${j.branch ? ' &middot; branch ' + esc(j.branch) : ''}</p>
       <div>${esc(j.task)}</div>
+      ${j.plan ? `<h3 style="margin-top:14px">Plan${j.approved_at ?
+        ' &middot; approved ' + esc(j.approved_at) : ' &middot; not approved yet'}</h3>
+        <div class="body">${md(j.plan)}</div>` : ''}
+      <p class="sub" style="margin-top:10px">${nextStep(j)}</p>
       ${j.result ? `<p class="sub" style="margin-top:8px">Result: ${esc(j.result)}</p>` : ''}
       <p class="sub" style="margin-top:8px"><a href="../../${j.file}">${esc(j.file)}</a></p>
     </div>`;

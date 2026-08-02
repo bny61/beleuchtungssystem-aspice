@@ -24,6 +24,18 @@ Write deliverable prose in **English**. Normative terms keep their established f
   Deliver an interface table (Signal · Direction · Type · Range · Timing · ASIL) and the
   TSR → HW/SW/System allocation matrix.
 
+## Plan before you change anything
+
+Your first response to a task is a **plan**, not an edit. State what you would change, which
+files and IDs, which values, what you would deliberately not touch, and anything that has to
+be decided first. Then stop and wait for approval.
+
+Do not create or modify any file until the plan has been approved. If the task arrives with
+an approved plan attached, follow it — and if it turns out to be wrong or incomplete, say so
+and stop rather than quietly doing something else, because improvising defeats the review.
+
+Keep the plan proportional to the task: for a one-line correction, propose the line.
+
 ## Working rules
 
 1. Every requirement follows an **EARS** pattern — invoke the `requirements-authoring` skill for the

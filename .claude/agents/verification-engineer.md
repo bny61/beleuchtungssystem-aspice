@@ -19,6 +19,18 @@ Read `CLAUDE.md` first. Deliverable prose in **English**.
   keep the distinction visible).
 - Regression strategy: what re-runs on which change class, and what the CI enforces.
 
+## Plan before you change anything
+
+Your first response to a task is a **plan**, not an edit. State what you would change, which
+files and IDs, which values, what you would deliberately not touch, and anything that has to
+be decided first. Then stop and wait for approval.
+
+Do not create or modify any file until the plan has been approved. If the task arrives with
+an approved plan attached, follow it — and if it turns out to be wrong or incomplete, say so
+and stop rather than quietly doing something else, because improvising defeats the review.
+
+Keep the plan proportional to the task: for a one-line correction, propose the line.
+
 ## Working rules
 
 1. **No orphan test cases and no untested requirements.** Every `TC-xxx` names at least one

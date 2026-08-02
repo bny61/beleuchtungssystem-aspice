@@ -15,10 +15,14 @@ Binding project rules: `CLAUDE.md`.
    products of previous phases (do not re-derive what exists — reuse the exact IDs and values).
 2. **Route** to the responsible agent (see table). Multi-owner phases are split by section, not
    merged into one voice.
-3. **Produce** the phase content in English, with the format rules from `CLAUDE.md`.
-4. **Persist** work products to their repo paths. Requirements/test cases as Requirements-as-Code.
-5. **Check** consistency: `python3 tools/trace_check.py` — report real output.
-6. **Close** the phase with the mandatory block, then **stop and wait for `next`**.
+3. **Plan and wait.** Present what the phase will produce — which work products, which IDs,
+   which values, what is deliberately left out — and stop for approval. A phase creates a lot
+   at once, so this is where a wrong reading is cheapest to correct. Binding rule in
+   `CLAUDE.md`, "Plan first, then change".
+4. **Produce** the phase content in English, with the format rules from `CLAUDE.md`.
+5. **Persist** work products to their repo paths. Requirements/test cases as Requirements-as-Code.
+6. **Check** consistency: `python3 tools/trace_check.py` — report real output.
+7. **Close** the phase with the mandatory block, then **stop and wait for `next`**.
 
 ## Phase → owner
 

@@ -9,10 +9,16 @@ what came back stay visible.
 A job is NOT a replacement for an open point (`OP-xx`) or a GitHub issue. Those are the
 project's tracking mechanisms; a job carries an optional `relates_to` pointing at one.
 
+Nothing is changed until a plan has been written, read and approved:
+
+    open --plan--> planned --approve--> approved --run--> done
+
 Commands:
     python3 tools/jobs.py serve [--port 8787]   serve the repo and accept jobs from the page
     python3 tools/jobs.py list [--all]          open jobs (--all includes finished ones)
     python3 tools/jobs.py show JOB-001
+    python3 tools/jobs.py plan JOB-001 [--replan]    agent states its intent, read-only
+    python3 tools/jobs.py approve JOB-001           after you have read and edited the plan
     python3 tools/jobs.py run JOB-001 [--dry-run] [--yes] [--model ...]
 
 Standard library only, like the other tools here, which keeps the tool-qualification
@@ -44,7 +50,8 @@ JOBS_REL = "09_process/jobs"
 AGENTS_REL = ".claude/agents"
 BROWSER_REL = "07_verification/reports/requirements_browser.html"
 
-STATUSES = ("open", "running", "done", "failed", "dropped")
+# open --plan--> planned --approve--> approved --run--> done | failed
+STATUSES = ("open", "planned", "approved", "running", "done", "failed", "dropped")
 TARGET_KINDS = ("record", "document", "diagram", "area", "general")
 
 MAX_PROMPT = 8000
@@ -103,12 +110,15 @@ def record_body(text: str) -> str:
     return text[end + 4:].lstrip("\n")
 
 
-def split_body(body: str) -> tuple[str, str]:
-    """Return (task, context) from a job body."""
-    task, context = body, ""
-    if "## Context" in body:
-        task, context = body.split("## Context", 1)
-    return task.replace("## Task", "", 1).strip(), context.strip()
+def split_body(body: str) -> tuple[str, str, str]:
+    """Return (task, context, plan) from a job body.
+
+    The plan is a section of the record on purpose: reviewing it is opening the file, and
+    editing it needs no tool of ours.
+    """
+    rest, plan = (body.split("## Plan", 1) + [""])[:2]
+    task, context = (rest.split("## Context", 1) + [""])[:2]
+    return (task.replace("## Task", "", 1).strip(), context.strip(), plan.strip())
 
 
 def load_jobs(root: Path) -> list[dict]:
@@ -162,6 +172,8 @@ def write_job(root: Path, data: dict) -> Path:
         f"target_kind: {data.get('target_kind', 'general')}",
         f"agent: {yaml_scalar(data.get('agent', ''))}",
         "relates_to: " + ("[]" if not rel else "[" + ", ".join(str(r) for r in rel) + "]"),
+        f"planned_at: {yaml_scalar(data.get('planned_at', ''))}",
+        f"approved_at: {yaml_scalar(data.get('approved_at', ''))}",
         f"branch: {yaml_scalar(data.get('branch', ''))}",
         f"result: {yaml_scalar(data.get('result', ''))}",
         "---",
@@ -174,6 +186,9 @@ def write_job(root: Path, data: dict) -> Path:
     context = (data.get("context") or "").strip()
     if context:
         lines += ["## Context", "", context, ""]
+    plan = (data.get("plan") or "").strip()
+    if plan:
+        lines += ["## Plan", "", plan, ""]
     path.write_text("\n".join(lines), encoding="utf-8")
     return path
 
@@ -183,7 +198,7 @@ def update_job(root: Path, jid: str, **changes) -> None:
     path = root / JOBS_REL / f"{jid}.md"
     text = path.read_text(encoding="utf-8")
     fm = parse_front_matter(text) or {}
-    task, context = split_body(record_body(text))
+    task, context, plan = split_body(record_body(text))
 
     data = {
         "id": jid,
@@ -193,10 +208,13 @@ def update_job(root: Path, jid: str, **changes) -> None:
         "target_kind": fm.get("target_kind", "general"),
         "agent": fm.get("agent", ""),
         "relates_to": fm.get("relates_to", []),
+        "planned_at": fm.get("planned_at", ""),
+        "approved_at": fm.get("approved_at", ""),
         "branch": fm.get("branch", ""),
         "result": fm.get("result", ""),
         "prompt": task,
         "context": context,
+        "plan": plan,
     }
     data.update(changes)
     write_job(root, data)
@@ -363,11 +381,108 @@ def compose_prompt(job: dict) -> str:
         if context:
             parts.append("Context captured when the task was written:\n" + context)
     parts.append(str(job.get("_task", "")).strip())
+    plan = str(job.get("_plan", "")).strip()
+    if plan:
+        parts.append(
+            "This plan was reviewed and approved by the human who wrote the task. Follow it.\n"
+            "If you find it wrong or incomplete, STOP and report that instead of improvising - "
+            "silently doing something else defeats the point of the approval.\n\n" + plan
+        )
     parts.append(
         "Do not commit or push. Leave the changes in the working tree for review, and "
         "finish by summarising what you changed and anything you deliberately left out."
     )
     return "\n\n".join(p for p in parts if p)
+
+
+def invoke(root: Path, cmd: list[str]) -> tuple[bool, str]:
+    """Run the CLI and return (ok, text). The JSON envelope carries the reply in 'result'."""
+    proc = subprocess.run(cmd, cwd=root, capture_output=True, text=True)
+    out = proc.stdout.strip()
+    text = out
+    try:
+        parsed = json.loads(out)
+        if isinstance(parsed, dict):
+            text = str(parsed.get("result", out))
+    except ValueError:
+        pass
+    return proc.returncode == 0, (text or proc.stderr.strip())
+
+
+def base_cmd(job: dict, args, permission_mode: str) -> list[str]:
+    cmd = ["claude", "-p", "--output-format", "json", "--permission-mode", permission_mode]
+    agent = str(job.get("agent", "")).strip()
+    if agent:
+        cmd += ["--agent", agent]
+    if getattr(args, "model", None):
+        cmd += ["--model", args.model]
+    return cmd
+
+
+def cmd_plan(root: Path, args) -> int:
+    """Ask the agent what it intends to do, without letting it do any of it."""
+    jobs = {str(j["id"]): j for j in load_jobs(root)}
+    if args.job not in jobs:
+        print(f"No such job: {args.job}", file=sys.stderr)
+        return 2
+    job = jobs[args.job]
+    task, _ctx, existing = split_body(str(job.get("_body", "")))
+    job["_task"] = task
+
+    if existing and not args.replan:
+        print(f"{args.job} already has a plan. Edit it, then approve - or use --replan.",
+              file=sys.stderr)
+        return 2
+    if not shutil.which("claude"):
+        print("The 'claude' CLI was not found on PATH.", file=sys.stderr)
+        return 2
+
+    prompt = (
+        compose_prompt(job)
+        + "\n\nProduce a PLAN only. State what you would change, which files and IDs, which "
+          "values, what you would deliberately not touch, and anything that needs deciding "
+          "first. Do not change anything. Keep it proportional to the task."
+    )
+    # plan mode is read-only: the agent cannot write even if it decides to.
+    cmd = base_cmd(job, args, "plan") + [prompt]
+    print(f"Planning {args.job} ({job.get('agent') or 'default agent'}) - read-only ...\n")
+    ok, text = invoke(root, cmd)
+    print(text)
+    if not ok:
+        update_job(root, args.job, status="open")
+        print(f"\n{args.job} -> planning failed, still open", file=sys.stderr)
+        return 1
+
+    update_job(root, args.job, status="planned", plan=text,
+               planned_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
+               approved_at="")
+    print(f"\n{args.job} -> planned")
+    print(f"Review and edit:  {JOBS_REL}/{args.job}.md   (## Plan section)")
+    print(f"Then:             python3 tools/jobs.py approve {args.job}")
+    return 0
+
+
+def cmd_approve(root: Path, args) -> int:
+    """Record that a human read the plan and accepted it."""
+    jobs = {str(j["id"]): j for j in load_jobs(root)}
+    if args.job not in jobs:
+        print(f"No such job: {args.job}", file=sys.stderr)
+        return 2
+    job = jobs[args.job]
+    _task, _ctx, plan = split_body(str(job.get("_body", "")))
+    if not plan:
+        print(f"{args.job} has no plan yet. Run: python3 tools/jobs.py plan {args.job}",
+              file=sys.stderr)
+        return 2
+    if job.get("status") == "approved":
+        print(f"{args.job} is already approved.")
+        return 0
+
+    stamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    update_job(root, args.job, status="approved", approved_at=stamp)
+    print(f"{args.job} -> approved  {stamp}")
+    print(f"Then: python3 tools/jobs.py run {args.job}")
+    return 0
 
 
 def cmd_run(root: Path, args) -> int:
@@ -381,12 +496,27 @@ def cmd_run(root: Path, args) -> int:
         print("Duplicate job ids present; resolve them before running.", file=sys.stderr)
         return 2
 
-    task, _context = split_body(str(job.get("_body", "")))
+    task, _context, plan = split_body(str(job.get("_body", "")))
     job["_task"] = task
+    job["_plan"] = plan
 
-    if job.get("status") in ("done", "running") and not args.force:
-        print(f"{args.job} is '{job.get('status')}'. Re-run with --force if that is intended.",
+    status = job.get("status")
+    # The gate: work only ever follows a plan a human read and accepted.
+    if status == "open":
+        print(f"{args.job} has no plan. Run: python3 tools/jobs.py plan {args.job}",
               file=sys.stderr)
+        return 2
+    if status == "planned":
+        print(f"{args.job} has a plan that is not approved. Review "
+              f"{JOBS_REL}/{args.job}.md, then: python3 tools/jobs.py approve {args.job}",
+              file=sys.stderr)
+        return 2
+    if status in ("done", "running") and not args.force:
+        print(f"{args.job} is '{status}'. Re-run with --force if that is intended.",
+              file=sys.stderr)
+        return 2
+    if status not in ("approved", "failed") and not args.force:
+        print(f"{args.job} is '{status}'; only an approved job runs.", file=sys.stderr)
         return 2
 
     if not shutil.which("claude"):
@@ -397,15 +527,10 @@ def cmd_run(root: Path, args) -> int:
     agent = str(job.get("agent", "")).strip()
     branch = f"job/{args.job}"
 
-    cmd = ["claude", "-p", "--output-format", "json",
-           "--permission-mode", args.permission_mode]
-    if agent:
-        cmd += ["--agent", agent]
-    if args.model:
-        cmd += ["--model", args.model]
-    cmd.append(prompt)
+    cmd = base_cmd(job, args, args.permission_mode) + [prompt]
 
-    print(f"\n{args.job}  target {job.get('target') or '-'}  agent {agent or '(default)'}")
+    print(f"\n{args.job}  target {job.get('target') or '-'}  agent {agent or '(default)'}"
+          f"  approved {job.get('approved_at') or '-'}")
     print("\n  " + "\n  ".join(task.splitlines()))
     print("\nwill run:")
     printable = list(cmd[:-1]) + ["<composed prompt>"]
@@ -440,23 +565,13 @@ def cmd_run(root: Path, args) -> int:
     update_job(root, args.job, status="running", branch=branch)
     print(f"Running {args.job} on {branch} ...\n")
 
-    proc = subprocess.run(cmd, cwd=root, capture_output=True, text=True)
-    out = proc.stdout.strip()
-    summary = out
-    try:
-        parsed = json.loads(out)
-        summary = str(parsed.get("result", out)) if isinstance(parsed, dict) else out
-    except ValueError:
-        pass
-
-    ok = proc.returncode == 0
-    print(summary or proc.stderr.strip())
+    ok, summary = invoke(root, cmd)
+    print(summary)
     update_job(
         root, args.job,
         status="done" if ok else "failed",
         branch=branch,
-        result=" ".join(summary.split())[:MAX_FIELD] if summary else
-               ("no output" if ok else proc.stderr.strip()[:MAX_FIELD]),
+        result=" ".join(summary.split())[:MAX_FIELD] if summary else "no output",
     )
     print(f"\n{args.job} -> {'done' if ok else 'failed'} (branch {branch}, nothing committed)")
     if ok:
@@ -481,7 +596,15 @@ def main() -> int:
     p = sub.add_parser("show", help="print a job record")
     p.add_argument("job")
 
-    p = sub.add_parser("run", help="run a job through the Claude Code CLI")
+    p = sub.add_parser("plan", help="ask the agent for a plan, changing nothing")
+    p.add_argument("job")
+    p.add_argument("--replan", action="store_true", help="discard an existing plan")
+    p.add_argument("--model", default=None, help="model alias passed to the CLI")
+
+    p = sub.add_parser("approve", help="accept the plan so the job may run")
+    p.add_argument("job")
+
+    p = sub.add_parser("run", help="run an approved job through the Claude Code CLI")
     p.add_argument("job")
     p.add_argument("--dry-run", action="store_true", help="print the command, run nothing")
     p.add_argument("--yes", action="store_true", help="skip the confirmation prompt")
@@ -493,7 +616,8 @@ def main() -> int:
     root = Path(args.root).resolve() if args.root else repo_root()
 
     return {
-        "serve": cmd_serve, "list": cmd_list, "show": cmd_show, "run": cmd_run,
+        "serve": cmd_serve, "list": cmd_list, "show": cmd_show,
+        "plan": cmd_plan, "approve": cmd_approve, "run": cmd_run,
     }[args.command](root, args)
 
 
