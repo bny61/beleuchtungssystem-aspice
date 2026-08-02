@@ -56,6 +56,10 @@ MAX_CONTEXT = 20000
 # is always shown in the printed command, never applied silently.
 DEFAULT_PERMISSION_MODE = "acceptEdits"
 
+# The generated page falls back to this port when it was opened from disk rather than
+# served, so the two must agree. It is defined here and imported by gen_req_browser.py.
+DEFAULT_PORT = 8787
+
 
 # --------------------------------------------------------------------------- helpers
 
@@ -469,7 +473,7 @@ def main() -> int:
     sub = ap.add_subparsers(dest="command", required=True)
 
     p = sub.add_parser("serve", help="serve the repo and accept jobs from the browser")
-    p.add_argument("--port", type=int, default=8787)
+    p.add_argument("--port", type=int, default=DEFAULT_PORT)
 
     p = sub.add_parser("list", help="list jobs")
     p.add_argument("--all", action="store_true", help="include finished and dropped jobs")
