@@ -8,6 +8,7 @@ Plans, assumptions, project status, templates and the original commissioning pro
 
 | Folder | Contents |
 |---|---|
+| [`jobs/`](jobs/) | `jobs` |
 | [`plans/`](plans/) | Plans |
 | [`prompts/`](prompts/) | Commissioning documents |
 
