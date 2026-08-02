@@ -86,6 +86,22 @@ jobs:
       # every workflow touching model views agrees on it.
       - uses: ./.github/actions/setup-plantuml
 
+      # `plantuml -checkonly` accepts the deprecated "#colour:label;" activity node and only
+      # prints a banner - into the rendered diagram itself, where it sat unnoticed in every
+      # archived SVG for weeks. A silent defect in an artefact meant to be read needs its own
+      # gate. Matches the colour prefix at the start of a line, which is the deprecated form;
+      # the current ";  <<#FFDDDD>>" and element colours like "as SAFE #LightBlue" are not
+      # at line start and are left alone.
+      - name: No deprecated PlantUML colour prefixes
+        run: |
+          if grep -rnE '^[[:space:]]*#[A-Za-z0-9]+:' \
+               --include='*.puml' --include='*.md' \
+               03_model 04_architecture 05_hardware 09_process/plans; then
+            echo "::error::Deprecated PlantUML colour prefix found. Write ':label; <<#RRGGBB>>' instead."
+            exit 1
+          fi
+          echo "No deprecated colour prefixes."
+
       - name: Check PlantUML sources
         run: |
           shopt -s nullglob
