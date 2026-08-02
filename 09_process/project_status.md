@@ -127,6 +127,7 @@ requirement) instead of `HW-REQ-025`, and `HW-REQ-004` lacked the variant markin
 | OP-37 | Interface table additions from the hardware view: `U_Batt`, `RailStatus`, and `SAFE_OFF` / `OV_SHUTDOWN` into the enable gate | systems-engineer | Phase 5 |
 | OP-38 | Photometric compliance at the 400 mA floor (≈ 232 lm/channel) against the legal minimum — affects the `SG-01` safe state and `SYS-REQ-013`, not only the derating curve | safety-manager, systems-engineer | Phase 5 |
 | OP-39 | `A-19` (central load-dump suppression) needs an interface agreement with the vehicle manufacturer, like `A-05` | safety-manager | Phase 6 |
+| OP-40 | `A-12` ("the derating curve never commands below 400 mA") restates `HW-REQ-008`, which requires exactly that. Since the requirement exists, the assumption should be confirmed or marked superseded rather than left `open` — an assumption and a requirement asserting the same thing invite them to drift apart | hardware-engineer | Phase 6 |
 | OP-13 | Catch up phase 0: role model, independence levels, tailoring, glossary | safety-manager | before phase 9 |
 | OP-14 | ~~HARA and item definition existed only in chat, not as work products~~ | safety-manager | **done** |
 

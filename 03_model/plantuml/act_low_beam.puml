@@ -8,6 +8,24 @@ if (Request valid and not timed out?) then (yes)
   :LED driver regulates channel\nto the commanded set point;
   repeat
     :Current_Sense_Chain samples\nI_load in the PWM on-phase;
+    note right
+      Source of the decision criteria below
+      (all values are plausible examples):
+      * 150 mA / 50 ms threshold: SYS-REQ-014,
+        realised by SM-01 in Current_Sense_Chain
+        (HW-REQ-002, debounce HW-REQ-009)
+      * 150 us minimum on-time: blanking and
+        conversion budget, HW-REQ-003. Below it the
+        diagnosis is reported "not available"
+        (SYS-REQ-017, decision OP-17); HW-REQ-004 is
+        not implemented in the base variant
+      * measurement uncertainty +/-20 mA at the
+        threshold: SYS-REQ-016 / HW-REQ-001
+      Tolerance chain and timing budget:
+      05_hardware/analysis_current_sensing.md
+      Sampling raster assumes A-08 (1.20 A nominal)
+      and A-09 (400 Hz PWM, duty >= 20 %).
+    end note
     if (PWM on-time >= 150 us?) then (yes)
       if (I_load < 150 mA for > 50 ms?) then (yes)
         :Debounce 20 ms;
