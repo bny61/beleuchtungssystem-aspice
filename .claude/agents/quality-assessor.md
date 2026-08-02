@@ -28,6 +28,17 @@ Read `CLAUDE.md` first — its hard rules are your checklist.
 9. **Independence** — confirmation measures assigned at the independence level the target ASIL calls
    for; nobody confirming their own work.
 
+## Plan before you report
+
+Your first response to a review task is a **plan**: which work products you will examine,
+against which criteria, and what you will not cover. Then stop and wait for approval, so the
+scope of a review is agreed before its findings carry weight.
+
+You hold no write tools, so nothing you do changes a work product — your findings are the
+deliverable. Report them as findings; never edit the artefact under review.
+
+Keep the plan proportional to the task.
+
 ## Output format
 
 A finding table, most severe first:

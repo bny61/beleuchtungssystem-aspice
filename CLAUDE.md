@@ -33,6 +33,25 @@ Second, deliberately shallower thread for contrast:
 
 Mark sections visibly: `🔍 DEEP DIVE` (detail) and `📋 OVERVIEW` (breadth).
 
+## Plan first, then change (binding)
+
+**Any task that will create or modify a work product starts with a plan for approval.** State
+what will change, which files and IDs, which values, what will deliberately not be touched, and
+what needs deciding first — then stop and wait. No work product is written before the plan is
+approved.
+
+A subagent is therefore invoked **twice**: once to plan, read-only, and once to carry out the
+approved plan. An agent handed an approved plan follows it; if the plan turns out to be wrong,
+it stops and says so rather than improvising, because silently doing something else is what the
+review exists to prevent.
+
+Exempt, because a plan for them is ceremony rather than review: reading and analysis, running
+the checks in `tools/`, regenerating derived artefacts, and a correction the user has already
+approved in the same turn. Keep every plan proportional — for a one-line fix, propose the line.
+
+Jobs enforce this mechanically (`tools/jobs.py`: `plan` → `approve` → `run`, see
+`09_process/jobs/README.md`). Everywhere else it holds because this file says so.
+
 ## ID scheme (never reuse, never silently change)
 
 `CR-` customer req · `SYS-REQ-` system req · `H-` hazard (HARA) · `SG-` safety goal ·

@@ -25,17 +25,36 @@ Jobs are also not a replacement for a GitHub issue. If a finding needs tracking 
 work itself, raise a problem report or change request from `.github/ISSUE_TEMPLATE/`
 (ASPICE SUP.9 and SUP.10) and point the job at it.
 
-## Using them
+## Nothing changes before you have approved a plan
 
 ```
-python3 tools/jobs.py serve          # serve the browser and capture jobs from it
-python3 tools/jobs.py list           # open jobs
-python3 tools/jobs.py show JOB-001
-python3 tools/jobs.py run JOB-001    # shows the command, asks, runs on branch job/JOB-001
+open  --plan-->  planned  --approve-->  approved  --run-->  done
 ```
 
-`run` never commits and never pushes. It leaves the changes in the working tree so you
-review them like any other work, and writes the outcome back into the job record.
+```
+python3 tools/jobs.py serve            # serve the browser and capture jobs from it
+python3 tools/jobs.py list             # jobs and where they stand
+python3 tools/jobs.py plan JOB-001     # the agent states its intent - read-only
+#   read it, edit the ## Plan section in JOB-001.md
+python3 tools/jobs.py approve JOB-001  # records that you accepted it
+python3 tools/jobs.py run JOB-001      # only an approved job runs
+```
+
+`plan` uses the CLI's own plan mode, so the agent **cannot** write during it even if it
+decides to. What comes back lands in the `## Plan` section of the record; reviewing it means
+opening the file, and editing it needs no tool of ours. `approve` stamps `approved_at`, so
+the record shows a plan existed and was accepted before any work started.
+
+`run` refuses anything that is not approved, carries the approved plan into the prompt as the
+authority, and instructs the agent to stop and report rather than improvise if the plan turns
+out to be wrong. It never commits and never pushes: changes are left in the working tree on
+branch `job/JOB-001` for review, and the outcome is written back into the record.
+
+Why the extra step is worth it: the first job run without one produced good work that also
+cited a requirement excluded from the base variant, and proposed three findings of which one
+survived checking. A plan states the intent before the diff exists, which is the only point
+where a wrong reading is cheap. The second job never needed to run at all - its plan showed
+the work was already done.
 
 Without the server the browser still captures: the panel offers **Copy job** and
 **Download**, and the file goes into this folder by hand.
@@ -51,9 +70,17 @@ target: SYS-REQ-025       # record id, document path, or diagram name
 target_kind: record       # record | document | diagram | area | general
 agent: systems-engineer   # a name from .claude/agents/, or empty for the default
 relates_to: [OP-29]       # open points or issues this serves, filled by you
+planned_at: ""            # written by `plan`
+approved_at: ""           # written by `approve` - the audit trail
 branch: ""                # written by the runner
 result: ""                # written by the runner
 ---
+```
+
+The body carries `## Task`, an optional `## Context` captured by the browser, and `## Plan`
+once planned:
+
+```
 ```
 
 Jobs are committed, so what was asked and what came back stay visible. They live outside the
