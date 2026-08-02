@@ -135,9 +135,17 @@ def load_jobs(root: Path) -> list[dict]:
     return sorted(jobs, key=lambda j: str(j["id"]))
 
 
-def next_job_id(root: Path) -> str:
+def next_job_id(root: Path, ignore: Path | None = None) -> str:
+    """Lowest free JOB number.
+
+    `ignore` leaves a file out of the scan, which adopt needs: a file already named
+    JOB-003.md was counting itself as taken and being bumped to JOB-004, leaving a gap in
+    a numbering the user had chosen correctly.
+    """
     used = set()
     for path in job_files(root):
+        if ignore is not None and path == ignore:
+            continue
         m = re.match(r"JOB-(\d+)", path.stem)
         if m:
             used.add(int(m.group(1)))
@@ -459,7 +467,11 @@ def cmd_adopt(root: Path, args) -> int:
         text = path.read_text(encoding="utf-8")
         task, context, plan = split_body(record_body(text))
         fm = parse_front_matter(text) or {}
-        new_id = next_job_id(root)
+        # Keep the number the file was already named with when it is free.
+        stem_ok = re.match(r"^JOB-\d{3,}$", path.stem)
+        candidate = path.stem if stem_ok else None
+        free = next_job_id(root, ignore=path)
+        new_id = candidate if candidate and candidate <= free else free
         target = root / JOBS_REL / f"{new_id}.md"
 
         data = {k: fm.get(k, "") for k in
