@@ -305,7 +305,11 @@ def md_to_html(md: str, base_dir: str = "", embedded: set[str] | None = None,
         # opened on one line and closed on the next came out with its asterisks showing.
         out.append("<p>" + inl("\x00".join(buf)).replace("\x00", "<br>") + "</p>")
 
-    return "".join(out)
+    html_out = "".join(out)
+    # A blank line between list items closed and reopened the list, so an ordered list
+    # written with spacing came out as "1. 1. 1.". Adjacent lists of the same kind with
+    # nothing between them are one list, which is also how GitHub renders them.
+    return re.sub(r"</(ol|ul)>\s*<\1>", "", html_out)
 
 
 # -------------------------------------------------------------------- mapping
@@ -521,11 +525,17 @@ def collect_agents(root: Path) -> list[dict]:
     return out
 
 
-def collect_jobs(root: Path) -> list[dict]:
-    """Jobs written by the human, from 09_process/jobs/."""
+def collect_jobs(root: Path, embedded: set[str] | None = None) -> list[dict]:
+    """Jobs written by the human, from 09_process/jobs/.
+
+    Rendered with the same Markdown renderer as the narrative documents. Agent plans are
+    full Markdown -- tables, code fences, links -- and the small regex renderer this used
+    to rely on turned all three into soup.
+    """
     base = root / JOBS_REL
     if not base.is_dir():
         return []
+    emb = embedded or set()
     jobs = []
     for path in sorted(base.glob("JOB-*.md")):
         text = path.read_text(encoding="utf-8")
@@ -534,7 +544,8 @@ def collect_jobs(root: Path) -> list[dict]:
             continue
         body = text.split("\n---", 1)[-1].split("---", 1)[-1] if text.startswith("---") else text
         rest, plan = (body.split("## Plan", 1) + [""])[:2]
-        task = rest.split("## Context", 1)[0].replace("## Task", "", 1).strip()
+        head, context = (rest.split("## Context", 1) + [""])[:2]
+        task = head.replace("## Task", "", 1).strip()
         jobs.append({
             "id": str(fm["id"]),
             "status": str(fm.get("status", "open")),
@@ -545,7 +556,12 @@ def collect_jobs(root: Path) -> list[dict]:
             "branch": str(fm.get("branch", "")),
             "result": str(fm.get("result", "")),
             "task": task,
+            "task_html": md_to_html(task, JOBS_REL, emb),
+            "context_html": md_to_html(context.strip(), JOBS_REL, emb) if context.strip() else "",
             "plan": plan.strip(),
+            "plan_html": md_to_html(plan.strip(), JOBS_REL, emb) if plan.strip() else "",
+            "result_html": md_to_html(str(fm.get("result", "")), JOBS_REL, emb)
+                           if fm.get("result") else "",
             "planned_at": str(fm.get("planned_at", "")),
             "approved_at": str(fm.get("approved_at", "")),
             "file": str(path.relative_to(root)),
@@ -686,7 +702,7 @@ def build_model(root: Path) -> dict:
     # that reports none.
     stats = dict(kpis(records))
 
-    jobs = collect_jobs(root)
+    jobs = collect_jobs(root, embedded)
     open_points = collect_open_points(root, items, documents, diagrams)
 
     return {
@@ -912,18 +928,6 @@ PAGE = r"""<!DOCTYPE html>
 <script>
 const D = JSON.parse(document.getElementById('data').textContent);
 const items = D.items, mods = D.modules;
-// The plan is Markdown the agent wrote; render the little of it that matters.
-function md(t) {
-  return esc(t)
-    .replace(/^### (.*)$/gm, '<h4>$1</h4>')
-    .replace(/^## (.*)$/gm, '<h3>$1</h3>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/^[-*] (.*)$/gm, '<li>$1</li>')
-    .replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>')
-    .replace(/\n{2,}/g, '</p><p>')
-    .replace(/^/, '<p>').replace(/$/, '</p>');
-}
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
@@ -1247,7 +1251,7 @@ function flagsFor(target) {
   }
   for (const j of js) {
     h += `<div class="jrow"><span class="fa">${esc(j.status)}</span>
-            <span class="fid"><a href="#jobs">${esc(j.id)}</a></span>${esc(j.task.split('\n')[0])}
+            <span class="fid"><a href="#job/${encodeURIComponent(j.id)}">${esc(j.id)}</a></span>${esc(j.task.split('\n')[0])}
           </div>`;
   }
   return h + '</div>';
@@ -1264,32 +1268,57 @@ function nextStep(j) {
   return j.branch ? `Ran on branch <code>${esc(j.branch)}</code>` : '';
 }
 
+function jobById(id) { return D.jobs.find(j => j.id === id); }
+
+function viewJob(id) {
+  const j = jobById(id);
+  if (!j) return `<p class="none">Unknown job ${esc(id)}.</p>`;
+  const meta = [
+    j.target ? esc(j.target) : 'no target',
+    esc(j.agent || 'default agent'),
+    j.planned_at ? 'planned ' + esc(j.planned_at) : '',
+    j.approved_at ? 'approved ' + esc(j.approved_at) : '',
+    j.branch ? 'branch ' + esc(j.branch) : '',
+  ].filter(Boolean).join(' &middot; ');
+  return `<h2 class="title">${esc(j.id)} &middot; ${esc(j.status)}</h2>
+    <p class="sub">${meta}</p>
+    ${j.relates_to && j.relates_to.length
+      ? `<p class="sub">Relates to ${j.relates_to.map(r => esc(r)).join(', ')}</p>` : ''}
+    <div class="banner" style="border-color:var(--line);color:inherit">${nextStep(j)}</div>
+    <div class="card"><h3>Task</h3><div class="body doc">${j.task_html}</div></div>
+    ${j.context_html ? `<div class="card"><h3>Context captured when it was written</h3>
+       <div class="body doc">${j.context_html}</div></div>` : ''}
+    ${j.plan_html ? `<h3 style="font-size:13px;text-transform:uppercase;letter-spacing:.6px;
+         color:var(--muted);margin:20px 0 8px">Plan${j.approved_at
+         ? ' &middot; approved ' + esc(j.approved_at) : ' &middot; not approved yet'}</h3>
+       <div class="body doc">${j.plan_html}</div>` : ''}
+    ${j.result_html ? `<div class="card"><h3>Result</h3>
+       <div class="body doc">${j.result_html}</div></div>` : ''}
+    <p class="foot">The record is the source, not this page:
+       <a href="../../${j.file}">${esc(j.file)}</a></p>`;
+}
+
 function viewJobs() {
   let h = `<h2 class="title">Jobs</h2>
-    <p class="sub">Tasks you wrote for an agent. Run them with
-       <code>python3 tools/jobs.py run &lt;id&gt;</code>. Open points are the other direction:
-       those are written by the agents, and appear on the element they concern.</p>`;
+    <p class="sub">Tasks you wrote for an agent. Nothing runs before a plan has been written,
+       read and approved: <code>plan</code> &rarr; <code>approve</code> &rarr; <code>run</code>.
+       Open points are the other direction &mdash; those are written by the agents, and appear
+       on the element they concern.</p>`;
   if (!D.jobs.length) {
-    h += `<div class="banner">No jobs yet. Press <strong>t</strong> while looking at any
+    return h + `<div class="banner">No jobs yet. Press <strong>t</strong> while looking at any
             record, document or diagram to write one.</div>`;
   }
-  for (const j of D.jobs) {
-    h += `<div class="card"><h3>${esc(j.id)} &middot; ${esc(j.status)}</h3>
-      <p class="sub" style="margin:0 0 8px">
-        ${j.target ? esc(j.target) : 'no target'} &middot; ${esc(j.agent || 'default agent')}
-        ${j.relates_to && j.relates_to.length ? ' &middot; relates to ' +
-          j.relates_to.map(r => esc(r)).join(', ') : ''}
-        ${j.branch ? ' &middot; branch ' + esc(j.branch) : ''}</p>
-      <div>${esc(j.task)}</div>
-      ${j.plan ? `<h3 style="margin-top:14px">Plan${j.approved_at ?
-        ' &middot; approved ' + esc(j.approved_at) : ' &middot; not approved yet'}</h3>
-        <div class="body">${md(j.plan)}</div>` : ''}
-      <p class="sub" style="margin-top:10px">${nextStep(j)}</p>
-      ${j.result ? `<p class="sub" style="margin-top:8px">Result: ${esc(j.result)}</p>` : ''}
-      <p class="sub" style="margin-top:8px"><a href="../../${j.file}">${esc(j.file)}</a></p>
-    </div>`;
-  }
-  return h;
+  const rows = D.jobs.map(j => `<tr>
+      <td class="id"><a href="#job/${encodeURIComponent(j.id)}">${esc(j.id)}</a></td>
+      <td><span class="pill">${esc(j.status)}</span></td>
+      <td>${esc(j.target || '-')}</td>
+      <td>${esc(j.agent || 'default')}</td>
+      <td class="txt">${esc(j.task.split('\n')[0])}</td>
+      <td>${nextStep(j)}</td>
+    </tr>`).join('');
+  return h + `<div class="tw"><table><thead><tr>
+      <th>ID</th><th>Status</th><th>Target</th><th>Agent</th><th>Task</th><th>Next</th>
+    </tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 /* ---- capture panel ---- */
@@ -1450,6 +1479,7 @@ function render() {
   if (F.q && showSearch) out = viewSearch();
   else if (h.startsWith('#doc/')) out = viewDocument(decodeURIComponent(h.slice(5)));
   else if (h === '#docs') out = viewDocs();
+  else if (h.startsWith('#job/')) out = viewJob(decodeURIComponent(h.slice(5)));
   else if (h === '#jobs') out = viewJobs();
   else if (h.startsWith('#a/')) out = viewArea(decodeURIComponent(h.slice(3)));
   else if (h.startsWith('#r/')) out = viewRecord(decodeURIComponent(h.slice(3)));
