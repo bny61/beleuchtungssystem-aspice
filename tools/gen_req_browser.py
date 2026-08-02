@@ -50,7 +50,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from trace_check import ASIL_ORDER, kpis, load_records  # noqa: E402
+from trace_check import ASIL_ORDER, kpis, load_records, parse_front_matter  # noqa: E402
 
 OUT_REL = "07_verification/reports/requirements_browser.html"
 PUML_DIR = "03_model/plantuml"
@@ -490,6 +490,121 @@ def collect_documents(root: Path, areas: list[dict]) -> list[dict]:
     return docs
 
 
+# ------------------------------------------------- agents, jobs, open points
+
+JOBS_REL = "09_process/jobs"
+AGENTS_REL = ".claude/agents"
+
+# Where the agents record what they found or left undone. Parsed read-only: an open point
+# is an agent reporting on its own work, so nothing here may ever write one.
+OPEN_POINT_SOURCES = [
+    "09_process/project_status.md",
+    "04_architecture/ee_architecture.md",
+]
+
+_OP_ROW = re.compile(r"^\|\s*(OP-\d+)\s*\|(.+)$")
+
+
+def collect_agents(root: Path) -> list[dict]:
+    """Subagent names and descriptions, so the capture panel can offer the real list."""
+    out = []
+    base = root / AGENTS_REL
+    if not base.is_dir():
+        return out
+    for path in sorted(base.glob("*.md")):
+        fm = parse_front_matter(path.read_text(encoding="utf-8")) or {}
+        out.append({
+            "name": str(fm.get("name", path.stem)).strip() or path.stem,
+            "description": " ".join(str(fm.get("description", "")).split())[:180],
+        })
+    return out
+
+
+def collect_jobs(root: Path) -> list[dict]:
+    """Jobs written by the human, from 09_process/jobs/."""
+    base = root / JOBS_REL
+    if not base.is_dir():
+        return []
+    jobs = []
+    for path in sorted(base.glob("JOB-*.md")):
+        text = path.read_text(encoding="utf-8")
+        fm = parse_front_matter(text) or {}
+        if "id" not in fm:
+            continue
+        body = text.split("\n---", 1)[-1].split("---", 1)[-1] if text.startswith("---") else text
+        task = body.split("## Context", 1)[0].replace("## Task", "", 1).strip()
+        jobs.append({
+            "id": str(fm["id"]),
+            "status": str(fm.get("status", "open")),
+            "target": str(fm.get("target", "")),
+            "target_kind": str(fm.get("target_kind", "general")),
+            "agent": str(fm.get("agent", "")),
+            "relates_to": fm.get("relates_to", []),
+            "branch": str(fm.get("branch", "")),
+            "result": str(fm.get("result", "")),
+            "task": task,
+            "file": str(path.relative_to(root)),
+        })
+    return jobs
+
+
+def collect_open_points(root: Path, items: dict, documents: list[dict],
+                        diagrams: list[dict]) -> list[dict]:
+    """Parse the OP-xx tables and attach each open point to the elements it names.
+
+    Read-only by design. These are the agents' findings; the browser shows them so that a
+    reader can see what was already flagged on the element in front of them, and decide
+    whether to write a job about it.
+    """
+    known_ids = set(items)
+    known_docs = {d["path"] for d in documents}
+    known_diagrams = {d["name"] for d in diagrams}
+
+    seen: dict[str, dict] = {}
+    for src in OPEN_POINT_SOURCES:
+        path = root / src
+        if not path.is_file():
+            continue
+        for line in path.read_text(encoding="utf-8").split("\n"):
+            m = _OP_ROW.match(line.strip())
+            if not m:
+                continue
+            opid = m.group(1)
+            cells = [c.strip() for c in m.group(2).split("|")]
+            text = cells[0] if cells else ""
+            owner = cells[1] if len(cells) > 1 else ""
+            state = cells[2] if len(cells) > 2 else ""
+            done = "done" in state.lower() or "closed" in state.lower() or "~~" in text
+
+            # An open point already recorded in project_status wins over a copy elsewhere.
+            if opid in seen and seen[opid]["source"] == OPEN_POINT_SOURCES[0]:
+                continue
+
+            targets = sorted({t for t in re.findall(r"`([A-Z]+-[A-Z]*-?\d+)`", text)
+                              if t in known_ids})
+            for d in known_docs:
+                if Path(d).name in text:
+                    targets.append(d)
+            for name in known_diagrams:
+                if name in text:
+                    targets.append(name)
+
+            plain = " ".join(text.replace("~~", "").split())
+            seen[opid] = {
+                "id": opid,
+                "text": plain,
+                # The table cells are Markdown: `SM-02` and **bold** have to be rendered,
+                # or the finding reads as punctuation soup on the element page.
+                "html": inline_md(plain),
+                "owner": owner,
+                "state": state,
+                "done": done,
+                "targets": sorted(set(targets)),
+                "source": src,
+            }
+    return [seen[k] for k in sorted(seen, key=lambda x: int(x.split("-")[1]))]
+
+
 # ---------------------------------------------------------------------- model
 
 
@@ -566,9 +681,16 @@ def build_model(root: Path) -> dict:
     # that reports none.
     stats = dict(kpis(records))
 
+    jobs = collect_jobs(root)
+    open_points = collect_open_points(root, items, documents, diagrams)
+
     return {
         "modules": [modules[k] for k in sorted(modules)],
         "areas": areas,
+        "jobs": jobs,
+        "openPoints": open_points,
+        "agents": collect_agents(root),
+        "jobsPath": JOBS_REL,
         "levels": [{"id": l, "title": LEVEL_TITLE[l]} for l in LEVEL_ORDER],
         "items": items,
         "diagrams": diagrams,
@@ -701,6 +823,43 @@ PAGE = r"""<!DOCTYPE html>
   .body.doc table { font-size:12.5px; }
   .body.doc td, .body.doc th { padding:6px 8px; }
   .missing { color:var(--warn); }
+  /* capture panel */
+  #panel { position:fixed; top:0; right:0; width:400px; max-width:92vw; height:100%;
+           background:var(--panel); border-left:1px solid var(--line); padding:16px 18px;
+           overflow:auto; transform:translateX(100%); transition:transform .16s ease;
+           z-index:50; box-shadow:-8px 0 24px rgba(0,0,0,.10); }
+  #panel.open { transform:none; }
+  #panel h3 { margin:0 0 4px; font-size:15px; }
+  #panel label { display:block; font-size:11px; text-transform:uppercase; letter-spacing:.6px;
+                 color:var(--muted); margin:14px 0 4px; }
+  #panel input, #panel select, #panel textarea { width:100%; font:inherit; padding:7px 9px;
+      border:1px solid var(--line); border-radius:7px; background:var(--bg); color:var(--fg); }
+  #panel textarea { min-height:150px; resize:vertical; font-size:13px; }
+  #panel .row { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+  #panel button { font:inherit; padding:7px 13px; border-radius:7px; border:1px solid var(--line);
+                  background:var(--bg); color:var(--fg); cursor:pointer; }
+  #panel button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  #panel button:hover { border-color:var(--accent); }
+  #panel .hint { font-size:12px; color:var(--muted); margin-top:10px; line-height:1.45; }
+  #panel .said { font-size:13px; margin-top:12px; padding:9px 11px; border-radius:7px;
+                 border:1px solid var(--line); display:none; }
+  #panel .said.ok { border-color:#4a8a4a; color:#4a8a4a; display:block; }
+  #panel .said.bad { border-color:var(--warn); color:var(--warn); display:block; }
+  .tgt { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px;
+         background:var(--bg); border:1px solid var(--line); border-radius:6px;
+         padding:6px 9px; word-break:break-all; }
+  header button.task { font:inherit; padding:5px 12px; border-radius:7px; cursor:pointer;
+                       border:1px solid var(--accent); background:var(--accent); color:#fff; }
+  /* findings on an element */
+  .flags { margin:0 0 16px; }
+  .flag { border:1px solid var(--line); border-left:3px solid var(--warn); border-radius:7px;
+          padding:9px 12px; margin-bottom:7px; background:var(--panel); font-size:13px; }
+  .flag.done { border-left-color:var(--muted); opacity:.65; }
+  .flag .fid { font-weight:700; margin-right:6px; }
+  .flag .fa { float:right; font-size:12px; }
+  .jrow { border:1px solid var(--line); border-radius:7px; padding:9px 12px; margin-bottom:7px;
+          background:var(--panel); font-size:13px; }
+  .jrow .fid { font-weight:700; margin-right:6px; }
   @media (max-width:1100px) { .vcols { grid-template-columns:1fr; } }
   @media (max-width:820px) { nav { display:none; } }
 </style>
@@ -710,6 +869,7 @@ PAGE = r"""<!DOCTYPE html>
   <h1>Adaptive front lighting system</h1>
   <span class="stats" id="stats"></span>
   <span class="grow"></span>
+  <button class="task" id="newTask" title="Write a task for an agent about what you are looking at (t)">+ Task</button>
   <input id="q" type="search" placeholder="Search id, text, rationale, element...">
   <select id="fKind"></select>
   <select id="fAsil"></select>
@@ -719,6 +879,28 @@ PAGE = r"""<!DOCTYPE html>
   <nav id="nav"></nav>
   <section id="content"></section>
 </main>
+
+<aside id="panel" aria-hidden="true" autocomplete="off">
+  <h3>Task for an agent</h3>
+  <div class="hint">Written by you, about the element below. Open points are the other
+     direction &mdash; those are written by the agents.</div>
+  <label>About</label>
+  <div class="tgt" id="pTarget">-</div>
+  <label for="pAgent">Agent</label>
+  <select id="pAgent"></select>
+  <label for="pRelates">Relates to <span style="text-transform:none">(open point or issue, optional)</span></label>
+  <input id="pRelates" placeholder="OP-34" autocomplete="off">
+  <label for="pPrompt">Task</label>
+  <textarea id="pPrompt" placeholder="What should the agent do?" autocomplete="off"></textarea>
+  <div class="row">
+    <button class="primary" id="pSave">Save job</button>
+    <button id="pCopy">Copy</button>
+    <button id="pDownload">Download</button>
+    <button id="pClose">Close</button>
+  </div>
+  <div class="said" id="pSaid"></div>
+  <div class="hint" id="pHint"></div>
+</aside>
 
 <script id="data" type="application/json">__DATA__</script>
 <script>
@@ -884,7 +1066,7 @@ function viewRecord(id) {
   const r = items[id];
   if (!r) return `<p class="none">Unknown record ${esc(id)}.</p>`;
   return `<h2 class="title">${kindPill(r.kind)} ${esc(r.id)}</h2>
-    <p class="sub">${esc(r.file)}</p>
+    <p class="sub">${esc(r.file)}</p>${flagsFor(r.id)}
     <div class="card"><h3>Requirement text</h3>
       <div class="reqtext">${esc(r.text)}</div></div>
     <dl class="grid">
@@ -914,7 +1096,7 @@ function viewDiagram(name) {
     : `<div class="banner">Not rendered - PlantUML was unavailable when this page was generated.
          The source below is authoritative either way.</div>`;
   return `<h2 class="title">${esc(d.title)}</h2>
-    <p class="sub">${esc(d.file)}</p>${img}
+    <p class="sub">${esc(d.file)}</p>${flagsFor(d.name)}${img}
     <p style="margin:12px 0"><button class="link" onclick="
        var e=document.getElementById('src');
        e.style.display = e.style.display === 'none' ? 'block' : 'none';">Show / hide source</button></p>
@@ -1006,6 +1188,7 @@ function viewDocument(path) {
   return `<h2 class="title">${esc(d.title)}</h2>
     <p class="sub">${esc(d.path)}${areas.length ? ' &middot; ' +
        areas.map(a => `<a href="#a/${encodeURIComponent(a.id)}">${esc(a.id)}</a>`).join(', ') : ''}</p>
+    ${flagsFor(d.path)}
     <div class="body doc">${d.html}</div>
     <p class="foot">Rendered from the Markdown source; the file is what counts:
        <a href="../../${d.path}">${esc(d.path)}</a></p>`;
@@ -1022,6 +1205,160 @@ function viewDocs() {
       byFolder[folder].map(d => docLink(d.path)).join('') + `</div></div>`;
   }
   return h;
+}
+
+/* ---- findings the agents raised, and jobs the human wrote ---- */
+function opsFor(target) {
+  return D.openPoints.filter(o => o.targets.includes(target));
+}
+function jobsFor(target) {
+  return D.jobs.filter(j => j.target === target);
+}
+
+function flagsFor(target) {
+  const ops = opsFor(target), js = jobsFor(target);
+  if (!ops.length && !js.length) return '';
+  let h = '<div class="flags">';
+  for (const o of ops) {
+    h += `<div class="flag${o.done ? ' done' : ''}">
+            <span class="fa">${esc(o.owner)}</span>
+            <span class="fid">${esc(o.id)}</span>${o.html}
+            ${o.done ? '' : ` &middot; <button class="link"
+              onclick="openTaskPanel('${esc(o.id)}')">make a job from this</button>`}
+          </div>`;
+  }
+  for (const j of js) {
+    h += `<div class="jrow"><span class="fa">${esc(j.status)}</span>
+            <span class="fid"><a href="#jobs">${esc(j.id)}</a></span>${esc(j.task.split('\n')[0])}
+          </div>`;
+  }
+  return h + '</div>';
+}
+
+function viewJobs() {
+  let h = `<h2 class="title">Jobs</h2>
+    <p class="sub">Tasks you wrote for an agent. Run them with
+       <code>python3 tools/jobs.py run &lt;id&gt;</code>. Open points are the other direction:
+       those are written by the agents, and appear on the element they concern.</p>`;
+  if (!D.jobs.length) {
+    h += `<div class="banner">No jobs yet. Press <strong>t</strong> while looking at any
+            record, document or diagram to write one.</div>`;
+  }
+  for (const j of D.jobs) {
+    h += `<div class="card"><h3>${esc(j.id)} &middot; ${esc(j.status)}</h3>
+      <p class="sub" style="margin:0 0 8px">
+        ${j.target ? esc(j.target) : 'no target'} &middot; ${esc(j.agent || 'default agent')}
+        ${j.relates_to && j.relates_to.length ? ' &middot; relates to ' +
+          j.relates_to.map(r => esc(r)).join(', ') : ''}
+        ${j.branch ? ' &middot; branch ' + esc(j.branch) : ''}</p>
+      <div>${esc(j.task)}</div>
+      ${j.result ? `<p class="sub" style="margin-top:8px">Result: ${esc(j.result)}</p>` : ''}
+      <p class="sub" style="margin-top:8px"><a href="../../${j.file}">${esc(j.file)}</a></p>
+    </div>`;
+  }
+  return h;
+}
+
+/* ---- capture panel ---- */
+const P = { target: '', kind: 'general' };
+
+function currentTarget() {
+  const h = location.hash;
+  if (h.startsWith('#r/')) return [decodeURIComponent(h.slice(3)), 'record'];
+  if (h.startsWith('#doc/')) return [decodeURIComponent(h.slice(5)), 'document'];
+  if (h.startsWith('#d/')) return [decodeURIComponent(h.slice(3)), 'diagram'];
+  if (h.startsWith('#a/')) return [decodeURIComponent(h.slice(3)), 'area'];
+  if (h.startsWith('#m/')) return [decodeURIComponent(h.slice(3)), 'general'];
+  return ['', 'general'];
+}
+
+function targetContext(target, kind) {
+  if (kind === 'record' && items[target]) {
+    const r = items[target];
+    return `${r.id} (${r.type}, ASIL ${r.asil || '-'}, ${r.status}) in ${r.file}\n` +
+           `Text: ${r.text}\n` +
+           `Derived from: ${r.up.join(', ') || '-'} | Refined by: ${r.down.join(', ') || '-'}`;
+  }
+  if (kind === 'document') return `Document ${target}`;
+  if (kind === 'diagram') {
+    const d = D.diagrams.find(x => x.name === target);
+    return d ? `Model view ${d.title} (${d.file})` : `Model view ${target}`;
+  }
+  if (kind === 'area') {
+    const a = D.areas.find(x => x.id === target);
+    return a ? `Process area ${a.id} - ${a.name}` : `Process area ${target}`;
+  }
+  return '';
+}
+
+function openTaskPanel(relates) {
+  const [target, kind] = currentTarget();
+  P.target = target; P.kind = kind;
+  document.getElementById('pTarget').textContent =
+    target ? `${target}  (${kind})` : 'the project in general';
+  document.getElementById('pRelates').value = relates || '';
+  if (relates) {
+    const op = D.openPoints.find(o => o.id === relates);
+    if (op && !document.getElementById('pPrompt').value.trim()) {
+      document.getElementById('pPrompt').value = `Address ${op.id}: ${op.text}\n\n`;
+    }
+  }
+  document.getElementById('pSaid').className = 'said';
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('panel').setAttribute('aria-hidden', 'false');
+  document.getElementById('pPrompt').focus();
+}
+
+function closeTaskPanel() {
+  document.getElementById('panel').classList.remove('open');
+  document.getElementById('panel').setAttribute('aria-hidden', 'true');
+}
+
+function jobPayload() {
+  const relates = document.getElementById('pRelates').value.trim();
+  return {
+    target: P.target,
+    target_kind: P.kind,
+    agent: document.getElementById('pAgent').value,
+    prompt: document.getElementById('pPrompt').value.trim(),
+    context: targetContext(P.target, P.kind),
+    relates_to: relates ? relates.split(/[,\s]+/).filter(Boolean) : []
+  };
+}
+
+function jobFileText(j, id) {
+  return ['---', 'id: ' + (id || 'JOB-xxx'),
+    'created: ' + new Date().toISOString().replace(/\.\d+Z$/, '+00:00'),
+    'status: open', 'target: ' + (j.target || '""'),
+    'target_kind: ' + j.target_kind, 'agent: ' + (j.agent || '""'),
+    'relates_to: [' + j.relates_to.join(', ') + ']', 'branch: ""', 'result: ""',
+    '---', '', '## Task', '', j.prompt, '',
+    ...(j.context ? ['## Context', '', j.context, ''] : [])].join('\n');
+}
+
+function said(kind, msg) {
+  const el = document.getElementById('pSaid');
+  el.className = 'said ' + kind;
+  el.textContent = msg;
+}
+
+async function submitJob() {
+  const j = jobPayload();
+  if (!j.prompt) { said('bad', 'Write the task first.'); return; }
+  try {
+    const res = await fetch('/api/jobs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },   // simple request: no preflight
+      body: JSON.stringify(j)
+    });
+    const out = await res.json();
+    if (!res.ok) { said('bad', out.error || 'The server rejected the job.'); return; }
+    said('ok', `Saved as ${out.id}. Run it with: python3 tools/jobs.py run ${out.id}`);
+    document.getElementById('pPrompt').value = '';
+  } catch (e) {
+    said('bad', 'No companion server. Use Copy or Download, and put the file in ' +
+                D.jobsPath + '/.');
+  }
 }
 
 function viewSearch() {
@@ -1060,6 +1397,7 @@ function render() {
   if (F.q && showSearch) out = viewSearch();
   else if (h.startsWith('#doc/')) out = viewDocument(decodeURIComponent(h.slice(5)));
   else if (h === '#docs') out = viewDocs();
+  else if (h === '#jobs') out = viewJobs();
   else if (h.startsWith('#a/')) out = viewArea(decodeURIComponent(h.slice(3)));
   else if (h.startsWith('#r/')) out = viewRecord(decodeURIComponent(h.slice(3)));
   else if (h.startsWith('#d/')) out = viewDiagram(decodeURIComponent(h.slice(3)));
@@ -1081,7 +1419,8 @@ function render() {
 document.getElementById('stats').innerHTML =
   Object.entries(D.stats).map(([k, v]) => `${esc(k)}: <strong>${esc(v)}</strong>`).join(' &middot; ') +
   ` &middot; ${D.ndiagrams} model views &middot; <a href="#v/aspice">V-model</a>
-    &middot; <a href="#docs">documents</a> &middot; <a href="#all">all records</a>`;
+    &middot; <a href="#docs">documents</a> &middot; <a href="#jobs">jobs (${D.jobs.length})</a>
+    &middot; <a href="#all">all records</a>`;
 
 document.getElementById('q').oninput = e => {
   F.q = e.target.value.toLowerCase();
@@ -1091,6 +1430,43 @@ document.getElementById('q').oninput = e => {
 for (const [sel, key] of [['fKind','kind'],['fAsil','asil'],['fStatus','status']]) {
   document.getElementById(sel).onchange = e => { F[key] = e.target.value; render(); };
 }
+document.getElementById('pAgent').innerHTML =
+  '<option value="">default agent</option>' +
+  D.agents.map(a => `<option value="${esc(a.name)}" title="${esc(a.description)}">${esc(a.name)}</option>`).join('');
+document.getElementById('pHint').textContent =
+  'With python3 tools/jobs.py serve running, Save writes the job straight into ' +
+  D.jobsPath + '/. Without it, use Copy or Download.';
+document.getElementById('newTask').onclick = () => openTaskPanel('');
+document.getElementById('pClose').onclick = closeTaskPanel;
+document.getElementById('pSave').onclick = submitJob;
+document.getElementById('pCopy').onclick = () => {
+  const j = jobPayload();
+  if (!j.prompt) { said('bad', 'Write the task first.'); return; }
+  navigator.clipboard.writeText(jobFileText(j)).then(
+    () => said('ok', 'Copied. Save it as ' + D.jobsPath + '/JOB-xxx.md'),
+    () => said('bad', 'The browser refused clipboard access; use Download.'));
+};
+document.getElementById('pDownload').onclick = () => {
+  const j = jobPayload();
+  if (!j.prompt) { said('bad', 'Write the task first.'); return; }
+  const blob = new Blob([jobFileText(j)], { type: 'text/markdown' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'JOB-xxx.md';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  said('ok', 'Downloaded. Move it into ' + D.jobsPath + '/ and rename to the next free id.');
+};
+document.addEventListener('keydown', e => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'textarea' || tag === 'select') {
+    if (e.key === 'Escape') closeTaskPanel();
+    return;
+  }
+  if (e.key === 't') { e.preventDefault(); openTaskPanel(''); }
+  if (e.key === 'Escape') closeTaskPanel();
+});
+
 document.getElementById('q').addEventListener('keydown', e => {
   if (e.key === 'Escape') clearSearch();
 });
