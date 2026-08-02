@@ -17,6 +17,7 @@ Commands:
     python3 tools/jobs.py serve [--port 8787]   serve the repo and accept jobs from the page
     python3 tools/jobs.py list [--all]          open jobs (--all includes finished ones)
     python3 tools/jobs.py show JOB-001
+    python3 tools/jobs.py adopt                     take hand-placed jobs into the numbering
     python3 tools/jobs.py plan JOB-001 [--replan]    agent states its intent, read-only
     python3 tools/jobs.py approve JOB-001           after you have read and edited the plan
     python3 tools/jobs.py run JOB-001 [--dry-run] [--yes] [--model ...]
@@ -156,10 +157,10 @@ def yaml_scalar(value: str) -> str:
     return s
 
 
-def write_job(root: Path, data: dict) -> Path:
-    """Write a job record. The caller supplies content, never a path."""
+def write_job(root: Path, data: dict, path: Path | None = None) -> Path:
+    """Write a job record. Content comes from the caller; a path only from this module."""
     jid = data["id"]
-    path = root / JOBS_REL / f"{jid}.md"
+    path = path or (root / JOBS_REL / f"{jid}.md")
     path.parent.mkdir(parents=True, exist_ok=True)
 
     rel = data.get("relates_to") or []
@@ -193,9 +194,23 @@ def write_job(root: Path, data: dict) -> Path:
     return path
 
 
+def job_path(root: Path, jid: str) -> Path:
+    """The file a job actually lives in.
+
+    Not simply JOBS_REL/<id>.md: a job downloaded from the browser carries the placeholder
+    id JOB-xxx and whatever filename you saved it under. Deriving the path from the id wrote
+    a second record and orphaned the original.
+    """
+    for path in job_files(root):
+        fm = parse_front_matter(path.read_text(encoding="utf-8")) or {}
+        if str(fm.get("id", "")).strip() == jid:
+            return path
+    return root / JOBS_REL / f"{jid}.md"
+
+
 def update_job(root: Path, jid: str, **changes) -> None:
     """Rewrite a job record with changed front-matter fields, keeping the body."""
-    path = root / JOBS_REL / f"{jid}.md"
+    path = job_path(root, jid)
     text = path.read_text(encoding="utf-8")
     fm = parse_front_matter(text) or {}
     task, context, plan = split_body(record_body(text))
@@ -217,7 +232,7 @@ def update_job(root: Path, jid: str, **changes) -> None:
         "plan": plan,
     }
     data.update(changes)
-    write_job(root, data)
+    write_job(root, data, path)
 
 
 def validate(root: Path, payload: dict) -> tuple[dict | None, str]:
@@ -419,6 +434,48 @@ def base_cmd(job: dict, args, permission_mode: str) -> list[str]:
     return cmd
 
 
+PLACEHOLDER = re.compile(r"^JOB-\d{3,}$")
+
+
+def cmd_adopt(root: Path, args) -> int:
+    """Take jobs that arrived by hand into the numbering.
+
+    The browser cannot know the next free number while it is offline, so a downloaded job
+    carries `id: JOB-xxx` and whatever filename you saved it under. This assigns the next
+    free id, renames the file to match and rewrites the record.
+    """
+    stray = []
+    for path in job_files(root):
+        fm = parse_front_matter(path.read_text(encoding="utf-8")) or {}
+        jid = str(fm.get("id", "")).strip()
+        if not PLACEHOLDER.match(jid) or path.stem != jid:
+            stray.append((path, jid))
+
+    if not stray:
+        print("Every job has a proper id and matching filename.")
+        return 0
+
+    for path, jid in stray:
+        text = path.read_text(encoding="utf-8")
+        task, context, plan = split_body(record_body(text))
+        fm = parse_front_matter(text) or {}
+        new_id = next_job_id(root)
+        target = root / JOBS_REL / f"{new_id}.md"
+
+        data = {k: fm.get(k, "") for k in
+                ("created", "status", "target", "target_kind", "agent",
+                 "planned_at", "approved_at", "branch", "result")}
+        data.update({"id": new_id, "relates_to": fm.get("relates_to", []),
+                     "prompt": task, "context": context, "plan": plan})
+        write_job(root, data, target)
+        if path != target:
+            path.unlink()
+        print(f"{path.name}  (id {jid or 'missing'})  ->  {new_id}   {target.relative_to(root)}")
+
+    print("\nNext: python3 tools/jobs.py plan <id>")
+    return 0
+
+
 def cmd_plan(root: Path, args) -> int:
     """Ask the agent what it intends to do, without letting it do any of it."""
     jobs = {str(j["id"]): j for j in load_jobs(root)}
@@ -596,6 +653,8 @@ def main() -> int:
     p = sub.add_parser("show", help="print a job record")
     p.add_argument("job")
 
+    sub.add_parser("adopt", help="give hand-placed jobs a real id and matching filename")
+
     p = sub.add_parser("plan", help="ask the agent for a plan, changing nothing")
     p.add_argument("job")
     p.add_argument("--replan", action="store_true", help="discard an existing plan")
@@ -617,7 +676,7 @@ def main() -> int:
 
     return {
         "serve": cmd_serve, "list": cmd_list, "show": cmd_show,
-        "plan": cmd_plan, "approve": cmd_approve, "run": cmd_run,
+        "adopt": cmd_adopt, "plan": cmd_plan, "approve": cmd_approve, "run": cmd_run,
     }[args.command](root, args)
 
 

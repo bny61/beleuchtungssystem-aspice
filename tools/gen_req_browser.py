@@ -1497,7 +1497,8 @@ document.getElementById('pCopy').onclick = () => {
   const j = jobPayload();
   if (!j.prompt) { said('bad', 'Write the task first.'); return; }
   navigator.clipboard.writeText(jobFileText(j)).then(
-    () => said('ok', 'Copied. Save it as ' + D.jobsPath + '/JOB-xxx.md'),
+    () => said('ok', 'Copied. Save it under ' + D.jobsPath +
+                       '/, then run: python3 tools/jobs.py adopt'),
     () => said('bad', 'The browser refused clipboard access; use Download.'));
 };
 document.getElementById('pDownload').onclick = () => {
@@ -1509,7 +1510,8 @@ document.getElementById('pDownload').onclick = () => {
   a.download = 'JOB-xxx.md';
   a.click();
   URL.revokeObjectURL(a.href);
-  said('ok', 'Downloaded. Move it into ' + D.jobsPath + '/ and rename to the next free id.');
+  said('ok', 'Downloaded. Move it into ' + D.jobsPath +
+                   '/, then run: python3 tools/jobs.py adopt');
 };
 document.addEventListener('keydown', e => {
   const tag = (e.target.tagName || '').toLowerCase();

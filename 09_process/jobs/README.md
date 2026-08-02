@@ -57,7 +57,16 @@ where a wrong reading is cheap. The second job never needed to run at all - its 
 the work was already done.
 
 Without the server the browser still captures: the panel offers **Copy job** and
-**Download**, and the file goes into this folder by hand.
+**Download**. Put the file in this folder and run:
+
+```
+python3 tools/jobs.py adopt
+```
+
+A page that is offline cannot know which id is free, so it writes the placeholder `JOB-xxx`.
+`adopt` assigns the next free number, renames the file to match and rewrites the record. Until
+then the id and the filename disagree, which is worth not leaving lying around: the tools key
+on the id.
 
 ## Record format
 
