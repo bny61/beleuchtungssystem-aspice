@@ -41,6 +41,10 @@ jobs:
             | tee trace_report.txt
         continue-on-error: true
 
+      # Runs on push as well, so main cannot drift into an unallocated work product.
+      - name: Every work product is allocated to a process area
+        run: python3 tools/gen_req_browser.py --check-allocation
+
       - name: Generate KPIs as JSON
         if: always()
         run: python3 tools/trace_check.py --json > trace_report.json || true
