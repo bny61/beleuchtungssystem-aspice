@@ -1582,6 +1582,50 @@ def normalise(page: str) -> str:
     return _SVG_PAYLOAD.sub("<svg payload>", page)
 
 
+# Directories holding work products. 03_model/exports is generated and gitignored.
+DOC_SCAN_DIRS = ["01_requirements", "02_safety", "03_model", "04_architecture",
+                 "05_hardware", "06_software", "07_verification", "09_process"]
+
+# Deliberately outside the allocation: the prompts folder is the untouched German
+# commissioning document, and jobs are working notes rather than work products.
+DOC_SCAN_EXEMPT = ["09_process/prompts", "09_process/jobs", "03_model/exports"]
+
+
+def is_record(text: str) -> bool:
+    """A Requirements-as-Code record rather than a narrative document."""
+    if not text.startswith("---"):
+        return False
+    end = text.find("\n---", 3)
+    return end != -1 and "\nid:" in text[:end]
+
+
+def unallocated_documents(root: Path) -> list[str]:
+    """Narrative work products that no process area claims.
+
+    The document set of the browser is built from aspice_mapping.md plus DOCUMENTS, so a
+    new analysis that reaches neither is simply invisible - and nothing complains. That
+    happened to analysis_low_beam_activation.md, which is why this exists.
+    """
+    covered = {p for p, _ in DOCUMENTS}
+    for area in parse_mapping(root):
+        covered |= set(area["doc_src"])
+
+    missing = []
+    for folder in DOC_SCAN_DIRS:
+        base = root / folder
+        if not base.is_dir():
+            continue
+        for path in sorted(base.rglob("*.md")):
+            rel = str(path.relative_to(root))
+            if path.name == "README.md" or any(rel.startswith(x) for x in DOC_SCAN_EXEMPT):
+                continue
+            if is_record(path.read_text(encoding="utf-8")):
+                continue
+            if rel not in covered:
+                missing.append(rel)
+    return missing
+
+
 def build_page(root: Path) -> str:
     model = build_model(root)
     data = json.dumps(model, ensure_ascii=False, separators=(",", ":"))
@@ -1594,10 +1638,23 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--root", default=".", help="repository root")
     ap.add_argument("--check", action="store_true", help="check only, exit 1 if stale")
+    ap.add_argument("--check-allocation", action="store_true",
+                    help="exit 1 if a narrative work product belongs to no process area")
     args = ap.parse_args()
 
     root = Path(args.root).resolve()
     out = root / OUT_REL
+
+    if args.check_allocation:
+        missing = unallocated_documents(root)
+        if missing:
+            print("Work products allocated to no process area:", file=sys.stderr)
+            for m in missing:
+                print(f"  {m}", file=sys.stderr)
+            print(f"\nAdd them to {MAPPING_REL} so the browser can show them.", file=sys.stderr)
+            return 1
+        print("Every work product is allocated to a process area.")
+        return 0
 
     try:
         page = build_page(root)

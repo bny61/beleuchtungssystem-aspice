@@ -39,6 +39,11 @@ jobs:
       - name: Check freshness of the requirements browser
         run: python3 tools/gen_req_browser.py --check
 
+      # A work product allocated to no process area is invisible in the browser and
+      # nothing else complains - that is how analysis_low_beam_activation.md was missed.
+      - name: Every work product is allocated to a process area
+        run: python3 tools/gen_req_browser.py --check-allocation
+
   update:
     name: Update overviews
     if: github.event_name != 'pull_request'
