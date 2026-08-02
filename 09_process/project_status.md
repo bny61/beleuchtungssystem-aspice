@@ -9,7 +9,7 @@
 | Phase | Content | Status | Lead |
 |---|---|---|---|
 | 0 | Project frame, stakeholders, roles, tailoring, glossary | **skipped** | safety-manager, config-manager |
-| 1 | Customer requirements `CR-001 … CR-023` (SYS.1) | **complete** (draft) | systems-engineer |
+| 1 | Customer requirements `CR-001 … CR-028` (SYS.1) | **complete** (draft) | systems-engineer |
 | 2 | Item definition, HARA, safety goals, FSC (ISO 26262-3) | **complete** (draft) | safety-manager |
 | 3 | `SYS-REQ`, `TSR`, E/E architecture (SYS.2, SYS.3) | **complete** (draft) | systems-engineer |
 | 4 | MBSE model, MagicGrid, 8 SysML views | **complete** (draft) | mbse-modeler |
@@ -27,9 +27,16 @@ tailoring decisions are missing but will be required at the latest for phase 9.
 
 ## Results so far
 
-- **23 customer requirements** `CR-001 … CR-023`, covering all categories of the customer
+- **28 customer requirements** `CR-001 … CR-028`, covering all categories of the customer
   specification. Three of them (`CR-002`, `CR-005`, `CR-016`) are **deliberately weak** and marked
   as such in the `rationale` field (teaching purpose).
+- **SYS.1 increment "illuminance" (after phase 4a):** `CR-024` … `CR-028` add the photometric side
+  of the adaptive front lighting — base level at 75R, glare limit at B50L, the degraded-channel
+  case, the AFS mode-change time and the stability band. All five are `asil: QM` **as a
+  placeholder only**; the classification is the safety-manager's (`OP-41`). `CR-026` is
+  deliberately left unquantified so that it cannot contradict the `SG-01` safe state, see `OP-38`.
+  Measuring convention: `A-22`. No `SYS-REQ` is derived from them yet — the derivation follows in
+  the next SYS.2 increment, after the ASIL of `OP-41` is settled.
 - **7 hazards** `H-01 … H-07`, six of them with a safety goal, one resulting in QM.
 - **2 safety goals**: `SG-01` (ASIL B, Golden Thread) and `SG-02` (ASIL A, second thread).
 - **8 FSR** `FSR-001 … FSR-008`, incl. the ASIL decomposition
@@ -128,6 +135,7 @@ requirement) instead of `HW-REQ-025`, and `HW-REQ-004` lacked the variant markin
 | OP-38 | Photometric compliance at the 400 mA floor (≈ 232 lm/channel) against the legal minimum — affects the `SG-01` safe state and `SYS-REQ-013`, not only the derating curve | safety-manager, systems-engineer | Phase 5 |
 | OP-39 | `A-19` (central load-dump suppression) needs an interface agreement with the vehicle manufacturer, like `A-05` | safety-manager | Phase 6 |
 | OP-40 | `A-12` ("the derating curve never commands below 400 mA") restates `HW-REQ-008`, which requires exactly that. Since the requirement exists, the assumption should be confirmed or marked superseded rather than left `open` — an assumption and a requirement asserting the same thing invite them to drift apart | hardware-engineer | Phase 6 |
+| OP-41 | ASIL of the illuminance requirements `CR-024` … `CR-028` is unassigned — all five carry `asil: QM` as a placeholder. Classify them from the HARA, as was done for the `tbd` records in `OP-1`; `CR-024`/`CR-026` touch `SG-01`, `CR-025` touches `SG-02` | safety-manager | Phase 5 |
 | OP-13 | Catch up phase 0: role model, independence levels, tailoring, glossary | safety-manager | before phase 9 |
 | OP-14 | ~~HARA and item definition existed only in chat, not as work products~~ | safety-manager | **done** |
 
