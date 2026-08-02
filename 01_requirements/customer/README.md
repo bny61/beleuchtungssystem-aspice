@@ -4,7 +4,7 @@
 
 Extract of the customer specification, ASPICE SYS.1. The ASIL is determined by the HARA (phase 2).
 
-**23 records.** Click an ID to open the record.
+**28 records.** Click an ID to open the record.
 
 | ID | Text | Type | ASIL | Status | Upstream | Downstream |
 |---|---|---|---|---|---|---|
@@ -31,10 +31,15 @@ Extract of the customer specification, ASPICE SYS.1. The ASIL is determined by t
 | [CR-021](CR-021.md) | The lighting system shall connect actuator-side components via LIN per ISO 17987. | communication | QM | draft | — | — |
 | [CR-022](CR-022.md) | The lighting system shall achieve an operating life of 30,000 h or a mileage of 1,500,000… | durability | QM | draft | — | — |
 | [CR-023](CR-023.md) | The lighting system shall meet the interface requirements of the vehicle-level cybersecur… | interface | QM | draft | — | — |
+| [CR-024](CR-024.md) | While the low beam is active in its base light distribution, the lighting system shall pr… | functional | QM | draft | — | — |
+| [CR-025](CR-025.md) | While the low beam is active, the lighting system shall not exceed an illuminance of 0.7… | legal | QM | draft | — | — |
+| [CR-026](CR-026.md) | If one low-beam channel has failed, the lighting system shall continue to provide, with t… | functional | QM | draft | — | — |
+| [CR-027](CR-027.md) | When a change of the adaptive light-distribution mode is requested, the lighting system s… | functional | QM | draft | — | — |
+| [CR-028](CR-028.md) | While the low beam is active and thermal derating is not active, the lighting system shal… | functional | QM | draft | — | — |
 
-**Status:** draft: 22 · reviewed: 1
+**Status:** draft: 27 · reviewed: 1
 
-**ASIL:** A: 3 · B: 7 · QM: 13
+**ASIL:** A: 3 · B: 7 · QM: 18
 
 ---
 

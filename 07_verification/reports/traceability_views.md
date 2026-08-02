@@ -501,11 +501,11 @@ flowchart LR
 
 ## 4 Level summary
 
-110 records, 162 typed links.
+115 records, 162 typed links.
 
 | Level | Kind | Records |
 |---|---|---|
-| 0 | `CR-` | 23 |
+| 0 | `CR-` | 28 |
 | 0 | `H-` | 7 |
 | 1 | `SG-` | 2 |
 | 2 | `FSR-` | 8 |
