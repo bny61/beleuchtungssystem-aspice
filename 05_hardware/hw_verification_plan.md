@@ -46,6 +46,8 @@ finding. Mixing them is how a design defect gets shipped as a process deviation.
 | **HV-10** | Environmental / mechanical | DV per **ISO 16750-3 (mechanical loads)**, **-4 (climatic loads)**, **-5 (chemical loads)**: vibration profile of the front module, thermal shock, damp heat cyclic, salt spray, IP protection | `CR-013`, `CR-014`, `A-11` | No functional deviation, no intermittent contact during vibration monitored on the channel current |
 | **HV-11** | HALT / HASS | HALT on DV samples: stepped thermal and vibration stress beyond specification to the operational and destruct limits; HASS as a screening profile derived from the HALT result, applied in production | Design margin, not a requirement | Operational limits ≥ 20 K beyond the specified range; HASS profile ≤ 20 % of the destruct limit; no infant-mortality failure escaping the screen |
 | **HV-12** | Bus transceivers | DV bench: bus lines shorted to supply and ground, TXD held dominant | `HW-REQ-025` | Bus released within 5 ms, no damage, recovery after fault removal |
+| **HV-13** | Low-beam activation timing 🔍 | Component + DV bench: enable edge to channel current recorded on both channels simultaneously; over 18 … 32 V and −40 °C … +85 °C; set point at nominal and at the derating floor | `HW-REQ-026`, `027`, `028`, `030` | Enable-gate propagation ≤ 1 ms; ≥ 95 % of set point within 20 ms; ramp ≥ 5 ms and monotonic; channel-to-channel skew ≤ 10 ms; hardware share of the activation chain ≤ 25 ms |
+| **HV-14** | Switch-on transient: inrush and false-trip freedom 🔍 | DV bench with current probe at the supply input and at both channels; **1000 switch-on cycles** at the corners of supply and temperature, including switch-on into a healthy load and switch-on into a pre-existing open load | `HW-REQ-029`, `030`, interaction with `SM-01` and `SM-06` | Input current ≤ 8 A instantaneous, `VBAT_PROT` dip ≤ 1 V, no `SM-06` undervoltage trip; **no open-load classification in 1000 switch-ons** of a healthy load; with a pre-existing open load, classification at ≤ 110 ms after enable (see `OP-42`) |
 
 **HALT is not a verification of a requirement** — it is a search for the design margin, and it
 belongs in this plan precisely because it produces findings no requirement-based test can. HASS,
@@ -61,6 +63,7 @@ derived from it, is a production screen and hence PV/series scope.
 | HV-10 environmental | full | reduced (vibration, damp heat) | 6 units DV, 3 PV |
 | HV-11 HALT / HASS | HALT once per design | HASS 100 % in series | 4 units HALT |
 | HV-12 | full | — | 3 units |
+| HV-13, HV-14 | full | reduced (HV-14, switch-on cycles at nominal supply only) | DV 6 units, PV 3 units per lot |
 
 ## 5 Fault injection — hand-off to `verification-engineer`
 
@@ -77,6 +80,13 @@ conditional measures is shown to detect what it is credited with. In particular:
 - Every injection must also be run with the transients of `HV-07` active, otherwise the interaction
   between debounce and disturbance stays untested.
 
+`HV-14` adds a case the `HV-01` fault list does not contain: the open load that is **already present
+when the channel is switched on**, rather than appearing during operation. It is the commonest real
+case (a lamp unplugged while the vehicle stood) and it exercises the blanking interval of
+`HW-REQ-030` instead of the steady-state detection path. The two directions must both be measured —
+switch-on into a healthy load, where the acceptance is *no* classification, and switch-on into an
+open load, where the acceptance is a classification at ≤ 110 ms.
+
 ## 6 Open points
 
 | # | Point | Owner |
@@ -85,6 +95,8 @@ conditional measures is shown to detect what it is credited with. In particular:
 | 2 | EMC test levels and the applicable OEM test plan to be fixed | systems-engineer, verification-engineer |
 | 3 | Junction-temperature measurement method for `HV-05` to be agreed with the LED supplier | hardware-engineer |
 | 4 | HALT/HASS profiles depend on the mechanical design, which does not exist yet | hardware-engineer |
+| 5 | `HV-14` acceptance for the pre-existing open load (110 ms) is stated against a cap that `SYS-REQ-018` sets at 100 ms — `OP-42` has to be decided before this entry can be turned into a `TC-xxx`, otherwise the test would be written against a requirement it knowingly fails | systems-engineer, then verification-engineer |
+| 6 | `HV-13`, `HV-14` → `TC-xxx` records for `HW-REQ-026` … `HW-REQ-030` (`OP-45`, extension of `OP-19`) | verification-engineer |
 
 ---
 

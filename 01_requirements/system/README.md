@@ -8,7 +8,7 @@ Derived from CR and FSR, ASPICE SYS.2.
 
 | ID | Text | Type | ASIL | Status | Upstream | Downstream |
 |---|---|---|---|---|---|---|
-| [SYS-REQ-001](SYS-REQ-001.md) | When the driver requests low beam via the light switch signal, the lighting ECU shall ene… | functional | B | draft | CR-001, FSR-002 | — |
+| [SYS-REQ-001](SYS-REQ-001.md) | When the driver requests low beam via the light switch signal, the lighting ECU shall ene… | functional | B | draft | CR-001, FSR-002 | HW-REQ-026, HW-REQ-027, HW-REQ-028, HW-REQ-0… |
 | [SYS-REQ-002](SYS-REQ-002.md) | When the ambient brightness signal remains below 1000 lx for more than 3 s, the lighting… | functional | B | draft | CR-002, FSR-002 | — |
 | [SYS-REQ-003](SYS-REQ-003.md) | When the ambient brightness signal remains above 2000 lx for more than 30 s, the lighting… | functional | B | draft | CR-002 | — |
 | [SYS-REQ-004](SYS-REQ-004.md) | When the vehicle gateway reports an oncoming or preceding vehicle, the lighting ECU shall… | functional | A | draft | CR-003, FSR-005 | — |
@@ -25,7 +25,7 @@ Derived from CR and FSR, ASPICE SYS.2.
 | [SYS-REQ-015](SYS-REQ-015.md) | When a low-beam channel is classified as "open load", the lighting ECU shall increment th… | diagnostics | B | draft | SYS-REQ-014 | — |
 | [SYS-REQ-016](SYS-REQ-016.md) | The lighting ECU shall measure the load current of a low-beam channel with a total uncert… | electrical | B | draft | FSR-001, SYS-REQ-014 | HW-REQ-001, HW-REQ-002 |
 | [SYS-REQ-017](SYS-REQ-017.md) | While the PWM on-time of a low-beam channel is shorter than 150 us, the lighting ECU shal… | diagnostics | B | draft | SYS-REQ-014 | HW-REQ-004 |
-| [SYS-REQ-018](SYS-REQ-018.md) | When an open load occurs in a low-beam channel, the lighting ECU shall report the fault t… | safety | B | draft | FSR-001, SYS-REQ-014 | HW-REQ-009, SM-01, TC-021 |
+| [SYS-REQ-018](SYS-REQ-018.md) | When an open load occurs in a low-beam channel, the lighting ECU shall report the fault t… | safety | B | draft | FSR-001, SYS-REQ-014 | HW-REQ-009, HW-REQ-030, SM-01, TC-021 |
 | [SYS-REQ-019](SYS-REQ-019.md) | When the measured load current of a low-beam channel falls below 150 mA, the lighting ECU… | diagnostics | B | draft | SYS-REQ-014 | HW-REQ-006, HW-REQ-007, HW-REQ-020, SM-03 |
 | [SYS-REQ-020](SYS-REQ-020.md) | The lighting ECU shall exchange light request, vehicle speed, steering angle, ambient bri… | communication | B | draft | CR-020 | HW-REQ-025, SYS-REQ-022, SYS-REQ-028 |
 | [SYS-REQ-021](SYS-REQ-021.md) | When a diagnostic tester sends a UDS request according to ISO 14229, the lighting ECU sha… | diagnostics | QM | draft | CR-019 | — |
