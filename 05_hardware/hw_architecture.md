@@ -14,11 +14,11 @@
 
 | Block | Hardware content (refinement) | Safety mechanisms | Owning HW-REQ |
 |---|---|---|---|
-| `Power_Supply_Unit` | Reverse-polarity FET, TVS clamp, CM choke + pi filter; buck 24 V → 5 V, LDO 3.3 V, buffered `VBAT_PROT`, 3.3 V ADC reference; UV/OV window comparators | `SM-06` | HW-REQ-011 … 016 |
+| `Power_Supply_Unit` | Reverse-polarity FET, TVS clamp, CM choke + pi filter; buck 24 V → 5 V, LDO 3.3 V, buffered `VBAT_PROT`, 3.3 V ADC reference; UV/OV window comparators | `SM-06` | HW-REQ-011 … 016, 029 |
 | `MCU_Lockstep` | Dual-core lockstep, ADC with PWM-timer-triggered conversion, second reference for the plausibility check | contributes to `SM-01` | HW-REQ-003, 010 |
 | `ASIC_Watchdog` | Independent time base, question/answer, rail monitor, reset and `SAFE_OFF` driver | `SM-02`, rail leg of `SM-06` | HW-REQ-017, 018 |
-| `LED_Driver_Stage_1..n` | Per-channel enable gate; constant-current buck, PWM 400 Hz, OCP/OVP/OT with status readback; channel voltage divider | `SM-03`, `SM-04`, actuation leg of `SM-02` | HW-REQ-006, 007, 019, 020, 021 |
-| `Current_Sense_Chain` | Shunt 50 mΩ → amplifier ×50 → anti-alias RC → clamp → ADC input | `SM-01` | HW-REQ-001 … 005, 009 |
+| `LED_Driver_Stage_1..n` | Per-channel enable gate; constant-current buck with soft start, PWM 400 Hz, OCP/OVP/OT with status readback; channel voltage divider | `SM-03`, `SM-04`, actuation leg of `SM-02` | HW-REQ-006, 007, 019, 020, 021, 026 … 029 |
+| `Current_Sense_Chain` | Shunt 50 mΩ → amplifier ×50 → anti-alias RC → clamp → ADC input | `SM-01` | HW-REQ-001 … 005, 009, 030 |
 | `Temp_Sense_Chain` | NTC divider + RC + clamp per LED module, board sensor, plausibility band | `SM-05` | HW-REQ-022, 023, 024 |
 | `CAN_FD_Transceiver` | Bus-fault protection, dominant timeout | — | HW-REQ-025 |
 | `LIN_Transceiver` | Actuator link | — | — |
@@ -232,6 +232,22 @@ example values.
   (`OP-15` for `SM-01`; the rest enter the FMEDA in phase 5). Hardware does not assert DC values
   independently.
 
+**`SM-01` has a second detection case, added by the refinement of `SYS-REQ-001`.** The row above is
+the steady-state case: a fault appearing while the channel is already energised, detected in ≤ 80 ms.
+An open load that is **already present when the channel is switched on** is subject to the 30 ms
+blanking of `HW-REQ-030`, which exists because the soft-start ramp of `HW-REQ-027` passes below the
+150 mA threshold by design and would otherwise false-trip on every switch-on.
+
+| Case | Detection | Reaction | Total | FTTI | Margin | Against `SYS-REQ-018` (100 ms cap) |
+|---|---|---|---|---|---|---|
+| Fault during operation | ≤ 80 ms | ≤ 150 ms | 230 ms | 300 ms | 70 ms (23 %) | within the cap |
+| Fault present at switch-on | ≤ 110 ms (30 ms blanking + 80 ms) | ≤ 150 ms | 260 ms | 300 ms | 40 ms (13 %) | **exceeds the cap — `OP-42`** |
+
+The `SG-01` budget closes in both cases. The `SYS-REQ-018` cap does not, and it is left visibly
+breached rather than designed around: the cap belongs to `systems-engineer`. No value of `SM-01` was
+changed for this — the start-up case is handed to `safety-analyst` as `OP-43`. Derivation:
+[`analysis_low_beam_activation.md`](analysis_low_beam_activation.md) section 4.
+
 ## 5 Hand-off to `systems-engineer`
 
 1. **`SM-02` conflicts with `SG-01`.** `TSR-001` requires `SAFE_OFF` to de-energise the LED driver
@@ -258,11 +274,16 @@ example values.
 | 4 | Photometric compliance at the 400 mA floor | systems-engineer |
 | 5 | Component selection has to confirm `A-10` (driver status) and the 65 V output-stage rating | hardware-engineer |
 | 6 | Test cases for `HW-REQ-011` … `HW-REQ-025` and `SM-02` … `SM-06` (`OP-19` extension) | verification-engineer |
+| 7 | `OP-42` — start-up open-load detection (110 ms) exceeds the 100 ms cap of `SYS-REQ-018`; widen the cap or exempt the switch-on window | systems-engineer |
+| 8 | `OP-43` — effect of the `HW-REQ-030` blanking window on the `SM-01` coverage claim in the FMEDA | safety-analyst |
+| 9 | `OP-44` — ≈ 203 ms of the 300 ms activation budget of `SYS-REQ-001` lies outside the item boundary (`A-23` plus signal cycle) | systems-engineer |
 
 ---
 
 **Work products:** `05_hardware/hw_architecture.md`, `03_model/plantuml/ibd_ecu.puml`,
-`03_model/plantuml/ibd_current_sense_chain.puml`, `SM-02` … `SM-06`, `HW-REQ-011` … `HW-REQ-025`
+`03_model/plantuml/ibd_current_sense_chain.puml`, `SM-02` … `SM-06`, `HW-REQ-011` … `HW-REQ-025`;
+extended by the `SYS-REQ-001` refinement (`HW-REQ-026` … `HW-REQ-030`,
+`analysis_low_beam_activation.md`)
 **Open points:** section 6
 **Process reference:** ASPICE **HWE.1** (hardware requirements analysis), **HWE.2** (hardware
 design) · ISO 26262 **Part 5** (hardware development: hardware safety requirements, hardware

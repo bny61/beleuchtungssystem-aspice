@@ -4,7 +4,7 @@
 
 HWE.1-HWE.4, ISO 26262-5.
 
-**31 records.** Click an ID to open the record.
+**36 records.** Click an ID to open the record.
 
 | ID | Text | Type | ASIL | Status | Upstream | Downstream |
 |---|---|---|---|---|---|---|
@@ -33,6 +33,11 @@ HWE.1-HWE.4, ISO 26262-5.
 | [HW-REQ-023](HW-REQ-023.md) | While the measured LED module temperature is above 105 C, the lighting ECU shall reduce t… | electrical | B | draft | CR-014, HW-REQ-008, HW-REQ-022 | HW-REQ-024, SM-05 |
 | [HW-REQ-024](HW-REQ-024.md) | The thermal design of a low-beam channel shall keep the LED junction temperature at or be… | electrical | B | draft | CR-014, HW-REQ-023 | — |
 | [HW-REQ-025](HW-REQ-025.md) | The CAN_FD_Transceiver shall withstand a permanent short of either bus line to the supply… | interface | B | draft | FSR-004, SYS-REQ-020 | — |
+| [HW-REQ-026](HW-REQ-026.md) | When the microcontroller enable signal of a low-beam channel becomes active while neither… | electrical | B | draft | SYS-REQ-001 | HW-REQ-027 |
+| [HW-REQ-027](HW-REQ-027.md) | When the effective enable signal of a low-beam channel becomes active, the LED driver sta… | electrical | B | draft | HW-REQ-026, SYS-REQ-001 | HW-REQ-029, HW-REQ-030 |
+| [HW-REQ-028](HW-REQ-028.md) | When both low-beam channels are enabled by the same light request, the difference between… | electrical | B | draft | SYS-REQ-001 | — |
+| [HW-REQ-029](HW-REQ-029.md) | When both low-beam channels are switched on simultaneously at a supply voltage within 18… | electrical | B | draft | HW-REQ-027, SYS-REQ-001 | — |
+| [HW-REQ-030](HW-REQ-030.md) | While less than 30 ms have elapsed since the effective enable signal of a low-beam channe… | diagnostics | B | draft | HW-REQ-027, SYS-REQ-001, SYS-REQ-018 | SM-01 |
 | [SM-01](SM-01.md) | Open-load detection in the low-beam channel via PWM-synchronous shunt current measurement… | safety-mechanism | B | draft | FSR-001, HW-REQ-001, HW-REQ-002, HW-REQ-003,… | TC-021 |
 | [SM-02](SM-02.md) | Program-execution monitoring by the ASIC_Watchdog with an independent time base and a que… | safety-mechanism | B | draft | FSR-002, HW-REQ-018, HW-REQ-019, TSR-001 | — |
 | [SM-03](SM-03.md) | Short-to-battery detection on a low-beam channel by evaluating the channel output voltage… | safety-mechanism | B | draft | HW-REQ-020, SYS-REQ-019, TSR-003 | — |
@@ -45,41 +50,41 @@ HWE.1-HWE.4, ISO 26262-5.
 A record appears under every element it is allocated to — allocation is
 many-to-many, which is why this is a grouping and not a folder split.
 
-**LED_Driver_Stage_1** (21)
+**LED_Driver_Stage_1** (25)
 
-[HW-REQ-001](HW-REQ-001.md), [HW-REQ-002](HW-REQ-002.md), [HW-REQ-003](HW-REQ-003.md), [HW-REQ-004](HW-REQ-004.md), [HW-REQ-006](HW-REQ-006.md), [HW-REQ-007](HW-REQ-007.md), [HW-REQ-008](HW-REQ-008.md), [HW-REQ-012](HW-REQ-012.md), [HW-REQ-013](HW-REQ-013.md), [HW-REQ-016](HW-REQ-016.md), [HW-REQ-019](HW-REQ-019.md), [HW-REQ-020](HW-REQ-020.md), [HW-REQ-021](HW-REQ-021.md), [HW-REQ-023](HW-REQ-023.md), [HW-REQ-024](HW-REQ-024.md), [SM-01](SM-01.md), [SM-02](SM-02.md), [SM-03](SM-03.md), [SM-04](SM-04.md), [SM-05](SM-05.md), [SM-06](SM-06.md)
+[HW-REQ-001](HW-REQ-001.md), [HW-REQ-002](HW-REQ-002.md), [HW-REQ-003](HW-REQ-003.md), [HW-REQ-004](HW-REQ-004.md), [HW-REQ-006](HW-REQ-006.md), [HW-REQ-007](HW-REQ-007.md), [HW-REQ-008](HW-REQ-008.md), [HW-REQ-012](HW-REQ-012.md), [HW-REQ-013](HW-REQ-013.md), [HW-REQ-016](HW-REQ-016.md), [HW-REQ-019](HW-REQ-019.md), [HW-REQ-020](HW-REQ-020.md), [HW-REQ-021](HW-REQ-021.md), [HW-REQ-023](HW-REQ-023.md), [HW-REQ-024](HW-REQ-024.md), [HW-REQ-026](HW-REQ-026.md), [HW-REQ-027](HW-REQ-027.md), [HW-REQ-028](HW-REQ-028.md), [HW-REQ-029](HW-REQ-029.md), [SM-01](SM-01.md), [SM-02](SM-02.md), [SM-03](SM-03.md), [SM-04](SM-04.md), [SM-05](SM-05.md), [SM-06](SM-06.md)
 
-**ECU_LightingCtrl** (10)
+**ECU_LightingCtrl** (11)
 
-[HW-REQ-003](HW-REQ-003.md), [HW-REQ-005](HW-REQ-005.md), [HW-REQ-007](HW-REQ-007.md), [HW-REQ-009](HW-REQ-009.md), [HW-REQ-010](HW-REQ-010.md), [HW-REQ-012](HW-REQ-012.md), [HW-REQ-014](HW-REQ-014.md), [HW-REQ-020](HW-REQ-020.md), [SM-01](SM-01.md), [SM-03](SM-03.md)
+[HW-REQ-003](HW-REQ-003.md), [HW-REQ-005](HW-REQ-005.md), [HW-REQ-007](HW-REQ-007.md), [HW-REQ-009](HW-REQ-009.md), [HW-REQ-010](HW-REQ-010.md), [HW-REQ-012](HW-REQ-012.md), [HW-REQ-014](HW-REQ-014.md), [HW-REQ-020](HW-REQ-020.md), [HW-REQ-030](HW-REQ-030.md), [SM-01](SM-01.md), [SM-03](SM-03.md)
 
-**SM-01** (10)
+**SM-01** (11)
 
-[HW-REQ-001](HW-REQ-001.md), [HW-REQ-002](HW-REQ-002.md), [HW-REQ-003](HW-REQ-003.md), [HW-REQ-004](HW-REQ-004.md), [HW-REQ-005](HW-REQ-005.md), [HW-REQ-006](HW-REQ-006.md), [HW-REQ-007](HW-REQ-007.md), [HW-REQ-008](HW-REQ-008.md), [HW-REQ-009](HW-REQ-009.md), [HW-REQ-010](HW-REQ-010.md)
+[HW-REQ-001](HW-REQ-001.md), [HW-REQ-002](HW-REQ-002.md), [HW-REQ-003](HW-REQ-003.md), [HW-REQ-004](HW-REQ-004.md), [HW-REQ-005](HW-REQ-005.md), [HW-REQ-006](HW-REQ-006.md), [HW-REQ-007](HW-REQ-007.md), [HW-REQ-008](HW-REQ-008.md), [HW-REQ-009](HW-REQ-009.md), [HW-REQ-010](HW-REQ-010.md), [HW-REQ-030](HW-REQ-030.md)
 
-**Power_Supply_Unit** (8)
+**Power_Supply_Unit** (9)
 
-[HW-REQ-011](HW-REQ-011.md), [HW-REQ-012](HW-REQ-012.md), [HW-REQ-013](HW-REQ-013.md), [HW-REQ-014](HW-REQ-014.md), [HW-REQ-015](HW-REQ-015.md), [HW-REQ-016](HW-REQ-016.md), [HW-REQ-017](HW-REQ-017.md), [SM-06](SM-06.md)
+[HW-REQ-011](HW-REQ-011.md), [HW-REQ-012](HW-REQ-012.md), [HW-REQ-013](HW-REQ-013.md), [HW-REQ-014](HW-REQ-014.md), [HW-REQ-015](HW-REQ-015.md), [HW-REQ-016](HW-REQ-016.md), [HW-REQ-017](HW-REQ-017.md), [HW-REQ-029](HW-REQ-029.md), [SM-06](SM-06.md)
 
 **ASIC_Watchdog** (5)
 
 [HW-REQ-017](HW-REQ-017.md), [HW-REQ-018](HW-REQ-018.md), [HW-REQ-019](HW-REQ-019.md), [SM-02](SM-02.md), [SM-06](SM-06.md)
 
-**Current_Sense_Chain** (4)
+**Current_Sense_Chain** (5)
 
-[HW-REQ-001](HW-REQ-001.md), [HW-REQ-002](HW-REQ-002.md), [HW-REQ-005](HW-REQ-005.md), [SM-01](SM-01.md)
+[HW-REQ-001](HW-REQ-001.md), [HW-REQ-002](HW-REQ-002.md), [HW-REQ-005](HW-REQ-005.md), [HW-REQ-030](HW-REQ-030.md), [SM-01](SM-01.md)
 
 **Temp_Sense_Chain** (4)
 
 [HW-REQ-022](HW-REQ-022.md), [HW-REQ-023](HW-REQ-023.md), [HW-REQ-024](HW-REQ-024.md), [SM-05](SM-05.md)
 
+**MCU_Lockstep** (3)
+
+[HW-REQ-018](HW-REQ-018.md), [HW-REQ-026](HW-REQ-026.md), [SM-02](SM-02.md)
+
 **SM-06** (3)
 
 [HW-REQ-011](HW-REQ-011.md), [HW-REQ-016](HW-REQ-016.md), [HW-REQ-017](HW-REQ-017.md)
-
-**MCU_Lockstep** (2)
-
-[HW-REQ-018](HW-REQ-018.md), [SM-02](SM-02.md)
 
 **SM-02** (2)
 
@@ -107,15 +112,16 @@ many-to-many, which is why this is a grouping and not a folder split.
 | File | Purpose |
 |---|---|
 | [analysis_current_sensing.md](analysis_current_sensing.md) | Analysis — low-beam current sensing and open-load detection (SM-01 / SYS-REQ-014) |
+| [analysis_low_beam_activation.md](analysis_low_beam_activation.md) | Analysis — low-beam activation path (SYS-REQ-001) |
 | [analysis_sm01_coverage.md](analysis_sm01_coverage.md) | Analysis — hardware side of the SM-01 diagnostic coverage claim (preparation for OP-15) |
 | [analysis_supply_and_transients.md](analysis_supply_and_transients.md) | Analysis — supply range, overvoltage, load dump and transients (OP-24, OP-4) |
 | [analysis_thermal_derating.md](analysis_thermal_derating.md) | Analysis — thermal derating and feasibility of the 400 mA floor (OP-16) |
 | [hw_architecture.md](hw_architecture.md) | Hardware architecture — Lighting ECU |
 | [hw_verification_plan.md](hw_verification_plan.md) | Hardware verification plan — Lighting ECU |
 
-**Status:** draft: 31
+**Status:** draft: 36
 
-**ASIL:** B: 31
+**ASIL:** B: 36
 
 ---
 

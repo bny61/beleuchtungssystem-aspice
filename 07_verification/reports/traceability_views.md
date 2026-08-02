@@ -85,15 +85,15 @@ flowchart LR
 | [SG-01](../../02_safety/03_fsc/SG-01.md) | B | reviewed | H-01, H-04 | FSR-001, FSR-002, FSR-003, FSR-004, TC-021, TC-021 |
 | [FSR-001](../../02_safety/03_fsc/FSR-001.md) | B | reviewed | SG-01 | HW-REQ-001, HW-REQ-005, HW-REQ-009, HW-REQ-010, SM-01, SM-01, SYS-REQ-014, SYS-REQ-016, SYS-REQ-018, TC-021, TC-021, TSR-003, TSR-004 |
 | [SYS-REQ-014](../../01_requirements/system/SYS-REQ-014.md) | B | draft | CR-007, FSR-001 | HW-REQ-003, HW-REQ-005, HW-REQ-008, SM-01, SYS-REQ-015, SYS-REQ-016, SYS-REQ-017, SYS-REQ-018, SYS-REQ-019, TC-021, TC-021 |
-| [SYS-REQ-018](../../01_requirements/system/SYS-REQ-018.md) | B | draft | FSR-001, SYS-REQ-014 | HW-REQ-009, SM-01, TC-021 |
+| [SYS-REQ-018](../../01_requirements/system/SYS-REQ-018.md) | B | draft | FSR-001, SYS-REQ-014 | HW-REQ-009, HW-REQ-030, SM-01, TC-021 |
 | [TSR-003](../../02_safety/04_tsc/TSR-003.md) | B | draft | FSR-001 | HW-REQ-020, SM-01, SM-01, SM-03 |
-| [SM-01](../../05_hardware/SM-01.md) | B | draft | FSR-001, FSR-001, HW-REQ-001, HW-REQ-002, HW-REQ-003, HW-REQ-004, HW-REQ-005, HW-REQ-006, HW-REQ-007, HW-REQ-008, HW-REQ-009, HW-REQ-010, SYS-REQ-014, SYS-REQ-018, TSR-003, TSR-003 | TC-021 |
+| [SM-01](../../05_hardware/SM-01.md) | B | draft | FSR-001, FSR-001, HW-REQ-001, HW-REQ-002, HW-REQ-003, HW-REQ-004, HW-REQ-005, HW-REQ-006, HW-REQ-007, HW-REQ-008, HW-REQ-009, HW-REQ-010, HW-REQ-030, SYS-REQ-014, SYS-REQ-018, TSR-003, TSR-003 | TC-021 |
 | [TC-021](../../07_verification/testcases/TC-021.md) | B | draft | CR-007, FSR-001, FSR-001, SG-01, SG-01, SM-01, SYS-REQ-014, SYS-REQ-014, SYS-REQ-018 | — |
 
 ## 2 Safety goal SG-01 — full context
 
-73 connected records.
-*Graph shows the derivation skeleton only (63 of 73 records; customer requirements and isolated nodes omitted). Allocation and verification links converge on few nodes and would obscure the structure — they are complete in the table below.*
+78 connected records.
+*Graph shows the derivation skeleton only (68 of 78 records; customer requirements and isolated nodes omitted). Allocation and verification links converge on few nodes and would obscure the structure — they are complete in the table below.*
 
 ```mermaid
 flowchart LR
@@ -153,6 +153,11 @@ flowchart LR
     HW_REQ_023["<b>HW-REQ-023</b><br/><small>ASIL B</small><br/><small>draft</small>"]
     HW_REQ_024["<b>HW-REQ-024</b><br/><small>ASIL B</small><br/><small>draft</small>"]
     HW_REQ_025["<b>HW-REQ-025</b><br/><small>ASIL B</small><br/><small>draft</small>"]
+    HW_REQ_026["<b>HW-REQ-026</b><br/><small>ASIL B</small><br/><small>draft</small>"]
+    HW_REQ_027["<b>HW-REQ-027</b><br/><small>ASIL B</small><br/><small>draft</small>"]
+    HW_REQ_028["<b>HW-REQ-028</b><br/><small>ASIL B</small><br/><small>draft</small>"]
+    HW_REQ_029["<b>HW-REQ-029</b><br/><small>ASIL B</small><br/><small>draft</small>"]
+    HW_REQ_030["<b>HW-REQ-030</b><br/><small>ASIL B</small><br/><small>draft</small>"]
     SM_01["<b>SM-01</b><br/><small>ASIL B</small><br/><small>draft</small>"]
     SM_02["<b>SM-02</b><br/><small>ASIL B</small><br/><small>draft</small>"]
     SM_03["<b>SM-03</b><br/><small>ASIL B</small><br/><small>draft</small>"]
@@ -203,11 +208,19 @@ flowchart LR
     HW_REQ_008 --> HW_REQ_023
     HW_REQ_022 --> HW_REQ_023
     HW_REQ_023 --> HW_REQ_024
+    HW_REQ_026 --> HW_REQ_027
+    HW_REQ_027 --> HW_REQ_029
+    HW_REQ_027 --> HW_REQ_030
     SG_01 --> FSR_001
     SG_01 --> FSR_002
     SG_01 --> FSR_003
     SG_01 --> FSR_004
     SG_01 --> TC_021
+    SYS_REQ_001 --> HW_REQ_026
+    SYS_REQ_001 --> HW_REQ_027
+    SYS_REQ_001 --> HW_REQ_028
+    SYS_REQ_001 --> HW_REQ_029
+    SYS_REQ_001 --> HW_REQ_030
     SYS_REQ_010 --> SYS_REQ_026
     SYS_REQ_012 --> HW_REQ_011
     SYS_REQ_012 --> HW_REQ_012
@@ -230,6 +243,7 @@ flowchart LR
     SYS_REQ_016 --> HW_REQ_002
     SYS_REQ_017 --> HW_REQ_004
     SYS_REQ_018 --> HW_REQ_009
+    SYS_REQ_018 --> HW_REQ_030
     SYS_REQ_018 --> TC_021
     SYS_REQ_019 --> HW_REQ_006
     SYS_REQ_019 --> HW_REQ_007
@@ -260,7 +274,7 @@ flowchart LR
     classDef h fill:#fdf0e3,stroke:#c07d29,color:#1a1a1a
     class H_01,H_04 h
     classDef hw_req fill:#eaf4ea,stroke:#4a8a4a,color:#1a1a1a
-    class HW_REQ_001,HW_REQ_002,HW_REQ_003,HW_REQ_004,HW_REQ_005,HW_REQ_006,HW_REQ_007,HW_REQ_008,HW_REQ_009,HW_REQ_010,HW_REQ_011,HW_REQ_012,HW_REQ_013,HW_REQ_015,HW_REQ_016,HW_REQ_017,HW_REQ_018,HW_REQ_019,HW_REQ_020,HW_REQ_021,HW_REQ_022,HW_REQ_023,HW_REQ_024,HW_REQ_025 hw_req
+    class HW_REQ_001,HW_REQ_002,HW_REQ_003,HW_REQ_004,HW_REQ_005,HW_REQ_006,HW_REQ_007,HW_REQ_008,HW_REQ_009,HW_REQ_010,HW_REQ_011,HW_REQ_012,HW_REQ_013,HW_REQ_015,HW_REQ_016,HW_REQ_017,HW_REQ_018,HW_REQ_019,HW_REQ_020,HW_REQ_021,HW_REQ_022,HW_REQ_023,HW_REQ_024,HW_REQ_025,HW_REQ_026,HW_REQ_027,HW_REQ_028,HW_REQ_029,HW_REQ_030 hw_req
     classDef sg fill:#fbeaea,stroke:#b05252,color:#1a1a1a
     class SG_01 sg
     classDef sm fill:#eaf4ea,stroke:#4a8a4a,color:#1a1a1a
@@ -327,6 +341,11 @@ flowchart LR
     click HW_REQ_023 href "../../05_hardware/HW-REQ-023.md" "HW-REQ-023"
     click HW_REQ_024 href "../../05_hardware/HW-REQ-024.md" "HW-REQ-024"
     click HW_REQ_025 href "../../05_hardware/HW-REQ-025.md" "HW-REQ-025"
+    click HW_REQ_026 href "../../05_hardware/HW-REQ-026.md" "HW-REQ-026"
+    click HW_REQ_027 href "../../05_hardware/HW-REQ-027.md" "HW-REQ-027"
+    click HW_REQ_028 href "../../05_hardware/HW-REQ-028.md" "HW-REQ-028"
+    click HW_REQ_029 href "../../05_hardware/HW-REQ-029.md" "HW-REQ-029"
+    click HW_REQ_030 href "../../05_hardware/HW-REQ-030.md" "HW-REQ-030"
     click SM_01 href "../../05_hardware/SM-01.md" "SM-01"
     click SM_02 href "../../05_hardware/SM-02.md" "SM-02"
     click SM_03 href "../../05_hardware/SM-03.md" "SM-03"
@@ -353,7 +372,7 @@ flowchart LR
 | [FSR-002](../../02_safety/03_fsc/FSR-002.md) | B | draft | SG-01 | HW-REQ-012, HW-REQ-013, HW-REQ-016, HW-REQ-017, HW-REQ-021, HW-REQ-022, SM-02, SM-04, SM-05, SM-06, SYS-REQ-001, SYS-REQ-002, SYS-REQ-012, SYS-REQ-025, TSR-001, TSR-002 |
 | [FSR-003](../../02_safety/03_fsc/FSR-003.md) | B | draft | SG-01 | SYS-REQ-011, SYS-REQ-013, TSR-004 |
 | [FSR-004](../../02_safety/03_fsc/FSR-004.md) | B | draft | CR-007, SG-01 | HW-REQ-025, SYS-REQ-010, TSR-005 |
-| [SYS-REQ-001](../../01_requirements/system/SYS-REQ-001.md) | B | draft | CR-001, FSR-002 | — |
+| [SYS-REQ-001](../../01_requirements/system/SYS-REQ-001.md) | B | draft | CR-001, FSR-002 | HW-REQ-026, HW-REQ-027, HW-REQ-028, HW-REQ-029, HW-REQ-030 |
 | [SYS-REQ-002](../../01_requirements/system/SYS-REQ-002.md) | B | draft | CR-002, FSR-002 | — |
 | [SYS-REQ-003](../../01_requirements/system/SYS-REQ-003.md) | B | draft | CR-002 | — |
 | [SYS-REQ-010](../../01_requirements/system/SYS-REQ-010.md) | B | draft | CR-007, FSR-004 | SYS-REQ-026 |
@@ -364,7 +383,7 @@ flowchart LR
 | [SYS-REQ-015](../../01_requirements/system/SYS-REQ-015.md) | B | draft | SYS-REQ-014 | — |
 | [SYS-REQ-016](../../01_requirements/system/SYS-REQ-016.md) | B | draft | FSR-001, SYS-REQ-014 | HW-REQ-001, HW-REQ-002 |
 | [SYS-REQ-017](../../01_requirements/system/SYS-REQ-017.md) | B | draft | SYS-REQ-014 | HW-REQ-004 |
-| [SYS-REQ-018](../../01_requirements/system/SYS-REQ-018.md) | B | draft | FSR-001, SYS-REQ-014 | HW-REQ-009, SM-01, TC-021 |
+| [SYS-REQ-018](../../01_requirements/system/SYS-REQ-018.md) | B | draft | FSR-001, SYS-REQ-014 | HW-REQ-009, HW-REQ-030, SM-01, TC-021 |
 | [SYS-REQ-019](../../01_requirements/system/SYS-REQ-019.md) | B | draft | SYS-REQ-014 | HW-REQ-006, HW-REQ-007, HW-REQ-020, SM-03 |
 | [SYS-REQ-020](../../01_requirements/system/SYS-REQ-020.md) | B | draft | CR-020 | HW-REQ-025, SYS-REQ-022, SYS-REQ-028 |
 | [SYS-REQ-022](../../01_requirements/system/SYS-REQ-022.md) | B | draft | CR-020, SYS-REQ-020 | SYS-REQ-023, SYS-REQ-024, SYS-REQ-027 |
@@ -404,7 +423,12 @@ flowchart LR
 | [HW-REQ-023](../../05_hardware/HW-REQ-023.md) | B | draft | CR-014, HW-REQ-008, HW-REQ-022 | HW-REQ-024, SM-05 |
 | [HW-REQ-024](../../05_hardware/HW-REQ-024.md) | B | draft | CR-014, HW-REQ-023 | — |
 | [HW-REQ-025](../../05_hardware/HW-REQ-025.md) | B | draft | FSR-004, SYS-REQ-020 | — |
-| [SM-01](../../05_hardware/SM-01.md) | B | draft | FSR-001, FSR-001, HW-REQ-001, HW-REQ-002, HW-REQ-003, HW-REQ-004, HW-REQ-005, HW-REQ-006, HW-REQ-007, HW-REQ-008, HW-REQ-009, HW-REQ-010, SYS-REQ-014, SYS-REQ-018, TSR-003, TSR-003 | TC-021 |
+| [HW-REQ-026](../../05_hardware/HW-REQ-026.md) | B | draft | SYS-REQ-001 | HW-REQ-027 |
+| [HW-REQ-027](../../05_hardware/HW-REQ-027.md) | B | draft | HW-REQ-026, SYS-REQ-001 | HW-REQ-029, HW-REQ-030 |
+| [HW-REQ-028](../../05_hardware/HW-REQ-028.md) | B | draft | SYS-REQ-001 | — |
+| [HW-REQ-029](../../05_hardware/HW-REQ-029.md) | B | draft | HW-REQ-027, SYS-REQ-001 | — |
+| [HW-REQ-030](../../05_hardware/HW-REQ-030.md) | B | draft | HW-REQ-027, SYS-REQ-001, SYS-REQ-018 | SM-01 |
+| [SM-01](../../05_hardware/SM-01.md) | B | draft | FSR-001, FSR-001, HW-REQ-001, HW-REQ-002, HW-REQ-003, HW-REQ-004, HW-REQ-005, HW-REQ-006, HW-REQ-007, HW-REQ-008, HW-REQ-009, HW-REQ-010, HW-REQ-030, SYS-REQ-014, SYS-REQ-018, TSR-003, TSR-003 | TC-021 |
 | [SM-02](../../05_hardware/SM-02.md) | B | draft | FSR-002, HW-REQ-018, HW-REQ-019, TSR-001 | — |
 | [SM-03](../../05_hardware/SM-03.md) | B | draft | HW-REQ-020, SYS-REQ-019, TSR-003 | — |
 | [SM-04](../../05_hardware/SM-04.md) | B | draft | FSR-002, HW-REQ-021, TSR-002 | — |
@@ -501,7 +525,7 @@ flowchart LR
 
 ## 4 Level summary
 
-115 records, 162 typed links.
+120 records, 172 typed links.
 
 | Level | Kind | Records |
 |---|---|---|
@@ -511,7 +535,7 @@ flowchart LR
 | 2 | `FSR-` | 8 |
 | 3 | `SYS-REQ-` | 28 |
 | 3 | `TSR-` | 8 |
-| 4 | `HW-REQ-` | 25 |
+| 4 | `HW-REQ-` | 30 |
 | 4 | `SM-` | 6 |
 | 5 | `TC-` | 1 |
 | 6 | `RISK-` | 2 |
