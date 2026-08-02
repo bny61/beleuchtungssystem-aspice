@@ -31,9 +31,9 @@ if (Request valid and not timed out?) then (yes)
         :Debounce 20 ms;
         :Discriminate cause\n(SYS-REQ-019);
         if (Cause = open load?) then (yes)
-          #FFDDDD:Classify channel as "open load"\n(SYS-REQ-014);
-          #FFDDDD:Enter safe state: operate remaining\nchannel, set DTC (TSR-004);
-          #FFDDDD:Request driver warning\nwithin 2 s (FSR-004);
+          :Classify channel as "open load"\n(SYS-REQ-014); <<#FFDDDD>>
+          :Enter safe state: operate remaining\nchannel, set DTC (TSR-004); <<#FFDDDD>>
+          :Request driver warning\nwithin 2 s (FSR-004); <<#FFDDDD>>
           stop
         else (no)
           :Handle as short-to-battery\nor commanded reduction;
