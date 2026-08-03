@@ -1,0 +1,61 @@
+@startuml agent_work_item
+title The life of one work item - nothing is changed before a plan is approved
+skinparam defaultTextAlignment left
+skinparam activityFontSize 12
+
+|Human|
+start
+:Notice something while reading a
+record, document or diagram;
+:Write a job against that element
+(browser panel, or by hand);
+note right
+  The element and its context are
+  captured automatically. Jobs are
+  written by the human. Open points
+  are written by the agents - the two
+  point in opposite directions.
+end note
+
+|Agent|
+:**plan** - state the intent
+read-only, cannot write;
+note right
+  claude -p --permission-mode plan
+  The agent may read the whole repo
+  and CLAUDE.md, and may invoke a
+  method skill, but changes nothing.
+end note
+
+|Human|
+:Read the plan in the job record;
+if (Right?) then (no)
+  :Edit the plan, or answer the
+  questions it stopped on;
+  note right: the decisions become binding on the run
+  detach
+else (yes)
+endif
+:**approve** - stamps approved_at;
+
+|Agent|
+:**run** - execute the approved plan
+on branch job/JOB-xxx;
+note right
+  Follows the plan. If the plan turns
+  out to be wrong it stops and says so
+  rather than improvising. Never
+  commits, never pushes.
+end note
+:Report what changed, what was left
+out, and hand findings to the
+responsible agent;
+
+|Human|
+:Review the diff and the report;
+:Verify the claims independently
+(trace_check, plantuml, the records);
+:Register any open points, commit,
+merge, push;
+stop
+@enduml

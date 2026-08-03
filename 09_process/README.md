@@ -16,6 +16,7 @@ Plans, assumptions, project status, templates and the original commissioning pro
 
 | File | Purpose |
 |---|---|
+| [agent_workflow.md](agent_workflow.md) | How the agents work — tasks, inputs, outputs, handoffs |
 | [aspice_mapping.md](aspice_mapping.md) | ASPICE and ISO 26262 mapping — process area to work product |
 | [assumptions.md](assumptions.md) | Assumptions (`A-xx`) |
 | [golden_thread_walkthrough.md](golden_thread_walkthrough.md) | Walkthrough — one customer requirement from top to bottom |

@@ -1,0 +1,50 @@
+@startuml agent_handoffs
+title Agent collaboration - the principal flows (full list: 09_process/agent_workflow.md)
+skinparam defaultTextAlignment center
+skinparam rectangle {
+  BackgroundColor White
+  RoundCorner 8
+}
+skinparam ArrowFontSize 11
+top to bottom direction
+
+rectangle "**safety-manager**\nHARA, safety goals,\nFSR, TSR, safety case" as SAM #FBEAEA
+rectangle "**systems-engineer**\nCR, SYS-REQ,\nE/E architecture" as SYS #E7F0FB
+rectangle "**mbse-modeler**\nSysML views" as MOD #E7F0FB
+
+rectangle "**hardware-engineer**\nHW-REQ, HW design,\nsafety mechanisms" as HWE #EAF4EA
+rectangle "**software-engineer**\nSW-REQ, SW design" as SWE #EAF4EA
+
+rectangle "**safety-analyst**\nFMEA, FTA, FMEDA,\nDFA, STPA" as ANA #FDF0E3
+rectangle "**verification-engineer**\ntest strategy, TC-xxx,\nfault injection" as VER #FDF0E3
+
+rectangle "**config-manager**\nrepo, CI, baselines,\ntool qualification" as CFG #F0EDF7
+rectangle "**quality-assessor**\nindependent review\n**no write tools**" as QA #F0EDF7
+
+SAM -down-> SYS : safety requirements\nto allocate
+SYS -up-> SAM : safety goals, FSR,\nASIL decomposition
+SYS -right-> MOD : architecture\nto model
+
+SYS -down-> HWE : allocated TSR
+SYS -down-> SWE : allocated TSR
+HWE -right-> SWE : diagnostics interface,\nDC claims
+
+HWE -down-> ANA : FMEDA rows,\nlambda values
+SWE -down-> ANA : freedom from\ninterference
+ANA -up-> SAM : new safety requirements,\ndecomposition questions
+
+ANA -right-> VER : fault injection\ntests
+SYS -down-> VER : verification method\nper requirement
+VER -up-> SAM : validation evidence\nfor the safety case
+
+CFG -down-> QA : independent\nprocess review
+QA -left-> SAM : findings as\na defect list
+
+note right of QA
+  quality-assessor holds no Write or Edit tool: it cannot
+  change what it reviews. Independence is enforced by the
+  tooling, not by instruction - and safety-manager routes
+  review of its own work here, because it must not confirm
+  its own work products.
+end note
+@enduml
