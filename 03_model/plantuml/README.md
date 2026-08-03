@@ -37,6 +37,7 @@ One file per view. The file name prefix encodes the view type.
 | [pdiag_mcu_lockstep.puml](pdiag_mcu_lockstep.puml) | P-diagram - MCU_Lockstep (OVERVIEW, contributes to SM-01) |
 | [pdiag_power_supply_unit.puml](pdiag_power_supply_unit.puml) | P-diagram - Power_Supply_Unit (OVERVIEW, SM-06) |
 | [pdiag_temp_sense_chain.puml](pdiag_temp_sense_chain.puml) | P-diagram - Temp_Sense_Chain (OVERVIEW, SM-05) |
+| [req_cr007_thread.puml](req_cr007_thread.puml) | Golden Thread - CR-007 from hazard to hardware design and back to test |
 | [req_golden_thread.puml](req_golden_thread.puml) | Requirements diagram - Golden Thread SG-01 (MagicGrid, Requirements) |
 | [seq_open_load.puml](seq_open_load.puml) | Sequence - Open load detection, fault reaction, diagnostic DTC (Golden Thread) |
 | [stm_lighting.puml](stm_lighting.puml) | State machine - Lighting system operating states incl. safe state (SG-01) |
