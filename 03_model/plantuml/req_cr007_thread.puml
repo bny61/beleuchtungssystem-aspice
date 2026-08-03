@@ -1,0 +1,54 @@
+@startuml req_cr007_thread
+title Golden Thread - CR-007 from hazard to hardware design and back to test
+skinparam defaultTextAlignment left
+skinparam rectangle {
+  BackgroundColor White
+  RoundCorner 8
+}
+
+rectangle "**H-01** / **H-04**  hazard\nLow beam fails at night,\ncarriageway unlit at 80 km/h\nS3 / E4 / C3 -> ASIL B" as H #FDF0E3
+rectangle "**SG-01**  safety goal  ASIL B\nNo undetected failure of the\nlow beam while driving\nFTTI 300 ms" as SG #FBEAEA
+rectangle "**CR-007**  customer requirement\nDetect the failure of a low-beam\nchannel and indicate it to the\ndriver within 2 s" as CR #E7F0FB
+
+rectangle "**FSR-001**  detect\nDetect within the fault\nreaction time, reach the\nsafe state, warn" as F1 #FBEAEA
+rectangle "**FSR-004**  indicate\nWarn the driver visually\nwithin 2 s" as F4 #FBEAEA
+
+rectangle "**TSR-003**\nDetect loss of load current\nand report within 100 ms" as T3 #F0EDF7
+rectangle "**SYS-REQ-010 / 026**\nRequest the warning,\ntransmit within 20 ms" as S10 #E7F0FB
+
+rectangle "**SYS-REQ-014**  the confluence\nBelow 150 mA for more than 50 ms\n-> classify as open load" as S14 #E7F0FB
+rectangle "**SYS-REQ-016**  +/-20 mA at the threshold\n**SYS-REQ-018**  report within 100 ms\n**SYS-REQ-019**  discriminate the cause" as S16 #E7F0FB
+
+rectangle "**HW-REQ-001**  +/-20 mA measurement\n**HW-REQ-002**  130 / 170 mA no-trip band\n**HW-REQ-009**  80 ms detection\n**HW-REQ-030**  30 ms start-up blanking" as HW #EAF4EA
+rectangle "**SM-01**  safety mechanism\nPWM-synchronous shunt measurement,\nthreshold, debounce, off-phase self-test" as SM #EAF4EA
+rectangle "**Current_Sense_Chain**  hardware design\nShunt 50 mOhm -> amp x50 -> RC -> ADC\nP-diagram error states E1, E2" as HD #EAF4EA
+
+rectangle "**TC-021**  HiL fault injection\nverifies SG-01, FSR-001,\nSYS-REQ-014, SYS-REQ-018" as TC #FDF0E3
+
+H -down-> SG
+SG -down-> F1
+SG -down-> F4
+CR -down-> F4
+CR -down-> S14
+F1 -down-> T3
+F1 -down-> S14
+F4 -down-> S10
+T3 -down-> SM
+S14 -down-> S16
+S16 -down-> HW
+HW -down-> SM
+SM -down-> HD
+TC -up-> S14
+TC -up-> SG
+
+note right of S14
+  Two parents meet here: the customer requirement
+  and the functional safety requirement. One system
+  requirement satisfies both, and is traceable to both.
+end note
+
+note right of CR
+  CR-007 bundles detection and indication (OP-3).
+  The fork below it is that defect made visible.
+end note
+@enduml

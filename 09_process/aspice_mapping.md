@@ -55,7 +55,7 @@ phase 7 has not been run.
 | MAN.3 | ASPICE | Project management | supporting | supporting | - | 09_process/project_status.md |
 | SUP.1 | ASPICE | Quality assurance | supporting | supporting | - | - |
 | SUP.4 | ASPICE | Joint review | supporting | supporting | - | .github/pull_request_template.md |
-| SUP.8 | ASPICE | Configuration management | supporting | supporting | - | 09_process/plans/tool_qualification.md, 09_process/aspice_mapping.md |
+| SUP.8 | ASPICE | Configuration management | supporting | supporting | - | 09_process/plans/tool_qualification.md, 09_process/aspice_mapping.md, 09_process/golden_thread_walkthrough.md |
 | SUP.9 | ASPICE | Problem resolution management | supporting | supporting | - | .github/ISSUE_TEMPLATE/problem_report.yml |
 | SUP.10 | ASPICE | Change request management | supporting | supporting | - | .github/ISSUE_TEMPLATE/change_request.yml |
 | Part 2 | ISO | Safety management, safety case | supporting | supporting | - | - |
