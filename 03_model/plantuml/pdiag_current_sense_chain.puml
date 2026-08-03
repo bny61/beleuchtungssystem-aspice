@@ -1,0 +1,32 @@
+@startuml pdiag_current_sense_chain
+title P-diagram - Current_Sense_Chain (DEEP DIVE, Golden Thread, SM-01)
+skinparam defaultTextAlignment left
+skinparam rectangle {
+  BackgroundColor White
+  RoundCorner 8
+}
+
+rectangle "**Noise factors**\n//piece-to-piece//  shunt 1.0 %, amplifier gain 1.0 %, Vos <= 150 uV RTI,\n   VREF 0.5 % (HW-REQ-001)\n//over time//  shunt 50 ppm/K drift, solder-joint ageing, VREF drift\n//customer usage//  duty 20..100 %, dimming, deep derating to 400 mA\n//environment//  -40..+85 C ambient, ISO 7637-2 transients, EMC injection\n//system interaction//  PWM edge coupling, ADC sampling raster,\n   supply ripple from the driver stage" as N #FFF8E1
+
+rectangle "**Input signal**\nTrue channel current\n0 .. 1.5 A through the\n50 mOhm shunt" as I #E7F0FB
+
+rectangle "**Ideal function**\nReport the true low-beam\nchannel current to the MCU\nwith a total uncertainty of\nnot more than +/-20 mA at\nthe 150 mA classification\nthreshold" as F #EAF4EA
+
+rectangle "**Intended output**\nI_Load_Ch1..n, 12 bit,\nPWM-synchronous,\n2.5 ms raster,\nwithin the tolerance band" as O #E7F0FB
+
+rectangle "**Error states**\nE1  reads high -> open load missed (SM-01 blind)\nE2  reads low -> healthy channel classified as open\nE3  stuck value -> fault frozen, no detection\nE4  noise above the band -> chattering classification\nE5  sample outside the PWM on-phase -> invalid reading\nE6  no conversion -> diagnosis unavailable" as E #FBEAEA
+
+rectangle "**Control factors**\nKelvin-sensed shunt, gain 50 V/V, anti-alias RC f_c 40 kHz,\nclamp to the ADC range, PWM-timer-triggered conversion\n(HW-REQ-003), second reference leg for the plausibility check,\noff-phase self-test, 20 ms debounce (HW-REQ-005)" as C #F0EDF7
+
+N -down-> F
+I -right-> F
+F -right-> O
+F -right-> E
+O -[hidden]down- E
+C -up-> F
+
+note bottom of C
+  Tolerance chain and the +/-20 mA budget: 05_hardware/analysis_current_sensing.md
+  Error states E1 .. E6 are candidate DFMEA failure modes for phase 5.
+end note
+@enduml

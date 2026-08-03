@@ -29,6 +29,14 @@ One file per view. The file name prefix encodes the view type.
 | [ibd_current_sense_chain.puml](ibd_current_sense_chain.puml) | Internal block diagram - Current_Sense_Chain, DEEP DIVE (Golden Thread, SM-01) |
 | [ibd_ecu.puml](ibd_ecu.puml) | Internal block diagram - ECU_LightingCtrl, hardware view (MagicGrid, Structure) |
 | [par_luminous_flux.puml](par_luminous_flux.puml) | Parametric diagram - Luminous flux vs. junction temperature vs. channel current |
+| [pdiag_asic_watchdog.puml](pdiag_asic_watchdog.puml) | P-diagram - ASIC_Watchdog (OVERVIEW, SM-02) |
+| [pdiag_can_fd_transceiver.puml](pdiag_can_fd_transceiver.puml) | P-diagram - CAN_FD_Transceiver (OVERVIEW) |
+| [pdiag_current_sense_chain.puml](pdiag_current_sense_chain.puml) | P-diagram - Current_Sense_Chain (DEEP DIVE, Golden Thread, SM-01) |
+| [pdiag_led_driver_stage.puml](pdiag_led_driver_stage.puml) | P-diagram - LED_Driver_Stage_1..n (DEEP DIVE, Golden Thread, SM-03 / SM-04) |
+| [pdiag_lin_transceiver.puml](pdiag_lin_transceiver.puml) | P-diagram - LIN_Transceiver (OVERVIEW, QM) |
+| [pdiag_mcu_lockstep.puml](pdiag_mcu_lockstep.puml) | P-diagram - MCU_Lockstep (OVERVIEW, contributes to SM-01) |
+| [pdiag_power_supply_unit.puml](pdiag_power_supply_unit.puml) | P-diagram - Power_Supply_Unit (OVERVIEW, SM-06) |
+| [pdiag_temp_sense_chain.puml](pdiag_temp_sense_chain.puml) | P-diagram - Temp_Sense_Chain (OVERVIEW, SM-05) |
 | [req_golden_thread.puml](req_golden_thread.puml) | Requirements diagram - Golden Thread SG-01 (MagicGrid, Requirements) |
 | [seq_open_load.puml](seq_open_load.puml) | Sequence - Open load detection, fault reaction, diagnostic DTC (Golden Thread) |
 | [stm_lighting.puml](stm_lighting.puml) | State machine - Lighting system operating states incl. safe state (SG-01) |

@@ -1,0 +1,31 @@
+@startuml pdiag_power_supply_unit
+title P-diagram - Power_Supply_Unit (OVERVIEW, SM-06)
+skinparam defaultTextAlignment left
+skinparam rectangle {
+  BackgroundColor White
+  RoundCorner 8
+}
+
+rectangle "**Noise factors**\n//piece-to-piece//  regulator tolerance, VREF 0.5 %, inductor spread\n//over time//  electrolytic capacitor drying, TVS degradation\n//customer usage//  cranking, jump start, frequent KL15 cycling\n//environment//  9..36 V, load dump 58 V / 400 ms, ISO 7637-2 pulses,\n   reverse polarity -32 V, -40..+85 C\n//system interaction//  inrush of both driver channels, bus wake" as N #FFF8E1
+
+rectangle "**Input signal**\nKL30 / KL15 vehicle supply,\n16 .. 32 V nominal,\n9 .. 36 V operating" as I #E7F0FB
+
+rectangle "**Ideal function**\nProvide clean 5 V and 3.3 V\nrails and the 3.3 V ADC\nreference, and flag any\nexcursion outside the\noperating range within\n10 ms (HW-REQ-016)" as F #EAF4EA
+
+rectangle "**Intended output**\n5 V / 3.3 V rails within\ntolerance, VREF 3.3 V\n+/-0.5 %, VBAT_PROT,\nRailStatus to the MCU" as O #E7F0FB
+
+rectangle "**Error states**\nE1  rail out of tolerance -> undefined ECU behaviour\nE2  rail collapses -> loss of low beam (H-01)\nE3  VREF drift -> every ADC reading biased, SM-01 affected\nE4  no undervoltage flag -> silent brown-out\nE5  damage from transient or reverse polarity -> total loss" as E #FBEAEA
+
+rectangle "**Control factors**\nReverse-polarity FET, TVS clamp, CM choke and pi filter\n(HW-REQ-015, HW-REQ-014), buck plus LDO, buffered VBAT_PROT,\nUV/OV window comparators with hardware shutdown above 60 V\n(HW-REQ-016), separate reference for the plausibility leg" as C #F0EDF7
+
+N -down-> F
+I -right-> F
+F -right-> O
+F -right-> E
+O -[hidden]down- E
+C -up-> F
+
+note bottom of C
+  Ranges and status classes: 05_hardware/analysis_supply_and_transients.md
+end note
+@enduml

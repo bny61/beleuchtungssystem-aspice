@@ -49,7 +49,7 @@ phase 7 has not been run.
 | SWE.5 | ASPICE | Software integration and integration test | software | right | - | - |
 | SWE.6 | ASPICE | Software qualification test | software | right | - | - |
 | HWE.1 | ASPICE | Hardware requirements analysis | hardware | left | id:HW-REQ- | 05_hardware/analysis_current_sensing.md, 05_hardware/analysis_low_beam_activation.md |
-| HWE.2 | ASPICE | Hardware design | hardware | left | id:SM- | 05_hardware/hw_architecture.md, 05_hardware/analysis_supply_and_transients.md, 05_hardware/analysis_thermal_derating.md |
+| HWE.2 | ASPICE | Hardware design | hardware | left | id:SM- | 05_hardware/hw_architecture.md, 05_hardware/hw_components.md, 05_hardware/analysis_supply_and_transients.md, 05_hardware/analysis_thermal_derating.md |
 | HWE.3 | ASPICE | Verification against the hardware design | hardware | right | - | 05_hardware/analysis_sm01_coverage.md |
 | HWE.4 | ASPICE | Hardware verification | hardware | right | - | 05_hardware/hw_verification_plan.md |
 | MAN.3 | ASPICE | Project management | supporting | supporting | - | 09_process/project_status.md |
@@ -61,7 +61,7 @@ phase 7 has not been run.
 | Part 2 | ISO | Safety management, safety case | supporting | supporting | - | - |
 | Part 3 | ISO | Concept phase: item definition, HARA, FSC | concept | left | path:02_safety/02_hara, path:02_safety/03_fsc | 02_safety/01_item_definition/item_definition.md, 02_safety/02_hara/hara.md, 02_safety/02_hara/operational_situations.md, 02_safety/02_hara/sec_classification.md |
 | Part 4 | ISO | Product development at system level (TSC) | system | left | path:02_safety/04_tsc | 04_architecture/ee_architecture.md |
-| Part 5 | ISO | Product development at hardware level | hardware | left | id:HW-REQ-, id:SM- | 05_hardware/hw_architecture.md, 05_hardware/hw_verification_plan.md, 05_hardware/analysis_low_beam_activation.md |
+| Part 5 | ISO | Product development at hardware level | hardware | left | id:HW-REQ-, id:SM- | 05_hardware/hw_architecture.md, 05_hardware/hw_components.md, 05_hardware/hw_verification_plan.md, 05_hardware/analysis_low_beam_activation.md |
 | Part 6 | ISO | Product development at software level | software | left | id:SW-REQ- | - |
 | Part 8 | ISO | Supporting processes | supporting | supporting | - | 09_process/assumptions.md, 09_process/plans/tool_qualification.md |
 | Part 9 | ISO | ASIL-oriented and safety-oriented analyses | supporting | supporting | path:02_safety/05_analyses | - |
