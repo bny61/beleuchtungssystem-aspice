@@ -117,6 +117,7 @@ many-to-many, which is why this is a grouping and not a folder split.
 | [analysis_supply_and_transients.md](analysis_supply_and_transients.md) | Analysis — supply range, overvoltage, load dump and transients (OP-24, OP-4) |
 | [analysis_thermal_derating.md](analysis_thermal_derating.md) | Analysis — thermal derating and feasibility of the 400 mA floor (OP-16) |
 | [hw_architecture.md](hw_architecture.md) | Hardware architecture — Lighting ECU |
+| [hw_components.md](hw_components.md) | Hardware components and their P-diagrams |
 | [hw_verification_plan.md](hw_verification_plan.md) | Hardware verification plan — Lighting ECU |
 
 **Status:** draft: 36

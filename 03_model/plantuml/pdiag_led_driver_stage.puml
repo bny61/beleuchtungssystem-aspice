@@ -1,0 +1,33 @@
+@startuml pdiag_led_driver_stage
+title P-diagram - LED_Driver_Stage_1..n (DEEP DIVE, Golden Thread, SM-03 / SM-04)
+skinparam defaultTextAlignment left
+skinparam rectangle {
+  BackgroundColor White
+  RoundCorner 8
+}
+
+rectangle "**Noise factors**\n//piece-to-piece//  current-set resistor 1 %, switching-node timing spread\n//over time//  MOSFET R_DS(on) rise, output-capacitor ageing, connector fretting\n//customer usage//  duty 20..100 %, frequent switch-on cycles, deep derating\n//environment//  cavity up to 105 C, 9..36 V supply, load dump 58 V, EMC\n//system interaction//  SAFE_OFF from the watchdog, derating set point,\n   inrush of the parallel channel, harness impedance" as N #FFF8E1
+
+rectangle "**Input signal**\nPWM_Ch1..n 400 Hz and\nEnable_Ch1..n from the MCU,\ncommanded set point\n0.40 .. 1.20 A" as I #E7F0FB
+
+rectangle "**Ideal function**\nDrive the commanded\nconstant channel current\ninto the LED module and\nreport its own status,\nwhile the enable gate\nremains dominated by\nSAFE_OFF (HW-REQ-019)" as F #EAF4EA
+
+rectangle "**Intended output**\nChannel current at set\npoint within 20 ms\n(HW-REQ-027), skew\n<= 10 ms (HW-REQ-028),\nDriverStatus OVP/OCP/OT" as O #E7F0FB
+
+rectangle "**Error states**\nE1  no output -> low beam lost (H-01)\nE2  output below set point -> illuminance below CR-024\nE3  output above set point -> overcurrent, LED stress\nE4  will not switch off -> unintended actuation (TSR-002)\nE5  slow or absent soft start -> activation misses SYS-REQ-001\nE6  excessive inrush -> supply dip, spurious SM-06 trip\nE7  status readback wrong -> fault reaction on false data" as E #FBEAEA
+
+rectangle "**Control factors**\nConstant-current buck with soft start (HW-REQ-027), enable gate\nEN_MCU AND not(SAFE_OFF) (HW-REQ-019), current limit 1.8 A with\nlatch-off <= 5 ms (HW-REQ-021), off-phase channel-voltage check\n(HW-REQ-020), inrush limited to 8 A (HW-REQ-029), thermal derating\n(HW-REQ-023), per-channel independence" as C #F0EDF7
+
+N -down-> F
+I -right-> F
+F -right-> O
+F -right-> E
+O -[hidden]down- E
+C -up-> F
+
+note bottom of C
+  Soft start, skew and inrush budget: 05_hardware/analysis_low_beam_activation.md
+  E1 is the failure the whole Golden Thread exists to detect.
+  Error states are candidate DFMEA failure modes for phase 5.
+end note
+@enduml

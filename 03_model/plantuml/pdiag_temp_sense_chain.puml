@@ -1,0 +1,31 @@
+@startuml pdiag_temp_sense_chain
+title P-diagram - Temp_Sense_Chain (OVERVIEW, SM-05)
+skinparam defaultTextAlignment left
+skinparam rectangle {
+  BackgroundColor White
+  RoundCorner 8
+}
+
+rectangle "**Noise factors**\n//piece-to-piece//  NTC tolerance, divider resistor tolerance\n//over time//  NTC drift, connector corrosion at the module\n//customer usage//  long high-load operation, frequent switching\n//environment//  cavity to 105 C, thermal shock, humidity\n//system interaction//  self-heating from the channel it measures,\n   shares the ADC and reference with the current sensing" as N #FFF8E1
+
+rectangle "**Input signal**\nLED module and board\ntemperature, -40 .. +150 C" as I #E7F0FB
+
+rectangle "**Ideal function**\nReport the LED module\ntemperature to within\n+/-3 K so the derating\nfunction can hold the\njunction below its limit\n(HW-REQ-022)" as F #EAF4EA
+
+rectangle "**Intended output**\nT_LED, T_Board, 100 ms,\nplausibility flag for open\nor shorted sensor" as O #E7F0FB
+
+rectangle "**Error states**\nE1  reads low -> derating too late, junction over limit\nE2  reads high -> derating too early, illuminance lost needlessly\nE3  open or short undetected -> derating on meaningless data\nE4  slow response -> thermal excursion missed" as E #FBEAEA
+
+rectangle "**Control factors**\nNTC divider with RC and clamp, plausibility band against the board\nsensor, open and short detection (HW-REQ-022), derating curve\nwith the 400 mA floor (HW-REQ-023, HW-REQ-008)" as C #F0EDF7
+
+N -down-> F
+I -right-> F
+F -right-> O
+F -right-> E
+O -[hidden]down- E
+C -up-> F
+
+note bottom of C
+  Thermal model and the derating floor: 05_hardware/analysis_thermal_derating.md
+end note
+@enduml
