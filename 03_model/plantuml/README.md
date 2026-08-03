@@ -23,6 +23,8 @@ One file per view. The file name prefix encodes the view type.
 | File | Purpose |
 |---|---|
 | [act_low_beam.puml](act_low_beam.puml) | Activity - Activate low beam including the fault case (SYS-REQ-001, FSR-001) |
+| [agent_handoffs.puml](agent_handoffs.puml) | Agent collaboration - the principal flows (full list: 09_process/agent_workflow.md) |
+| [agent_work_item.puml](agent_work_item.puml) | The life of one work item - nothing is changed before a plan is approved |
 | [bdd_ee_architecture.puml](bdd_ee_architecture.puml) | E/E architecture - Lighting ECU (SYS.3) |
 | [bdd_system.puml](bdd_system.puml) | Block definition diagram - System decomposition (MagicGrid, Structure) |
 | [ctx_item.puml](ctx_item.puml) | Context diagram - Item "Adaptive front-lighting system" (ISO 26262-3, Item Definition) |

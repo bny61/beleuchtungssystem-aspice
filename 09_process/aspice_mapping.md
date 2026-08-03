@@ -52,7 +52,7 @@ phase 7 has not been run.
 | HWE.2 | ASPICE | Hardware design | hardware | left | id:SM- | 05_hardware/hw_architecture.md, 05_hardware/hw_components.md, 05_hardware/analysis_supply_and_transients.md, 05_hardware/analysis_thermal_derating.md |
 | HWE.3 | ASPICE | Verification against the hardware design | hardware | right | - | 05_hardware/analysis_sm01_coverage.md |
 | HWE.4 | ASPICE | Hardware verification | hardware | right | - | 05_hardware/hw_verification_plan.md |
-| MAN.3 | ASPICE | Project management | supporting | supporting | - | 09_process/project_status.md |
+| MAN.3 | ASPICE | Project management | supporting | supporting | - | 09_process/project_status.md, 09_process/agent_workflow.md |
 | SUP.1 | ASPICE | Quality assurance | supporting | supporting | - | - |
 | SUP.4 | ASPICE | Joint review | supporting | supporting | - | .github/pull_request_template.md |
 | SUP.8 | ASPICE | Configuration management | supporting | supporting | - | 09_process/plans/tool_qualification.md, 09_process/aspice_mapping.md, 09_process/golden_thread_walkthrough.md |
