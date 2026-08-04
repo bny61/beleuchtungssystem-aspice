@@ -1,0 +1,46 @@
+@startuml sw_tasks
+title SW dynamic behaviour - OS tasks, runnables and the SG-01 reaction chain (plausible example values)
+skinparam shadowing false
+skinparam defaultTextAlignment left
+skinparam rectangle {
+  BackgroundColor White
+  RoundCorner 8
+}
+
+rectangle "**Task_Sense_2ms5**\ncycle 2.5 ms - prio 40 - deadline 2.5 ms\nOS-App: APP_SAFETY (ASIL B)\n. IoHwAb: PWM-synchronous current sample\n. IoHwAb: channel voltage, driver status" as T1 #EAF4EA
+
+rectangle "**Task_Safety_5ms**\ncycle 5 ms - prio 35 - deadline 5 ms\nOS-App: APP_SAFETY (ASIL B)\n. RE_LM_RxEval    (E2E check, validity)\n. RE_LM_Monitor   (SM-01 evaluation, cmd/fb compare)\n. RE_LM_Arbitrate (state machine, set point, actuation)" as T2 #EAF4EA
+
+rectangle "**Task_Ctrl_10ms**\ncycle 10 ms - prio 30 - deadline 10 ms\nOS-App: APP_SAFETY (ASIL B)\n. RE_WLC_Inhibit  (work-lamp inhibit)\n. RE_LM_Tx        (status, driver warning)\n. RE_WdgService   (watchdog question/answer)" as T3 #EAF4EA
+
+rectangle "**Task_Monitor_20ms**\ncycle 20 ms - prio 25 - deadline 20 ms\nOS-App: APP_HB_MON (ASIL A(A))\n. RE_HBM_Plausibility (speed + ambient)\n. RE_HBM_Disable      (own enable path)" as T4 #E7F0FB
+
+rectangle "**Task_HighBeam_50ms**\ncycle 50 ms - prio 20 - deadline 50 ms\nOS-App: APP_HB_CTRL (QM(A))\n. RE_HBC_Mask (object list to segment mask)" as T5 #FFF8E1
+
+rectangle "**Task_Slow_100ms**\ncycle 100 ms - prio 15 - deadline 100 ms\nOS-App: APP_SAFETY (ASIL B)\n. RE_LM_Thermal (derating set point)\n. RE_LM_StatusTx (LightingStatus)" as T6 #EAF4EA
+
+rectangle "**Task_Background**\nbackground - prio 5 - no deadline\nOS-App: APP_QM (QM)\n. RE_DGM_Uds  (UDS server)\n. RE_DGM_Dtc  (DTC housekeeping)" as T7 #F0EDF7
+
+T1 -down-> T2 : filtered samples\n(RTE, same partition)
+T2 -down-> T3 : fault status,\nwarning request
+T2 -down-> T6 : set point, channel state
+T6 -up-> T2 : derating set point
+T2 -right-> T7 : DTC event (DEM)
+T4 -left-> T7 : DTC event (DEM)
+T5 -up-> T4 : commanded high-beam state\n(monitored, not trusted)
+
+note bottom of T2
+  **SG-01 reaction chain (SW share, SW-REQ-013)**
+  t0  open-load classification available (end of the
+      80 ms detection budget, HW-REQ-009)
+  +5 ms  RE_LM_Arbitrate: transition to LIMP_HOME
+  +1 ms  actuation write via IoHwAb / PWM driver
+  = 6 ms software share of the 150 ms of TSR-004
+end note
+
+note bottom of T5
+  Lower priority than the monitor task on purpose:
+  the QM(A) control path can never delay the A(A)
+  monitor. Timing protection enforces it.
+end note
+@enduml

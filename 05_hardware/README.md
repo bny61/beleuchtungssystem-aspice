@@ -30,7 +30,7 @@ HWE.1-HWE.4, ISO 26262-5.
 | [HW-REQ-020](HW-REQ-020.md) | When the channel output voltage of a low-beam channel measured during the PWM off-phase e… | diagnostics | B | draft | HW-REQ-006, SYS-REQ-019, TSR-003 | SM-03 |
 | [HW-REQ-021](HW-REQ-021.md) | The LED driver stage shall limit the channel output current to 1.8 A, shall latch the cha… | electrical | B | draft | FSR-002, HW-REQ-007, TSR-002 | SM-04 |
 | [HW-REQ-022](HW-REQ-022.md) | The Temp_Sense_Chain shall measure the LED module temperature over the range -40 C to +15… | electrical | B | draft | CR-014, FSR-002 | HW-REQ-023, SM-05 |
-| [HW-REQ-023](HW-REQ-023.md) | While the measured LED module temperature is above 105 C, the lighting ECU shall reduce t… | electrical | B | draft | CR-014, HW-REQ-008, HW-REQ-022 | HW-REQ-024, SM-05 |
+| [HW-REQ-023](HW-REQ-023.md) | While the measured LED module temperature is above 105 C, the lighting ECU shall reduce t… | electrical | B | draft | CR-014, HW-REQ-008, HW-REQ-022 | HW-REQ-024, SM-05, SW-REQ-011 |
 | [HW-REQ-024](HW-REQ-024.md) | The thermal design of a low-beam channel shall keep the LED junction temperature at or be… | electrical | B | draft | CR-014, HW-REQ-023 | — |
 | [HW-REQ-025](HW-REQ-025.md) | The CAN_FD_Transceiver shall withstand a permanent short of either bus line to the supply… | interface | B | draft | FSR-004, SYS-REQ-020 | — |
 | [HW-REQ-026](HW-REQ-026.md) | When the microcontroller enable signal of a low-beam channel becomes active while neither… | electrical | B | draft | SYS-REQ-001 | HW-REQ-027 |
@@ -39,10 +39,10 @@ HWE.1-HWE.4, ISO 26262-5.
 | [HW-REQ-029](HW-REQ-029.md) | When both low-beam channels are switched on simultaneously at a supply voltage within 18… | electrical | B | draft | HW-REQ-027, SYS-REQ-001 | — |
 | [HW-REQ-030](HW-REQ-030.md) | While less than 30 ms have elapsed since the effective enable signal of a low-beam channe… | diagnostics | B | draft | HW-REQ-027, SYS-REQ-001, SYS-REQ-018 | SM-01 |
 | [SM-01](SM-01.md) | Open-load detection in the low-beam channel via PWM-synchronous shunt current measurement… | safety-mechanism | B | draft | FSR-001, HW-REQ-001, HW-REQ-002, HW-REQ-003,… | TC-021 |
-| [SM-02](SM-02.md) | Program-execution monitoring by the ASIC_Watchdog with an independent time base and a que… | safety-mechanism | B | draft | FSR-002, HW-REQ-018, HW-REQ-019, TSR-001 | — |
+| [SM-02](SM-02.md) | Program-execution monitoring by the ASIC_Watchdog with an independent time base and a que… | safety-mechanism | B | draft | FSR-002, HW-REQ-018, HW-REQ-019, SW-REQ-010,… | — |
 | [SM-03](SM-03.md) | Short-to-battery detection on a low-beam channel by evaluating the channel output voltage… | safety-mechanism | B | draft | HW-REQ-020, SYS-REQ-019, TSR-003 | — |
 | [SM-04](SM-04.md) | Overcurrent protection in the LED driver stage: hardware current limit at the output stag… | safety-mechanism | B | draft | FSR-002, HW-REQ-021, TSR-002 | — |
-| [SM-05](SM-05.md) | Overtemperature protection of the LED modules by NTC measurement with plausibility band a… | safety-mechanism | B | draft | CR-014, FSR-002, HW-REQ-022, HW-REQ-023 | — |
+| [SM-05](SM-05.md) | Overtemperature protection of the LED modules by NTC measurement with plausibility band a… | safety-mechanism | B | draft | CR-014, FSR-002, HW-REQ-022, HW-REQ-023, SW-… | — |
 | [SM-06](SM-06.md) | Supply voltage monitoring: window comparators on the protected battery voltage in the Pow… | safety-mechanism | B | draft | FSR-002, HW-REQ-011, HW-REQ-016, HW-REQ-017,… | — |
 
 ## By allocated element

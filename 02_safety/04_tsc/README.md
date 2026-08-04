@@ -9,13 +9,13 @@ ISO 26262-4. Technical safety requirements and their allocation.
 | ID | Text | Type | ASIL | Status | Upstream | Downstream |
 |---|---|---|---|---|---|---|
 | [TSR-001](TSR-001.md) | The lighting ECU shall monitor its own program execution by an external watchdog with an… | safety | B | draft | FSR-002 | HW-REQ-016, HW-REQ-017, HW-REQ-018, HW-REQ-0… |
-| [TSR-002](TSR-002.md) | The lighting ECU shall prevent energising or de-energising of a low-beam channel that was… | safety | B | draft | FSR-002 | HW-REQ-021, SM-04 |
-| [TSR-003](TSR-003.md) | The lighting ECU shall detect the loss of load current in a low-beam channel and report i… | safety | B | draft | FSR-001 | HW-REQ-020, SM-01, SM-03 |
-| [TSR-004](TSR-004.md) | When the loss of a low-beam channel has been reported, the lighting ECU shall establish t… | safety | B | draft | FSR-001, FSR-003 | HW-REQ-019 |
-| [TSR-005](TSR-005.md) | The lighting ECU shall transmit the driver warning request on the vehicle bus with a cycl… | safety | B | draft | FSR-004 | SYS-REQ-026 |
-| [TSR-006](TSR-006.md) | The lighting ECU shall determine the high-beam segment to be masked from the object data… | safety | QM(A) | draft | FSR-006 | — |
-| [TSR-007](TSR-007.md) | The lighting ECU shall evaluate, in a monitor independent of the high-beam control path,… | safety | A(A) | draft | FSR-007 | — |
-| [TSR-008](TSR-008.md) | The lighting ECU shall inhibit energising of the work-lamp output stages while the vehicl… | safety | A | draft | FSR-008 | — |
+| [TSR-002](TSR-002.md) | The lighting ECU shall prevent energising or de-energising of a low-beam channel that was… | safety | B | draft | FSR-002 | HW-REQ-021, SM-04, SW-REQ-001 |
+| [TSR-003](TSR-003.md) | The lighting ECU shall detect the loss of load current in a low-beam channel and report i… | safety | B | draft | FSR-001 | HW-REQ-020, SM-01, SM-03, SW-REQ-002, SW-REQ… |
+| [TSR-004](TSR-004.md) | When the loss of a low-beam channel has been reported, the lighting ECU shall establish t… | safety | B | draft | FSR-001, FSR-003 | HW-REQ-019, SW-REQ-003, SW-REQ-013 |
+| [TSR-005](TSR-005.md) | The lighting ECU shall transmit the driver warning request on the vehicle bus with a cycl… | safety | B | draft | FSR-004 | SW-REQ-006, SYS-REQ-026 |
+| [TSR-006](TSR-006.md) | The lighting ECU shall determine the high-beam segment to be masked from the object data… | safety | QM(A) | draft | FSR-006 | SW-REQ-007 |
+| [TSR-007](TSR-007.md) | The lighting ECU shall evaluate, in a monitor independent of the high-beam control path,… | safety | A(A) | draft | FSR-007 | SW-REQ-008 |
+| [TSR-008](TSR-008.md) | The lighting ECU shall inhibit energising of the work-lamp output stages while the vehicl… | safety | A | draft | FSR-008 | SW-REQ-009 |
 
 ## By allocated element
 

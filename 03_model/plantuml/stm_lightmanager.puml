@@ -1,0 +1,58 @@
+@startuml stm_lightmanager
+title State machine - SWC_LightManager, low-beam path (DEEP DIVE, Golden Thread)
+skinparam shadowing false
+skinparam state {
+  BackgroundColor White
+  BorderColor Black
+}
+
+[*] --> INIT
+
+state INIT #E7F0FB : entry / clear fault status, read NvM\ndo / self-test of the sensing path\nexit / channels de-energised
+state STANDBY : ignition on, no low-beam request\ndo / channels de-energised
+state ACTIVATING #EAF4EA : entry / set enable, start blanking timer (30 ms, HW-REQ-030)\ndo / SM-01 classification suppressed
+state ACTIVE #EAF4EA : do / arbitrate set point = f(request, derating)\ndo / SM-01 evaluation, cmd/fb comparison (5 ms)
+state HOLD_LAST_VALID #FFF8E1 : entry / freeze arbitrated set point\ndo / SM-01 evaluation continues\ndo / thermal derating still applied
+state LIMP_HOME #FBEAEA : entry / failed channel latched off, DTC set,\n        driver warning requested\ndo / remaining channel held at set point
+state FAIL_DARK #FBEAEA : entry / DTC set, driver warning requested\ndo / no low-beam channel available
+
+INIT --> STANDBY : self-test passed
+INIT --> FAIL_DARK : self-test failed
+
+STANDBY --> ACTIVATING : low-beam requested\n[light request group valid]
+ACTIVATING --> ACTIVE : blanking timer elapsed
+ACTIVATING --> STANDBY : request withdrawn
+
+ACTIVE --> HOLD_LAST_VALID : light request group invalid\n[low beam energised]  / SW-REQ-004
+HOLD_LAST_VALID --> ACTIVE : light request group valid again
+HOLD_LAST_VALID --> STANDBY : ignition status off
+
+ACTIVE --> LIMP_HOME : channel classified failed\n[exactly one channel failed] / SW-REQ-003
+HOLD_LAST_VALID --> LIMP_HOME : channel classified failed\n[exactly one channel failed]
+LIMP_HOME --> FAIL_DARK : remaining channel classified failed
+ACTIVE --> FAIL_DARK : both channels classified failed
+
+ACTIVE --> STANDBY : request off or ignition off
+LIMP_HOME --> STANDBY : ignition off
+FAIL_DARK --> STANDBY : ignition off
+
+note right of LIMP_HOME
+  **Safe state of SG-01** - degraded but visible.
+  No return to ACTIVE within the ignition cycle:
+  an intermittent open load must not produce a
+  flickering headlamp (SW-REQ-003).
+end note
+
+note right of HOLD_LAST_VALID
+  Entered only when the low beam was already
+  energised. Request invalid while dark does NOT
+  switch the low beam on (SYS-REQ-025).
+end note
+
+note bottom of ACTIVE
+  Thermal derating is not a state. It is a set-point
+  computation (SW-REQ-011) evaluated in ACTIVE,
+  HOLD_LAST_VALID and LIMP_HOME alike, reported as
+  a status flag, never as a mode change.
+end note
+@enduml
