@@ -4,7 +4,7 @@ skinparam shadowing false
 skinparam componentStyle rectangle
 skinparam defaultTextAlignment center
 
-package "Application Layer" as APP #EAF4EA {
+package "Application Layer  --  **decide**" as APP #EAF4EA {
   component "SWC_LightManager\nASIL B" as LM
   component "SWC_HighBeamControl\nQM(A)" as HBC
   component "SWC_HighBeamMonitor\nASIL A(A)" as HBM
@@ -12,11 +12,11 @@ package "Application Layer" as APP #EAF4EA {
   component "SWC_DiagnosticManager\nQM" as DGM
 }
 
-package "RTE" as RTE #F0EDF7 {
+package "RTE  --  **connect, isolate**" as RTE #F0EDF7 {
   component "Runtime Environment\nsender/receiver + client/server ports,\ninter-partition communication" as RTEC
 }
 
-package "Service Layer" as SRV #E7F0FB {
+package "Service Layer  --  **communicate, supervise, persist**" as SRV #E7F0FB {
   component "COM / PduR / CanNm" as COM
   component "E2E Library\nProfile 1 equivalent" as E2E
   component "DEM / DCM\nDTC, UDS server" as DEM
@@ -25,13 +25,13 @@ package "Service Layer" as SRV #E7F0FB {
   component "OS (AUTOSAR OS)\nscheduling, memory partitioning,\ntiming protection" as OS
 }
 
-package "ECU Abstraction / IoHwAb" as ECUAL #FFF8E1 {
+package "ECU Abstraction / IoHwAb  --  **convert to physical units, validate**" as ECUAL #FFF8E1 {
   component "IoHwAb\nchannel current, channel voltage,\ntemperature, enable" as IOHW
   component "CanIf" as CANIF
   component "WdgDrv abstraction" as WDGA
 }
 
-package "MCAL" as MCAL #FBEAEA {
+package "MCAL  --  **translate registers**" as MCAL #FBEAEA {
   component "ADC driver" as ADC
   component "PWM / GPT driver" as PWM
   component "DIO driver" as DIO
@@ -79,5 +79,14 @@ note right of SRV
   E2E, WdgM and OS carry safety mechanisms:
   SM-02 (watchdog) via WdgM/WdgIf,
   SYS-REQ-022..027 via the E2E library.
+end note
+
+note right of ECUAL
+  Range monitoring is split here.
+  IoHwAb answers "is this sample usable?"
+  - SampleValid, Blanked, T_LED_Valid.
+  Whether a value means the channel failed
+  is an ASIL B decision and stays in the
+  application. See section 2.1.
 end note
 @enduml

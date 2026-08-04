@@ -35,7 +35,7 @@ skinparam shadowing false
 skinparam componentStyle rectangle
 skinparam defaultTextAlignment center
 
-package "Application Layer" as APP #EAF4EA {
+package "Application Layer  --  **decide**" as APP #EAF4EA {
   component "SWC_LightManager\nASIL B" as LM
   component "SWC_HighBeamControl\nQM(A)" as HBC
   component "SWC_HighBeamMonitor\nASIL A(A)" as HBM
@@ -43,11 +43,11 @@ package "Application Layer" as APP #EAF4EA {
   component "SWC_DiagnosticManager\nQM" as DGM
 }
 
-package "RTE" as RTE #F0EDF7 {
+package "RTE  --  **connect, isolate**" as RTE #F0EDF7 {
   component "Runtime Environment\nsender/receiver + client/server ports,\ninter-partition communication" as RTEC
 }
 
-package "Service Layer" as SRV #E7F0FB {
+package "Service Layer  --  **communicate, supervise, persist**" as SRV #E7F0FB {
   component "COM / PduR / CanNm" as COM
   component "E2E Library\nProfile 1 equivalent" as E2E
   component "DEM / DCM\nDTC, UDS server" as DEM
@@ -56,13 +56,13 @@ package "Service Layer" as SRV #E7F0FB {
   component "OS (AUTOSAR OS)\nscheduling, memory partitioning,\ntiming protection" as OS
 }
 
-package "ECU Abstraction / IoHwAb" as ECUAL #FFF8E1 {
+package "ECU Abstraction / IoHwAb  --  **convert to physical units, validate**" as ECUAL #FFF8E1 {
   component "IoHwAb\nchannel current, channel voltage,\ntemperature, enable" as IOHW
   component "CanIf" as CANIF
   component "WdgDrv abstraction" as WDGA
 }
 
-package "MCAL" as MCAL #FBEAEA {
+package "MCAL  --  **translate registers**" as MCAL #FBEAEA {
   component "ADC driver" as ADC
   component "PWM / GPT driver" as PWM
   component "DIO driver" as DIO
@@ -111,6 +111,15 @@ note right of SRV
   SM-02 (watchdog) via WdgM/WdgIf,
   SYS-REQ-022..027 via the E2E library.
 end note
+
+note right of ECUAL
+  Range monitoring is split here.
+  IoHwAb answers "is this sample usable?"
+  - SampleValid, Blanked, T_LED_Valid.
+  Whether a value means the channel failed
+  is an ASIL B decision and stays in the
+  application. See section 2.1.
+end note
 @enduml
 ```
 
@@ -119,6 +128,52 @@ the service layer to the MCAL and the hardware; every arrow that crosses a packa
 generated or configured interface, never a direct call. The colouring of the application layer is
 irrelevant to safety — the ASIL is written into each component and the partitioning is in
 `sw_partitions.puml`.
+
+### 2.1 What each layer is responsible for
+
+The layer a piece of logic belongs in is a design decision, not a matter of taste. The **must not
+contain** column is the useful half of this table: it is what stops the next person putting a
+threshold comparison somewhere convenient.
+
+| Layer | Responsible for | Must not contain | In this ECU |
+|---|---|---|---|
+| **Application** | Deciding. Safety logic, state machines, control laws, fault classification and the reaction to it | Register access, raw sensor scaling, bus protocol handling | `150 mA for more than 50 ms → open load` (`SW-REQ-002`); the derating curve and its 400 mA floor (`SW-REQ-011`); the limp-home state machine (`SW-REQ-003`) |
+| **RTE** | Connecting components and isolating them. Every port between two SWCs, and every crossing of a partition boundary | Any application logic whatsoever — it is generated | Sender/receiver ports for the set points, client/server to `DEM`; the QM(A) ↔ A(A) crossing |
+| **Service** | Communicating, supervising, persisting. Standard infrastructure shared by all components | Product-specific decisions about *this* lighting function | E2E counter and CRC (`SYS-REQ-022` … `027`); `WdgM` alive and deadline supervision (`SM-02`); `DEM`/`DCM`; AUTOSAR OS scheduling and partitioning |
+| **ECU abstraction / IoHwAb** | Converting to physical units and validating the acquisition. Making a value usable and saying whether it is | Any judgement about whether a value indicates a *fault* | counts → mA, mV, °C; `SampleValid_Ch[n]` (sample lay in the PWM on-phase), `Blanked_Ch[n]` (`HW-REQ-030`), `T_LED_Valid` (`HW-REQ-022` plausibility band) |
+| **MCAL** | Translating registers. The only layer that knows the microcontroller | Anything portable between microcontrollers | ADC, PWM/GPT, DIO, CAN/LIN, SPI drivers |
+
+**Calculation and range monitoring do not live in one layer — they are split, deliberately.**
+
+| Question | Answered by | Why there |
+|---|---|---|
+| *Is this sample usable?* | **IoHwAb** | It depends on how the value was acquired — the PWM phase, the blanking window, the sensor plausibility band. Nothing above needs to know that |
+| *Does this value mean the channel has failed?* | **Application** | It is a safety decision derived from `SYS-REQ-014`, carrying ASIL B |
+
+The reason for the split is the freedom-from-interference argument. IoHwAb is shared by every
+component including the QM ones; putting an ASIL B decision there would place safety logic in a
+layer that `freedom_from_interference.md` treats as common infrastructure, and the decomposition
+argument would have to cover it too.
+
+**One value, end to end.** The channel current from silicon to a classified fault:
+
+| Step | Layer | What happens |
+|---|---|---|
+| 1 | Hardware | Shunt 50 mΩ → amplifier ×50 → RC → ADC input (`Current_Sense_Chain`) |
+| 2 | MCAL | ADC driver returns a 12-bit conversion result, triggered by the PWM timer (`HW-REQ-003`) |
+| 3 | IoHwAb | Scales counts to **mA**, and sets `SampleValid_Ch[n]` from the PWM phase and `Blanked_Ch[n]` from the start-up blanking timer |
+| 4 | RTE | Delivers `I_Load_Ch[n]` and its validity flags to `SWC_LightManager` |
+| 5 | Application | Compares against `LM_I_OPEN_LOAD_MA = 150`, debounces over 50 ms, discriminates the cause (`SYS-REQ-019`), classifies as open load and enters the fault reaction |
+| 6 | Application → Service | Reports the DTC through `DEM` and requests the driver warning |
+
+`SWC_LightManager` never sees an ADC count, and never needs to know the shunt is 50 mΩ. The
+hardware tolerance chain in `05_hardware/analysis_current_sensing.md` lives entirely below step 4;
+the safety decision lives entirely above it.
+
+> **The layer boundaries are only as strong as the hardware that enforces them.** Memory
+> partitioning and timing protection are AUTOSAR OS features, but **no `HW-REQ` currently requires
+> an MPU or a timing-protection unit** — recorded as `OP-48`. Until that is closed, this table
+> describes an intended separation, not an enforced one.
 
 ## 3 📋 OVERVIEW — the five application components
 
