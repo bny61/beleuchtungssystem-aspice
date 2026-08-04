@@ -1,0 +1,83 @@
+@startuml sw_layers
+title SW architecture - AUTOSAR Classic layers, Lighting ECU (SWE.2)
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam defaultTextAlignment center
+
+package "Application Layer" as APP #EAF4EA {
+  component "SWC_LightManager\nASIL B" as LM
+  component "SWC_HighBeamControl\nQM(A)" as HBC
+  component "SWC_HighBeamMonitor\nASIL A(A)" as HBM
+  component "SWC_WorkLampControl\nASIL A" as WLC
+  component "SWC_DiagnosticManager\nQM" as DGM
+}
+
+package "RTE" as RTE #F0EDF7 {
+  component "Runtime Environment\nsender/receiver + client/server ports,\ninter-partition communication" as RTEC
+}
+
+package "Service Layer" as SRV #E7F0FB {
+  component "COM / PduR / CanNm" as COM
+  component "E2E Library\nProfile 1 equivalent" as E2E
+  component "DEM / DCM\nDTC, UDS server" as DEM
+  component "WdgM / WdgIf\nalive + deadline supervision" as WDGM
+  component "NvM" as NVM
+  component "OS (AUTOSAR OS)\nscheduling, memory partitioning,\ntiming protection" as OS
+}
+
+package "ECU Abstraction / IoHwAb" as ECUAL #FFF8E1 {
+  component "IoHwAb\nchannel current, channel voltage,\ntemperature, enable" as IOHW
+  component "CanIf" as CANIF
+  component "WdgDrv abstraction" as WDGA
+}
+
+package "MCAL" as MCAL #FBEAEA {
+  component "ADC driver" as ADC
+  component "PWM / GPT driver" as PWM
+  component "DIO driver" as DIO
+  component "CAN / LIN driver" as CANDRV
+  component "SPI driver" as SPI
+}
+
+node "Hardware\nMCU_Lockstep, Current_Sense_Chain,\nLED_Driver_Stage_1..n, ASIC_Watchdog,\nTemp_Sense_Chain, CAN_FD_Transceiver" as HW #LightGray
+
+LM --> RTEC
+HBC --> RTEC
+HBM --> RTEC
+WLC --> RTEC
+DGM --> RTEC
+
+RTEC --> COM
+RTEC --> E2E
+RTEC --> DEM
+RTEC --> WDGM
+RTEC --> NVM
+RTEC --> IOHW
+
+COM --> CANIF
+CANIF --> CANDRV
+IOHW --> ADC
+IOHW --> PWM
+IOHW --> DIO
+WDGM --> WDGA
+WDGA --> SPI
+OS -[hidden]down- NVM
+
+ADC --> HW
+PWM --> HW
+DIO --> HW
+CANDRV --> HW
+SPI --> HW
+
+note right of APP
+  Five application components, names published
+  and binding. Mixed ASIL: QM ... ASIL B.
+  Partitioning: freedom_from_interference.md
+end note
+
+note right of SRV
+  E2E, WdgM and OS carry safety mechanisms:
+  SM-02 (watchdog) via WdgM/WdgIf,
+  SYS-REQ-022..027 via the E2E library.
+end note
+@enduml

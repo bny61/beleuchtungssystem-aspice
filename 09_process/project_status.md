@@ -1,8 +1,7 @@
 # Project status — current state and open points
 
 > This file is the re-entry point. It is updated at the end of every phase.
-> Last update: after the E/E architecture refinement (systems-engineer + hardware-engineer,
-> between phase 4 and phase 5).
+> Last update: after phase 7 — software (software-engineer).
 
 ## Phase status
 
@@ -16,7 +15,7 @@
 | 4a | E/E architecture refinement — bus catalogue, timing, HW architecture detail | **complete** (draft) | systems-engineer, hardware-engineer |
 | 5 | FMEA, DFMEA, FTA, FMEDA, DFA, STPA | **next phase** | safety-analyst |
 | 6 | Hardware (HWE.1–4, Part 5) | **partly pulled forward** in 4a | hardware-engineer |
-| 7 | Software (SWE.1–6, Part 6) | open | software-engineer |
+| 7 | Software (SWE.1–6, Part 6) | **SWE.1–SWE.4 complete** (draft); SWE.5/SWE.6 open | software-engineer |
 | 8 | Verification & validation (SYS.4, SYS.5) | open | verification-engineer |
 | 9 | Safety case, confirmation measures | open | safety-manager, quality-assessor |
 | 10 | GitHub configuration management and evidence | partly prepared | config-manager |
@@ -81,6 +80,26 @@ tailoring decisions are missing but will be required at the latest for phase 9.
   93.0 %; dropping any single measure gives 84.5 / 79.9 / 85.0 / 89.0 %, so none is optional. The
   90 % claim stays conditional until the FMEDA confirms it (`OP-15`).
 - Traceability check green, **110 records**, requirements coverage 81/94 = 86 %.
+- **Phase 7, software (SWE.1–SWE.4, ISO 26262-6):** 14 software requirements `SW-REQ-001` …
+  `SW-REQ-014` covering all five SWCs, with full depth only on `SWC_LightManager`. ASIL is inherited
+  from the parent requirement throughout, never assigned in the software phase. Platform is
+  **AUTOSAR Classic**, so partitioning, timing protection, WdgM and the E2E library are platform
+  features rather than invented mechanisms. Work products: `06_software/sw_architecture.md`
+  (layering, five SWCs, seven OS tasks with cycle times, priorities and deadlines),
+  `06_software/detailed_design/swc_lightmanager.md` (🔍 interfaces, state machine, error handling,
+  pseudocode), `06_software/coding_standard/misra_c_2012.md` (two deviations `MD-01`/`MD-02`, each
+  with rationale and compensating measure, plus the static-analysis gate),
+  `06_software/sw_verification_plan.md` (statement **and** branch coverage at 100 % for ASIL B, with
+  the justification of the metric and the gate behaviour), `06_software/freedom_from_interference.md`
+  (closes `OP-26` as a **view**, not as evidence). Four new diagrams: `sw_layers.puml`,
+  `sw_tasks.puml`, `stm_lightmanager.puml`, `sw_partitions.puml`.
+- **Timing closes, with no published value changed.** SG-01: 77.6 ms detection (specified ≤ 80 ms,
+  `HW-REQ-009`) + a **6 ms software share** of the 150 ms fault reaction of `TSR-004` → 230 ms
+  against the 300 ms FTTI, margin 70 ms (23 %) — the 50 ms window and 20 ms debounce are counted as
+  10 and 4 activations of the 5 ms monitoring task, so software adds no time. Activation:
+  **8.5 ms software share** against the 10 ms cap of `SW-REQ-014`. Periodic CPU load 42 % against a
+  rate-monotonic bound of ≈ 73.5 %. The `OP-42` start-up case (110 ms versus the 100 ms cap of
+  `SYS-REQ-018`) is carried through unchanged and not smoothed over.
 
 ### Housekeeping from the parallel refinement
 
@@ -120,7 +139,7 @@ requirement) instead of `HW-REQ-025`, and `HW-REQ-004` lacked the variant markin
 | OP-11 | ~~Create `RISK-01`/`RISK-02` as records~~ | config-manager | **done** |
 | OP-12 | ~~Syntax-check the context diagram~~ — PlantUML installed; both existing diagrams were in fact broken (`skinparam` single-line block) and are fixed | mbse-modeler | **done** (phase 4) |
 | OP-25 | No behavioural views for the `SG-02` thread (state machine and sequence cover the low beam only) | mbse-modeler | Phase 5 |
-| OP-26 | Freedom-from-interference view for `SWC_HighBeamControl` QM(A) vs. `SWC_HighBeamMonitor` A(A) — needs the SW architecture | software-engineer | Phase 7 |
+| OP-26 | ~~Freedom-from-interference view for `SWC_HighBeamControl` QM(A) vs. `SWC_HighBeamMonitor` A(A)~~ — view delivered in `06_software/freedom_from_interference.md`. **The view is an argument, not evidence**: independence is demonstrated only by the DFA (`OP-8`), and `RISK-02` stays open | software-engineer | **done** (phase 7) |
 | OP-27 | Confirm PGNs, source addresses and the background bus load against the OEM J1939 database (`A-14`, `A-16`) | systems-engineer | before baseline |
 | OP-28 | Agree E2E data identifiers, CRC parameters and counter handling with the gateway supplier (`A-15`) | safety-manager | Phase 7 |
 | OP-29 | `AmbientLight` timeout (500 ms) equals the SG-02 FTTI — decide between a shorter timeout and a staleness reaction in `SWC_HighBeamMonitor` | safety-manager | Phase 5 |
@@ -141,10 +160,20 @@ requirement) instead of `HW-REQ-025`, and `HW-REQ-004` lacked the variant markin
 | OP-44 | ≈ 203 ms of the 300 ms activation budget of `SYS-REQ-001` is spent outside the item boundary (gateway `A-23` plus signal cycle). Confirm `A-23`, and confirm the 300 ms is measured at the light rather than at the ECU pin | systems-engineer | Phase 5 |
 | OP-45 | Test cases for `HW-REQ-026` … `HW-REQ-030` (`HV-13`, `HV-14`) — extension of `OP-19`. Not to be written against `HW-REQ-030` before `OP-42` is decided, or the test would encode a known breach | verification-engineer | Phase 8 |
 | OP-46 | Power-on readiness is unspecified: `SYS-REQ-001` does not say what happens when the light request arrives while the ECU is still booting. A start-up requirement is missing at system level | systems-engineer | Phase 5 |
+| OP-47 | End-to-end protection (`SYS-REQ-022` … `SYS-REQ-027`, `SW-REQ-005`) is an ASIL B safety measure with **no `SM-xx` record** — the `SM-` set is hardware-owned. Either create the record or state why the measure does not need one | safety-manager, safety-analyst | Phase 5 |
+| OP-48 | **No `HW-REQ` requires an MPU or OS timing-protection support.** The whole freedom-from-interference argument rests on a platform capability that no hardware requirement demands | hardware-engineer | Phase 6 |
+| OP-49 | Unit test cases (`TC-xxx`) for `SW-REQ-001` … `SW-REQ-014`, the CI coverage gate, and the WCET/stack measurement on target | verification-engineer | Phase 8 |
+| OP-50 | Tool confidence for the MISRA static analyser and the coverage tool, into `09_process/plans/tool_qualification.md` | config-manager, quality-assessor | before baseline |
+| OP-51 | `SWC_LightManager` aggregates ASIL B, ASIL A (cornering light) and QM (daytime running lights) functions in one partition, so all of it inherits ASIL B. Split the component or accept the inheritance explicitly — the decision changes `04_architecture/allocation.md` | software-engineer, systems-engineer | Phase 5 |
 | OP-13 | Catch up phase 0: role model, independence levels, tailoring, glossary | safety-manager | before phase 9 |
 | OP-14 | ~~HARA and item definition existed only in chat, not as work products~~ | safety-manager | **done** |
 
 ## Next step
+
+**Phase 5** — safety analyses (unchanged; phase 7 was pulled forward against the hardware phase in
+the same way phase 6 was). New phase 7 input for it: `OP-47`, `OP-51` and, above all, `OP-8` —
+`06_software/freedom_from_interference.md` is written as an argument for the DFA to examine and is
+explicitly **not** evidence.
 
 **Phase 5** — safety analyses: System-FMEA and DFMEA per AIAG-VDA with B/A/E and AP, FTA with
 minimal cut sets, FMEDA with SPFM/LFM/PMHF against the ASIL B targets, DFA for the decomposed path,

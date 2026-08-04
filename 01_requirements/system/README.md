@@ -26,15 +26,15 @@ Derived from CR and FSR, ASPICE SYS.2.
 | [SYS-REQ-016](SYS-REQ-016.md) | The lighting ECU shall measure the load current of a low-beam channel with a total uncert… | electrical | B | draft | FSR-001, SYS-REQ-014 | HW-REQ-001, HW-REQ-002 |
 | [SYS-REQ-017](SYS-REQ-017.md) | While the PWM on-time of a low-beam channel is shorter than 150 us, the lighting ECU shal… | diagnostics | B | draft | SYS-REQ-014 | HW-REQ-004 |
 | [SYS-REQ-018](SYS-REQ-018.md) | When an open load occurs in a low-beam channel, the lighting ECU shall report the fault t… | safety | B | draft | FSR-001, SYS-REQ-014 | HW-REQ-009, HW-REQ-030, SM-01, TC-021 |
-| [SYS-REQ-019](SYS-REQ-019.md) | When the measured load current of a low-beam channel falls below 150 mA, the lighting ECU… | diagnostics | B | draft | SYS-REQ-014 | HW-REQ-006, HW-REQ-007, HW-REQ-020, SM-03 |
+| [SYS-REQ-019](SYS-REQ-019.md) | When the measured load current of a low-beam channel falls below 150 mA, the lighting ECU… | diagnostics | B | draft | SYS-REQ-014 | HW-REQ-006, HW-REQ-007, HW-REQ-020, SM-03, S… |
 | [SYS-REQ-020](SYS-REQ-020.md) | The lighting ECU shall exchange light request, vehicle speed, steering angle, ambient bri… | communication | B | draft | CR-020 | HW-REQ-025, SYS-REQ-022, SYS-REQ-028 |
-| [SYS-REQ-021](SYS-REQ-021.md) | When a diagnostic tester sends a UDS request according to ISO 14229, the lighting ECU sha… | diagnostics | QM | draft | CR-019 | — |
-| [SYS-REQ-022](SYS-REQ-022.md) | The lighting ECU shall protect every safety-relevant signal group exchanged with the vehi… | communication | B | draft | CR-020, SYS-REQ-020 | SYS-REQ-023, SYS-REQ-024, SYS-REQ-027 |
-| [SYS-REQ-023](SYS-REQ-023.md) | If the alive counter of a received safety-relevant signal group does not increase by one… | communication | B | draft | SYS-REQ-022 | — |
-| [SYS-REQ-024](SYS-REQ-024.md) | If a safety-relevant signal group is not received within the timeout defined for that sig… | communication | B | draft | SYS-REQ-022 | SYS-REQ-025 |
-| [SYS-REQ-025](SYS-REQ-025.md) | While the light request signal group is marked as invalid and the low beam was energised… | safety | B | draft | FSR-002, SYS-REQ-024 | — |
-| [SYS-REQ-026](SYS-REQ-026.md) | When the lighting ECU has classified a low-beam channel as failed, it shall transmit the… | communication | B | draft | SYS-REQ-010, TSR-005 | — |
-| [SYS-REQ-027](SYS-REQ-027.md) | The lighting ECU shall include a signal-group-specific data identifier in the checksum co… | communication | B | draft | SYS-REQ-022 | — |
+| [SYS-REQ-021](SYS-REQ-021.md) | When a diagnostic tester sends a UDS request according to ISO 14229, the lighting ECU sha… | diagnostics | QM | draft | CR-019 | SW-REQ-012 |
+| [SYS-REQ-022](SYS-REQ-022.md) | The lighting ECU shall protect every safety-relevant signal group exchanged with the vehi… | communication | B | draft | CR-020, SYS-REQ-020 | SW-REQ-005, SYS-REQ-023, SYS-REQ-024, SYS-RE… |
+| [SYS-REQ-023](SYS-REQ-023.md) | If the alive counter of a received safety-relevant signal group does not increase by one… | communication | B | draft | SYS-REQ-022 | SW-REQ-005 |
+| [SYS-REQ-024](SYS-REQ-024.md) | If a safety-relevant signal group is not received within the timeout defined for that sig… | communication | B | draft | SYS-REQ-022 | SW-REQ-005, SYS-REQ-025 |
+| [SYS-REQ-025](SYS-REQ-025.md) | While the light request signal group is marked as invalid and the low beam was energised… | safety | B | draft | FSR-002, SYS-REQ-024 | SW-REQ-004 |
+| [SYS-REQ-026](SYS-REQ-026.md) | When the lighting ECU has classified a low-beam channel as failed, it shall transmit the… | communication | B | draft | SYS-REQ-010, TSR-005 | SW-REQ-006 |
+| [SYS-REQ-027](SYS-REQ-027.md) | The lighting ECU shall include a signal-group-specific data identifier in the checksum co… | communication | B | draft | SYS-REQ-022 | SW-REQ-005 |
 | [SYS-REQ-028](SYS-REQ-028.md) | The lighting ECU shall occupy not more than 1.0 % of the nominal capacity of the CAN FD s… | communication | B | draft | SYS-REQ-020 | — |
 
 ## By allocated element

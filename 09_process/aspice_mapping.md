@@ -30,8 +30,8 @@ same artefact, and forcing a single home would lose one of them.
 | `Records` | Which Requirements-as-Code records belong here: `path:<folder>` or `id:<ID prefix>` |
 | `Documents` | Narrative work products, as repo-relative paths |
 
-`-` means nothing is allocated yet. For most `SWE.*` rows that is the honest state of this project:
-phase 7 has not been run.
+`-` means nothing is allocated yet. After phase 7 that is still the honest state of `SWE.5` and
+`SWE.6`: the software integration and qualification tests have not been planned.
 
 ## Mapping
 
@@ -43,9 +43,9 @@ phase 7 has not been run.
 | SYS.4 | ASPICE | System integration and integration test | system | right | - | - |
 | SYS.5 | ASPICE | System qualification test | system | right | id:TC- | 07_verification/reports/traceability_matrix.md, 07_verification/reports/traceability_views.md |
 | SWE.1 | ASPICE | Software requirements analysis | software | left | id:SW-REQ- | - |
-| SWE.2 | ASPICE | Software architectural design | software | left | - | - |
-| SWE.3 | ASPICE | Software detailed design and unit construction | software | left | - | - |
-| SWE.4 | ASPICE | Software unit verification | software | right | - | - |
+| SWE.2 | ASPICE | Software architectural design | software | left | - | 06_software/sw_architecture.md, 06_software/freedom_from_interference.md |
+| SWE.3 | ASPICE | Software detailed design and unit construction | software | left | - | 06_software/detailed_design/swc_lightmanager.md, 06_software/coding_standard/misra_c_2012.md |
+| SWE.4 | ASPICE | Software unit verification | software | right | - | 06_software/sw_verification_plan.md |
 | SWE.5 | ASPICE | Software integration and integration test | software | right | - | - |
 | SWE.6 | ASPICE | Software qualification test | software | right | - | - |
 | HWE.1 | ASPICE | Hardware requirements analysis | hardware | left | id:HW-REQ- | 05_hardware/analysis_current_sensing.md, 05_hardware/analysis_low_beam_activation.md |
@@ -62,14 +62,17 @@ phase 7 has not been run.
 | Part 3 | ISO | Concept phase: item definition, HARA, FSC | concept | left | path:02_safety/02_hara, path:02_safety/03_fsc | 02_safety/01_item_definition/item_definition.md, 02_safety/02_hara/hara.md, 02_safety/02_hara/operational_situations.md, 02_safety/02_hara/sec_classification.md |
 | Part 4 | ISO | Product development at system level (TSC) | system | left | path:02_safety/04_tsc | 04_architecture/ee_architecture.md |
 | Part 5 | ISO | Product development at hardware level | hardware | left | id:HW-REQ-, id:SM- | 05_hardware/hw_architecture.md, 05_hardware/hw_components.md, 05_hardware/hw_verification_plan.md, 05_hardware/analysis_low_beam_activation.md |
-| Part 6 | ISO | Product development at software level | software | left | id:SW-REQ- | - |
+| Part 6 | ISO | Product development at software level | software | left | id:SW-REQ- | 06_software/sw_architecture.md, 06_software/detailed_design/swc_lightmanager.md, 06_software/coding_standard/misra_c_2012.md, 06_software/sw_verification_plan.md, 06_software/freedom_from_interference.md |
 | Part 8 | ISO | Supporting processes | supporting | supporting | - | 09_process/assumptions.md, 09_process/plans/tool_qualification.md |
 | Part 9 | ISO | ASIL-oriented and safety-oriented analyses | supporting | supporting | path:02_safety/05_analyses | - |
 
 ## Known gaps this table makes visible
 
-- **`SWE.1` … `SWE.6` and ISO 26262-6 are empty.** Phase 7 has not been run; `06_software/` holds
-  skeleton folders only.
+- **`SWE.1` … `SWE.4` and ISO 26262-6 are populated by phase 7** — `SW-REQ-001` … `SW-REQ-014`,
+  the software architecture, the `SWC_LightManager` detailed design, the coding standard and the
+  unit verification plan. **`SWE.5` and `SWE.6` are still empty**: software integration test and
+  software qualification test are a hand-off to `verification-engineer` (`OP-49`), and no `TC-`
+  record exists for any `SW-REQ` yet.
 - **`SYS.4` is empty and `SYS.5` holds a single test case** for 94 requirements. The test strategy
   is owed by phase 8.
 - **`HWE.3` and `HWE.4` carry plans, not results.** The verification plan exists (`HV-01` … `HV-12`);

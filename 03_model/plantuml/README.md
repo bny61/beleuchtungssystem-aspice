@@ -43,6 +43,10 @@ One file per view. The file name prefix encodes the view type.
 | [req_golden_thread.puml](req_golden_thread.puml) | Requirements diagram - Golden Thread SG-01 (MagicGrid, Requirements) |
 | [seq_open_load.puml](seq_open_load.puml) | Sequence - Open load detection, fault reaction, diagnostic DTC (Golden Thread) |
 | [stm_lighting.puml](stm_lighting.puml) | State machine - Lighting system operating states incl. safe state (SG-01) |
+| [stm_lightmanager.puml](stm_lightmanager.puml) | State machine - SWC_LightManager, low-beam path (DEEP DIVE, Golden Thread) |
+| [sw_layers.puml](sw_layers.puml) | SW architecture - AUTOSAR Classic layers, Lighting ECU (SWE.2) |
+| [sw_partitions.puml](sw_partitions.puml) | Memory partitioning and timing protection - mixed ASIL (freedom from interference, OP-26) |
+| [sw_tasks.puml](sw_tasks.puml) | SW dynamic behaviour - OS tasks, runnables and the SG-01 reaction chain (plausible example values) |
 | [uc_lighting.puml](uc_lighting.puml) | Use cases - Adaptive front-lighting system (MagicGrid, Problem Domain / Behavior) |
 
 ---

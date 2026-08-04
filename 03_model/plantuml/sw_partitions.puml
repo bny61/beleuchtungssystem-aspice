@@ -1,0 +1,54 @@
+@startuml sw_partitions
+title Memory partitioning and timing protection - mixed ASIL (freedom from interference, OP-26)
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam defaultTextAlignment center
+
+node "MCU_Lockstep - one core, AUTOSAR OS with MPU" as MCU {
+
+  package "OS-Application APP_SAFETY (ASIL B)" as P1 #EAF4EA {
+    component "SWC_LightManager" as LM
+    component "SWC_WorkLampControl" as WLC
+  }
+
+  package "OS-Application APP_HB_MON (ASIL A(A))" as P2 #E7F0FB {
+    component "SWC_HighBeamMonitor" as HBM
+  }
+
+  package "OS-Application APP_HB_CTRL (QM(A))" as P3 #FFF8E1 {
+    component "SWC_HighBeamControl" as HBC
+  }
+
+  package "OS-Application APP_QM (QM)" as P4 #F0EDF7 {
+    component "SWC_DiagnosticManager" as DGM
+  }
+}
+
+component "RTE - the only path between partitions\n(IOC, generated, no shared writable data)" as RTE #White
+
+HBC -down-> RTE : commanded high-beam state
+RTE -down-> HBM : commanded state (read only)
+LM -down-> RTE
+RTE -down-> DGM : DEM events
+
+HBM -right-> [Enable path B\nseparate GPIO + driver enable] #LightGray
+HBC -right-> [Enable path A\nsegment PWM] #LightGray
+
+note bottom of P3
+  QM(A) partition: no write access to the memory of
+  APP_HB_MON or APP_SAFETY, lowest task priority,
+  execution budget enforced by OS timing protection.
+end note
+
+note bottom of P2
+  A(A) partition: higher priority than the QM(A)
+  control path, own enable path to the driver stage,
+  own inputs (VehicleSpeed, AmbientLight).
+end note
+
+note right of MCU
+  This is an **argument**, not a proof.
+  It becomes evidence only when the phase 5 DFA
+  analyses it; RISK-02 stays open regardless.
+end note
+@enduml
