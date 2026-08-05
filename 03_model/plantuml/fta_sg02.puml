@@ -1,0 +1,74 @@
+@startuml fta_sg02
+title Fault tree - top event: SG-02 violated (OVERVIEW, second thread, ASIL A)
+skinparam defaultTextAlignment center
+skinparam shadowing false
+skinparam nodesep 12
+skinparam ranksep 26
+skinparam rectangle {
+  BackgroundColor White
+  RoundCorner 6
+}
+
+rectangle "**TOP**\nSG-02 violated:\nother road users are glared by high beam or work lamps\nand the state persists beyond the 500 ms FTTI" as TOP #FBEAEA
+
+rectangle "OR" as GT #F0EDF7
+
+rectangle "**G1**\nGlaring high-beam segment\nnot switched off" as G1 #FFF8E1
+rectangle "**G2**\nWork lamps energised\nwhile driving" as G2 #FFF8E1
+
+rectangle "AND" as G1G #F0EDF7
+rectangle "AND" as G2G #F0EDF7
+
+rectangle "**G1a**\nControl path leaves the\nsegment energised" as G1A #FFF8E1
+rectangle "OR" as G1AG #F0EDF7
+
+rectangle "**G1b**\nMonitor path does not\nde-energise the high beam" as G1B #FFF8E1
+rectangle "OR" as G1BG #F0EDF7
+
+rectangle "C1\nObject data wrong, late or\nabsent (A-05, no E2E on\nOBJ_List_1)" as C1 #E7F0FB
+rectangle "C2\nSWC_HighBeamControl\ncomputes the wrong segment\n(QM(A), TSR-006)" as C2 #E7F0FB
+rectangle "C3\nHigh-beam driver stage\nwill not switch off (E4)" as C3 #E7F0FB
+
+rectangle "C4\nSWC_HighBeamMonitor\nfails or is starved\n(A(A), TSR-007)" as C4 #E7F0FB
+rectangle "C5\nAmbientLight or VehicleSpeed\nstale but not timed out\n(OP-29)" as C5 #E7F0FB
+rectangle "C6\nSeparate enable path to the\nhigh-beam stage inoperative" as C6 #E7F0FB
+rectangle "C7\n<<common cause>>\nDependent failure of control\nand monitor (DFA)" as C7 #FBEAEA
+
+rectangle "C8\nWork-lamp stage energised\nwithout request or stuck on" as C8 #E7F0FB
+rectangle "C9\nSpeed inhibit defeated:\nsignal invalid or stale\n(TSR-008)" as C9 #E7F0FB
+
+TOP -down- GT
+GT -down-> G1
+GT -down-> G2
+
+G1 -down- G1G
+G1G -down-> G1A
+G1G -down-> G1B
+
+G1A -down- G1AG
+G1AG -down-> C1
+G1AG -down-> C2
+G1AG -down-> C3
+
+G1B -down- G1BG
+G1BG -down-> C4
+G1BG -down-> C5
+G1BG -down-> C6
+
+G2 -down- G2G
+G2G -down-> C8
+G2G -down-> C9
+
+GT -down-> C7
+
+note right of C7
+  C7 defeats the AND of G1 in one event and is
+  therefore an order-1 cut set unless the DFA
+  holds: 02_safety/05_analyses/dfa_decomposition.md.
+end note
+
+note bottom of GT
+  OVERVIEW depth on purpose: basic events are named
+  but not quantified, because SG-02 carries no FMEDA.
+end note
+@enduml

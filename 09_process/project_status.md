@@ -13,7 +13,7 @@
 | 3 | `SYS-REQ`, `TSR`, E/E architecture (SYS.2, SYS.3) | **complete** (draft) | systems-engineer |
 | 4 | MBSE model, MagicGrid, 8 SysML views | **complete** (draft) | mbse-modeler |
 | 4a | E/E architecture refinement — bus catalogue, timing, HW architecture detail | **complete** (draft) | systems-engineer, hardware-engineer |
-| 5 | FMEA, DFMEA, FTA, FMEDA, DFA, STPA | **next phase** | safety-analyst |
+| 5 | FMEA, DFMEA, FTA, FMEDA, DFA, STPA, verification matrix | **complete** (draft) | safety-analyst |
 | 6 | Hardware (HWE.1–4, Part 5) | **partly pulled forward** in 4a | hardware-engineer |
 | 7 | Software (SWE.1–6, Part 6) | **SWE.1–SWE.4 complete** (draft); SWE.5/SWE.6 open | software-engineer |
 | 8 | Verification & validation (SYS.4, SYS.5) | open | verification-engineer |
@@ -101,6 +101,27 @@ tailoring decisions are missing but will be required at the latest for phase 9.
   rate-monotonic bound of ≈ 73.5 %. The `OP-42` start-up case (110 ms versus the 100 ms cap of
   `SYS-REQ-018`) is carried through unchanged and not smoothed over.
 
+- **Phase 5 — safety analyses.** Eight work products in `02_safety/05_analyses/`: System-FMEA per
+  AIAG-VDA with B/A/E and action priority, a five-row DFMEA drawn from the P-diagram error states of
+  `hw_components.md`, a fault tree per safety goal with minimal cut sets, the Golden Thread FMEDA,
+  the DFA of the `FSR-005` decomposition, an STPA of "high beam on", and the verification matrix.
+  Two fault-tree diagrams in `03_model/plantuml/`.
+- **The ASIL B hardware metrics are met** — SPFM **91.8 %** (target ≥ 90 %), LFM **88.8 %**
+  (≥ 60 %), PMHF **1.84 × 10⁻⁸ 1/h** (< 10⁻⁷). λ values are plausible examples following a named
+  handbook method at a stated mission profile.
+- **`OP-15` answered: the `SM-01` coverage claim survives.** The FMEDA reaches 92.2 % against the
+  93.0 % proposed in `analysis_sm01_coverage.md`; the 0.8-point gap is one credit for the
+  channel-voltage leg. `OP-23` closed with it — per-string sensing is not required. `OP-43` closed:
+  the 30 ms blanking does not move the claim.
+- **`RISK-03`: the SPFM result is conditional on `OP-34`.** Analysed on the human's instruction as
+  if `SAFE_OFF` differentiated by channel class. Without that, `W4` and `M2` become single-point
+  faults and SPFM falls to **84.2 %** — a 7.6-point swing across the target, not a rounding
+  sensitivity. If `OP-34` is decided otherwise, the FMEDA and `fta_sg01` must be redone.
+- **`OP-8` done, `RISK-02` still open.** The DFA exists, so the open point is discharged — but the
+  decomposition is *argued*, not demonstrated: three coupling factors carry a high residual,
+  including partitioning that no `HW-REQ` requires (`OP-48`).
+- Traceability check green, **135 records**.
+
 ### Housekeeping from the parallel refinement
 
 The two agents ran concurrently and both appended assumptions numbered `A-14` … `A-17`. The
@@ -119,7 +140,7 @@ requirement) instead of `HW-REQ-025`, and `HW-REQ-004` lacked the variant markin
 | OP-1 | ~~Carry the ASIL of the `tbd` customer requirements over from the HARA~~ | systems-engineer | **done** (phase 3) |
 | OP-2 | ~~Behaviour outside the normal supply range is missing~~ — undervoltage in `SYS-REQ-013`, overvoltage and load dump in `HW-REQ-011` … `HW-REQ-016`. Residual: the system-level requirement for < 9 V / > 32 V, see `OP-36` | systems-engineer, hardware-engineer | **done** (4a) |
 | OP-3 | `CR-007` is not atomic (detection + indication); change only via a requirement-change issue | systems-engineer | before baseline |
-| OP-15 | Confirm the 90 % diagnostic coverage of `SM-01` against the FMEDA — blocks `SM-01` returning to `reviewed` | safety-analyst | Phase 5 |
+| OP-15 | ~~Confirm the 90 % diagnostic coverage of `SM-01` against the FMEDA~~ — **confirmed at 92.2 %** by `fmeda_golden_thread.md`; `SM-01` may return to `reviewed` | safety-analyst | **done** (phase 5) |
 | OP-16 | ~~Feasibility of the 400 mA derating floor (`HW-REQ-008`, `A-12`)~~ — confirmed by the load-line analysis, condition captured as `HW-REQ-024` | hardware-engineer | **done** (4a) |
 | OP-17 | ~~Decide the gating scheme below the minimum PWM on-time~~ — decided for `SYS-REQ-017` ("diagnosis not available"); `HW-REQ-004` not implemented in the base variant | systems-engineer | **done** (phase 3) |
 | OP-18 | ~~Decide whether per-string current sensing is added~~ — decided against; channel voltage (`HW-REQ-006`) covers the failure mode. Revisit after the FMEDA (`OP-23`) | systems-engineer | **done** (phase 3) |
@@ -127,13 +148,13 @@ requirement) instead of `HW-REQ-025`, and `HW-REQ-004` lacked the variant markin
 | OP-20 | Re-review `SYS-REQ-014`, `SM-01` and `TC-021` — dropped to `draft` by the refinement | safety-manager | Phase 3 |
 | OP-21 | ~~CAN FD / J1939 message catalogue and signal encoding at frame level~~ — `ee_architecture.md` section 3; residual items split to `OP-27` / `OP-28` | systems-engineer | **done** (4a) |
 | OP-22 | ~~Bus load and timing analysis for the cycle times of the interface table~~ — `ee_architecture.md` section 4; residual assumption `A-14` | systems-engineer | **done** (4a) |
-| OP-23 | Revisit the decision against per-string sensing after the FMEDA | safety-analyst | Phase 5 |
+| OP-23 | ~~Revisit the decision against per-string sensing after the FMEDA~~ — confirmed: per-string sensing is **not required**, the channel-voltage leg carries group 2 | safety-analyst | **done** (phase 5) |
 | OP-24 | ~~Overvoltage and load-dump behaviour undefined~~ — operating-range table, clamped load dump, `HW-REQ-011` … `HW-REQ-016` | hardware-engineer | **done** (4a) |
 | OP-4 | Function class per ISO 7637-2 pulse — **hardware side done** (pulse/class table in `analysis_supply_and_transients.md`); the `CR-017` text still has to be corrected, see `OP-35` | hardware-engineer, systems-engineer | **partly done** (4a) |
 | OP-5 | Replace the weak requirements `CR-002`, `CR-005`, `CR-016` before a real baseline | quality-manager | before baseline |
 | OP-6 | ~~Normalise the ASCII transliteration in the records to proper umlauts~~ | config-manager | **obsolete** — resolved by the translation to English |
 | OP-7 | `RISK-01`: confirm the E rating of H-01 (E3 vs. E4) in the confirmation review | safety-manager | Phase 9 |
-| OP-8 | `RISK-02`: perform the DFA for the decomposition of `FSR-005` | safety-analyst | Phase 5 |
+| OP-8 | ~~`RISK-02`: perform the DFA for the decomposition of `FSR-005`~~ — `dfa_decomposition.md` exists. **The decomposition is argued but not demonstrated**: three coupling factors carry a high residual, so `RISK-02` stays open | safety-analyst | **done** (phase 5) |
 | OP-9 | Plan `A-03` (driver response to the warning) as a validation target at vehicle level | verification-engineer | Phase 8 |
 | OP-10 | Interface agreement (DIA) for the object detection outside the item boundary (`A-05`) | safety-manager | Phase 3 |
 | OP-11 | ~~Create `RISK-01`/`RISK-02` as records~~ | config-manager | **done** |
@@ -156,7 +177,7 @@ requirement) instead of `HW-REQ-025`, and `HW-REQ-004` lacked the variant markin
 | OP-40 | `A-12` ("the derating curve never commands below 400 mA") restates `HW-REQ-008`, which requires exactly that. Since the requirement exists, the assumption should be confirmed or marked superseded rather than left `open` — an assumption and a requirement asserting the same thing invite them to drift apart | hardware-engineer | Phase 6 |
 | OP-41 | ASIL of the illuminance requirements `CR-024` … `CR-028` is unassigned — all five carry `asil: QM` as a placeholder. Classify them from the HARA, as was done for the `tbd` records in `OP-1`; `CR-024`/`CR-026` touch `SG-01`, `CR-025` touches `SG-02` | safety-manager | Phase 5 |
 | OP-42 | **`HW-REQ-030` blanking breaks a published cap**: the 30 ms `SM-01` blanking makes start-up open-load detection 110 ms, exceeding the 100 ms of `SYS-REQ-018`. Widen the cap, exempt the switch-on window explicitly, or take the shorter 170 mA-edge blanking documented in `analysis_low_beam_activation.md` §4.3. Decided deliberately: the conflict is recorded rather than designed around, because the cap belongs to `SYS-REQ-018` | systems-engineer | Phase 5 |
-| OP-43 | Does the 30 ms blanking window move the `SM-01` coverage claim in the FMEDA? Same field as `OP-15` | safety-analyst | Phase 5 |
+| OP-43 | ~~Does the 30 ms blanking window move the `SM-01` coverage claim in the FMEDA?~~ — it does not; the claim holds at 92.2 % | safety-analyst | **done** (phase 5) |
 | OP-44 | ≈ 203 ms of the 300 ms activation budget of `SYS-REQ-001` is spent outside the item boundary (gateway `A-23` plus signal cycle). Confirm `A-23`, and confirm the 300 ms is measured at the light rather than at the ECU pin | systems-engineer | Phase 5 |
 | OP-45 | Test cases for `HW-REQ-026` … `HW-REQ-030` (`HV-13`, `HV-14`) — extension of `OP-19`. Not to be written against `HW-REQ-030` before `OP-42` is decided, or the test would encode a known breach | verification-engineer | Phase 8 |
 | OP-46 | Power-on readiness is unspecified: `SYS-REQ-001` does not say what happens when the light request arrives while the ECU is still booting. A start-up requirement is missing at system level | systems-engineer | Phase 5 |
@@ -165,6 +186,14 @@ requirement) instead of `HW-REQ-025`, and `HW-REQ-004` lacked the variant markin
 | OP-49 | Unit test cases (`TC-xxx`) for `SW-REQ-001` … `SW-REQ-014`, the CI coverage gate, and the WCET/stack measurement on target | verification-engineer | Phase 8 |
 | OP-50 | Tool confidence for the MISRA static analyser and the coverage tool, into `09_process/plans/tool_qualification.md` | config-manager, quality-assessor | before baseline |
 | OP-51 | `SWC_LightManager` aggregates ASIL B, ASIL A (cornering light) and QM (daytime running lights) functions in one partition, so all of it inherits ASIL B. Split the component or accept the inheritance explicitly — the decision changes `04_architecture/allocation.md` | software-engineer, systems-engineer | Phase 5 |
+| OP-52 | No `HW-REQ` requires a power-up test of the `SAFE_OFF` path — 4.40 FIT latent at zero coverage (`D5`) | hardware-engineer | Phase 6 |
+| OP-53 | No `HW-REQ` requires a power-up test of the `SM-06` window comparators — 6.75 FIT latent at zero coverage (`P4`) | hardware-engineer | Phase 6 |
+| OP-54 | **9.90 FIT of uncovered single-point faults in the supply** (`P1`, `P5`), 54 % of the SPF+RF residue and the order-1 cut sets `MCS-1`/`MCS-2`. Accept with an argued residual risk, or split the supply path | systems-engineer, safety-manager | before baseline |
+| OP-55 | The 99 % lockstep and 90 % `SM-02` diagnostic-coverage claims have no named evidence source | hardware-engineer | Phase 6 |
+| OP-56 | Shared MCAL drivers are asserted ASIL B but nothing shows it; a coupling factor of the decomposition (`CF-7`) | hardware-engineer, software-engineer | Phase 7 |
+| OP-57 | No requirement covers a **missing** `OBJ_List_1`; `TSR-006`/`TSR-007` cover implausible states, not absence. Also the high-beam stage failed short downstream of the enable gate | systems-engineer | Phase 5 |
+| OP-58 | No fault-injection test exercises the partition boundary from the QM(A) side | software-engineer, verification-engineer | Phase 8 |
+| OP-59 | The FMEDA mission profile and λ handbook basis are not recorded as an `A-xx` assumption | safety-manager | Phase 5 |
 | OP-13 | Catch up phase 0: role model, independence levels, tailoring, glossary | safety-manager | before phase 9 |
 | OP-14 | ~~HARA and item definition existed only in chat, not as work products~~ | safety-manager | **done** |
 

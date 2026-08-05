@@ -1,0 +1,110 @@
+@startuml fta_sg01
+title Fault tree - top event: SG-01 violated (DEEP DIVE, Golden Thread, ASIL B)
+skinparam defaultTextAlignment center
+skinparam shadowing false
+skinparam nodesep 12
+skinparam ranksep 26
+skinparam rectangle {
+  BackgroundColor White
+  RoundCorner 6
+}
+
+rectangle "**TOP**\nSG-01 violated:\nthe low beam fails while driving and the failure is\nneither detected nor mitigated within the 300 ms FTTI" as TOP #FBEAEA
+
+rectangle "OR" as GT #F0EDF7
+
+rectangle "**G1**\nTotal loss of both\nlow-beam channels\n(no safe state reachable)" as G1 #FFF8E1
+rectangle "**G2**\nLoss of one channel\nnot detected within\nthe FTTI" as G2 #FFF8E1
+rectangle "**G3**\nLoss detected, but the safe\nstate of SG-01 is not\nestablished in 150 ms" as G3 #FFF8E1
+
+rectangle "OR" as G1G #F0EDF7
+rectangle "AND" as G2G #F0EDF7
+rectangle "AND" as G3G #F0EDF7
+
+rectangle "**G1c**\nSAFE_OFF de-energises\nthe low-beam channels" as G1C #FFF8E1
+rectangle "AND" as G1CG #F0EDF7
+
+rectangle "**G2a**\nOpen load in one\nlow-beam channel" as G2A #FFF8E1
+rectangle "OR" as G2AG #F0EDF7
+
+rectangle "**G2b**\nSM-01 blind to the\nopen load" as G2B #FFF8E1
+rectangle "OR" as G2BG #F0EDF7
+
+rectangle "**G2b1**\nSense chain masks\nthe fault" as G2B1 #FFF8E1
+rectangle "AND" as G2B1G #F0EDF7
+
+rectangle "**G3a**\nFault reaction\nineffective" as G3A #FFF8E1
+rectangle "OR" as G3AG #F0EDF7
+
+rectangle "B1\nLoss of VBAT_PROT\n(input protection or\nreverse-polarity FET open)\n5.4 FIT - no SM" as B1 #FBEAEA
+rectangle "B2\nSupply damaged by\ntransient / reverse polarity\n4.5 FIT - no SM" as B2 #FBEAEA
+rectangle "B3\nASIC_Watchdog trips\nspuriously (E2)\n5.5 FIT" as B3 #E7F0FB
+rectangle "H1\n<<house event>>\nSAFE_OFF not differentiated\nby channel class (OP-34)\nassumed FALSE" as H1 #EAF4EA
+
+rectangle "B5\nDriver output stage open\n15.4 FIT" as B5 #E7F0FB
+rectangle "B6\nChannel connector or\nharness open\n16.25 FIT" as B6 #E7F0FB
+rectangle "B7\nEnable gate stuck\nde-asserted\n4.4 FIT" as B7 #E7F0FB
+rectangle "B8\nDriver-internal latch-off\n(OCP / OVP / OT)\n12.1 FIT" as B8 #E7F0FB
+
+rectangle "B9\nSense chain stuck at a\nplausible value (E1 / E3)\n8.1 FIT" as B9 #E7F0FB
+rectangle "B10\nOff-phase zero-current\nself-test ineffective\n(HW-REQ-005 leg)\n2.5 FIT" as B10 #E7F0FB
+rectangle "B12\nThreshold / debounce\nevaluation fault\n(systematic, SWC_LightManager)" as B12 #F0EDF7
+rectangle "B13\nADC or VREF bias beyond\nthe plausibility band\n3.0 FIT" as B13 #E7F0FB
+
+rectangle "B14\nLimp-home state machine\ndoes not establish the\nsafe state (systematic)" as B14 #F0EDF7
+rectangle "B15\nRemaining low-beam channel\nalready failed\n64.6 FIT (dual point)" as B15 #E7F0FB
+
+TOP -down- GT
+GT -down-> G1
+GT -down-> G2
+GT -down-> G3
+
+G1 -down- G1G
+G1G -down-> B1
+G1G -down-> B2
+G1G -down-> G1C
+
+G1C -down- G1CG
+G1CG -down-> B3
+G1CG -down-> H1
+
+G2 -down- G2G
+G2G -down-> G2A
+G2G -down-> G2B
+
+G2A -down- G2AG
+G2AG -down-> B5
+G2AG -down-> B6
+G2AG -down-> B7
+G2AG -down-> B8
+
+G2B -down- G2BG
+G2BG -down-> G2B1
+G2BG -down-> B12
+G2BG -down-> B13
+
+G2B1 -down- G2B1G
+G2B1G -down-> B9
+G2B1G -down-> B10
+
+G3 -down- G3G
+G3G -down-> G2A
+G3G -down-> G3A
+
+G3A -down- G3AG
+G3AG -down-> B14
+G3AG -down-> B15
+
+note right of GT
+  Failure rates are the FMEDA values of
+  02_safety/05_analyses/fmeda_golden_thread.md.
+  All plausible example values, not validated data.
+end note
+
+note bottom of H1
+  Set FALSE under the working assumption that OP-34
+  is resolved by channel-class differentiation of
+  SAFE_OFF (RISK-03). Set TRUE, {B3} becomes an
+  order-1 cut set and the ASIL B SPFM target is missed.
+end note
+@enduml

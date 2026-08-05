@@ -4,16 +4,30 @@
 
 FMEA, FTA, FMEDA, DFA, STPA and the risks tracked.
 
-**2 records.** Click an ID to open the record.
+**3 records.** Click an ID to open the record.
 
 | ID | Text | Type | ASIL | Status | Upstream | Downstream |
 |---|---|---|---|---|---|---|
 | [RISK-01](RISK-01.md) | The exposure rating of hazard H-01 (E3 rather than E4) determines ASIL B versus ASIL C fo… | risk | — | draft | — | — |
 | [RISK-02](RISK-02.md) | The ASIL decomposition of FSR-005 into FSR-006 (QM(A)) and FSR-007 (A(A)) is not demonstr… | risk | — | draft | — | — |
+| [RISK-03](RISK-03.md) | The ASIL B single-point fault metric of the SG-01 path is met only if OP-34 is decided by… | risk | — | draft | — | — |
 
-**Status:** draft: 2
+## Other documents in this folder
 
-**ASIL:** —: 2
+| File | Purpose |
+|---|---|
+| [dfa_decomposition.md](dfa_decomposition.md) | DFA — dependent failure analysis of the `FSR-005` decomposition |
+| [dfmea_ecu.md](dfmea_ecu.md) | DFMEA — `ECU_LightingCtrl` assembly (5-row extract) |
+| [fmea_system.md](fmea_system.md) | System-FMEA — Adaptive front lighting system (AIAG-VDA, 7 steps) |
+| [fmeda_golden_thread.md](fmeda_golden_thread.md) | FMEDA — Golden Thread extract (SG-01, ASIL B) |
+| [fta_sg01.md](fta_sg01.md) | FTA — SG-01 "No undetected failure of the low beam while driving" (ASIL B) |
+| [fta_sg02.md](fta_sg02.md) | FTA — SG-02 "No unintended glare caused by high beam or work lamps" (ASIL A) |
+| [stpa_high_beam.md](stpa_high_beam.md) | STPA (short form) — control action "high beam on" |
+| [verification_matrix.md](verification_matrix.md) | Verification matrix — which means proves which requirement |
+
+**Status:** draft: 3
+
+**ASIL:** —: 3
 
 ---
 
