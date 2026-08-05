@@ -588,7 +588,7 @@ flowchart LR
 
 ## 4 Level summary
 
-134 records, 196 typed links.
+135 records, 196 typed links.
 
 | Level | Kind | Records |
 |---|---|---|
@@ -602,6 +602,6 @@ flowchart LR
 | 4 | `SM-` | 6 |
 | 4 | `SW-REQ-` | 14 |
 | 5 | `TC-` | 1 |
-| 6 | `RISK-` | 2 |
+| 6 | `RISK-` | 3 |
 
 Interactive exploration of all records: [`trace_explorer.html`](trace_explorer.html) — open it locally in a browser; GitHub does not render HTML files stored in a repository.

@@ -64,7 +64,7 @@ same artefact, and forcing a single home would lose one of them.
 | Part 5 | ISO | Product development at hardware level | hardware | left | id:HW-REQ-, id:SM- | 05_hardware/hw_architecture.md, 05_hardware/hw_components.md, 05_hardware/hw_verification_plan.md, 05_hardware/analysis_low_beam_activation.md |
 | Part 6 | ISO | Product development at software level | software | left | id:SW-REQ- | 06_software/sw_architecture.md, 06_software/detailed_design/swc_lightmanager.md, 06_software/coding_standard/misra_c_2012.md, 06_software/sw_verification_plan.md, 06_software/freedom_from_interference.md |
 | Part 8 | ISO | Supporting processes | supporting | supporting | - | 09_process/assumptions.md, 09_process/plans/tool_qualification.md |
-| Part 9 | ISO | ASIL-oriented and safety-oriented analyses | supporting | supporting | path:02_safety/05_analyses | - |
+| Part 9 | ISO | ASIL-oriented and safety-oriented analyses | supporting | supporting | path:02_safety/05_analyses | 02_safety/05_analyses/fmea_system.md, 02_safety/05_analyses/dfmea_ecu.md, 02_safety/05_analyses/fta_sg01.md, 02_safety/05_analyses/fta_sg02.md, 02_safety/05_analyses/fmeda_golden_thread.md, 02_safety/05_analyses/dfa_decomposition.md, 02_safety/05_analyses/stpa_high_beam.md, 02_safety/05_analyses/verification_matrix.md |
 
 ## Known gaps this table makes visible
 

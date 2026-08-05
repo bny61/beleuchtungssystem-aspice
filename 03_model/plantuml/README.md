@@ -28,6 +28,8 @@ One file per view. The file name prefix encodes the view type.
 | [bdd_ee_architecture.puml](bdd_ee_architecture.puml) | E/E architecture - Lighting ECU (SYS.3) |
 | [bdd_system.puml](bdd_system.puml) | Block definition diagram - System decomposition (MagicGrid, Structure) |
 | [ctx_item.puml](ctx_item.puml) | Context diagram - Item "Adaptive front-lighting system" (ISO 26262-3, Item Definition) |
+| [fta_sg01.puml](fta_sg01.puml) | Fault tree - top event: SG-01 violated (DEEP DIVE, Golden Thread, ASIL B) |
+| [fta_sg02.puml](fta_sg02.puml) | Fault tree - top event: SG-02 violated (OVERVIEW, second thread, ASIL A) |
 | [ibd_current_sense_chain.puml](ibd_current_sense_chain.puml) | Internal block diagram - Current_Sense_Chain, DEEP DIVE (Golden Thread, SM-01) |
 | [ibd_ecu.puml](ibd_ecu.puml) | Internal block diagram - ECU_LightingCtrl, hardware view (MagicGrid, Structure) |
 | [par_luminous_flux.puml](par_luminous_flux.puml) | Parametric diagram - Luminous flux vs. junction temperature vs. channel current |
